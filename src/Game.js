@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { checkCollision } from './Collision.js';
 
 export class Game {
-  constructor(scene, camera, renderer, traffic, trees, houses, road, ui) {
+  constructor(scene, camera, renderer, traffic, trees, houses, stars, road, ui) {
     this.scene = scene;
     this.camera = camera;
     this.renderer = renderer;
@@ -10,11 +10,13 @@ export class Game {
     this.traffic = traffic;
     this.trees = trees;
     this.houses = houses;
+    this.stars = stars;
     this.road = road;
     this.ui = ui;
 
     this.state = 'start_screen';
     this.score = 0;
+    this.starCount = 0;
     this.baseSpeed = 1;
     this.actualSpeed = 1;
     this.timeElapsed = 0;
@@ -76,6 +78,8 @@ export class Game {
     this.traffic.reset();
     this.trees.reset();
     this.houses.reset();
+    this.stars.reset();
+    this.starCount = 0;
     this.player.reset();
     this.ui.hideStartScreen();
     this.ui.hideGameOver();
@@ -126,9 +130,13 @@ export class Game {
     this.traffic.update(delta, this.actualSpeed);
     this.trees.update(delta, this.actualSpeed);
     this.houses.update(delta, this.actualSpeed);
+    this.stars.update(delta, this.actualSpeed);
     this.road.update(this.actualSpeed, delta);
 
     const playerBox = this.player.getBox();
+    this.starCount += this.stars.checkCollection(playerBox);
+    this.ui.updateStars(this.starCount);
+
     const trafficBoxes = this.traffic.getBoxes();
     const hit = checkCollision(playerBox, trafficBoxes);
     if (hit) {
@@ -151,7 +159,7 @@ export class Game {
     });
 
     setTimeout(() => {
-      this.ui.showGameOver(this.score);
+      this.ui.showGameOver(this.score, this.starCount);
     }, 400);
   }
 }

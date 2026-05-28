@@ -67,6 +67,13 @@ canvas { display: block; }
 .char-name { font-size: 15px; font-weight: 700; opacity: 0.8; }
 .char-card.selected .char-name { opacity: 1; }
 
+.star-counter {
+  position: absolute; top: 20px; left: 30px;
+  color: #ffdd44; font-size: 28px; font-weight: 800;
+  text-shadow: 0 0 12px rgba(255,200,0,0.6), 0 2px 8px rgba(0,0,0,0.7);
+  letter-spacing: 1px;
+}
+
 .controls-hint {
   position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
   color: rgba(255,255,255,0.4); font-size: 14px;

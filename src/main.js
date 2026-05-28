@@ -5,6 +5,7 @@ import { Player } from './Player.js';
 import { Traffic } from './Traffic.js';
 import { Trees } from './Trees.js';
 import { Houses } from './Houses.js';
+import { Stars } from './Stars.js';
 import { UI } from './UI.js';
 import { Game } from './Game.js';
 
@@ -40,6 +41,9 @@ async function init() {
   const houseModels = loader.getHouseModels();
   const houses = new Houses(houseModels, sceneSetup.scene);
 
+  const starModel = loader.getStarModel();
+  const stars = new Stars(starModel, sceneSetup.scene);
+
   const ponyModel = loader.getPonyModel();
   const playerModelRace = loader.getPlayerModel();
 
@@ -50,6 +54,7 @@ async function init() {
     traffic,
     trees,
     houses,
+    stars,
     road,
     ui
   );

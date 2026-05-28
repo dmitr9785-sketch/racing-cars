@@ -69,6 +69,12 @@ export class UI {
     this.container.appendChild(this.hud);
     this.hudScore = this.hud.querySelector('#hud-score');
     this.hudSpeed = this.hud.querySelector('#hud-speed');
+
+    this.starCounter = document.createElement('div');
+    this.starCounter.className = 'star-counter';
+    this.starCounter.textContent = '⭐ 0';
+    this.starCounter.style.display = 'none';
+    this.container.appendChild(this.starCounter);
   }
 
   _buildGameOver() {
@@ -118,7 +124,12 @@ export class UI {
 
   showHUD() {
     this.hud.style.display = 'block';
+    this.starCounter.style.display = 'block';
     this.hint.style.display = 'block';
+  }
+
+  updateStars(count) {
+    this.starCounter.textContent = `⭐ ${count}`;
   }
 
   updateScore(score) {
@@ -129,10 +140,11 @@ export class UI {
     this.hudSpeed.textContent = `Speed: ${speed.toFixed(1)}x`;
   }
 
-  showGameOver(score) {
-    this.finalScore.textContent = `Score: ${Math.floor(score)}`;
+  showGameOver(score, stars) {
+    this.finalScore.textContent = `Score: ${Math.floor(score)}  ⭐ ${stars}`;
     this.gameoverScreen.classList.add('show');
     this.hud.style.display = 'none';
+    this.starCounter.style.display = 'none';
     this.hint.style.display = 'none';
   }
 

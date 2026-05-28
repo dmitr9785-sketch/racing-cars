@@ -19,6 +19,7 @@ const MODEL_LIST = [
   { id: 'house_1', file: 'assets/models/building-sample-house-b.glb' },
   { id: 'house_2', file: 'assets/models/building-sample-house-c.glb' },
   { id: 'tree', file: 'assets/models/maple_tree.glb' },
+  { id: 'star', file: 'assets/models/shining_star_low_poly.glb' },
 ];
 
 function fixMatColors(obj) {
@@ -54,7 +55,7 @@ export class ModelLoader {
           entry.file,
           (gltf) => {
             const model = gltf.scene;
-            const skip = entry.id === 'pony' || entry.id.startsWith('house_') || entry.id === 'tree';
+            const skip = entry.id === 'pony' || entry.id.startsWith('house_') || entry.id === 'tree' || entry.id === 'star';
             if (!skip) {
               model.scale.setScalar(0.8);
               model.traverse((child) => {
@@ -102,6 +103,9 @@ export class ModelLoader {
       const crown = new THREE.Mesh(new THREE.ConeGeometry(0.5, 0.7, 5), new THREE.MeshStandardMaterial({ color: 0x3d8c40, roughness: 0.9 }));
       crown.position.y = 0.9;
       group.add(crown);
+    } else if (id === 'star') {
+      const star = new THREE.Mesh(new THREE.OctahedronGeometry(0.3, 0), new THREE.MeshStandardMaterial({ color: 0xffdd44, emissive: 0xff8800, emissiveIntensity: 0.5 }));
+      group.add(star);
     } else if (id.startsWith('house_')) {
       const walls = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.8, 1.5), new THREE.MeshStandardMaterial({ color: 0xccaa88, roughness: 0.9 }));
       walls.position.y = 0.4;
@@ -149,5 +153,9 @@ export class ModelLoader {
 
   getTreeModel() {
     return this.models['tree'] ? this.models['tree'].clone() : null;
+  }
+
+  getStarModel() {
+    return this.models['star'] ? this.models['star'].clone() : null;
   }
 }
