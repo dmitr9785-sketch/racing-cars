@@ -19,6 +19,7 @@ export class Road {
     this._createLaneMarkings();
     this._createBarriers();
     this._createEdgeMarkings();
+    this._createGrass();
 
     scene.add(this.group);
   }
@@ -128,6 +129,20 @@ export class Road {
       const x = side * (ROAD_WIDTH / 2 - 0.1);
       const mesh = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.02, ROAD_LENGTH), mat);
       mesh.position.set(x, 0.01, ROAD_LENGTH / 2 - 5);
+      this.group.add(mesh);
+    }
+  }
+
+  _createGrass() {
+    const grassMat = new THREE.MeshStandardMaterial({ color: 0x4a8c3f, roughness: 1, metalness: 0 });
+
+    for (const side of [-1, 1]) {
+      const centerX = side * (ROAD_WIDTH / 2 + 9);
+      const geo = new THREE.PlaneGeometry(18, ROAD_LENGTH);
+      const mesh = new THREE.Mesh(geo, grassMat);
+      mesh.rotation.x = -Math.PI / 2;
+      mesh.position.set(centerX, -0.05, ROAD_LENGTH / 2 - 5);
+      mesh.receiveShadow = true;
       this.group.add(mesh);
     }
   }
