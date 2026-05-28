@@ -16,6 +16,7 @@ const MODEL_LIST = [
   { id: 'obstacle_1', file: 'assets/models/wheel-default.glb' },
   { id: 'pony', file: 'assets/models/pony_luna.glb' },
   { id: 'house', file: 'assets/models/medieval_village_house__2.glb' },
+  { id: 'tree', file: 'assets/models/maple_tree.glb' },
 ];
 
 function fixMatColors(obj) {
@@ -51,14 +52,17 @@ export class ModelLoader {
           entry.file,
           (gltf) => {
             const model = gltf.scene;
-            model.scale.setScalar(0.8);
-            model.traverse((child) => {
-              if (child.isMesh) {
-                child.castShadow = true;
-                child.receiveShadow = true;
-              }
-            });
-            fixMatColors(model);
+            const skip = entry.id === 'pony' || entry.id === 'house' || entry.id === 'tree';
+            if (!skip) {
+              model.scale.setScalar(0.8);
+              model.traverse((child) => {
+                if (child.isMesh) {
+                  child.castShadow = true;
+                  child.receiveShadow = true;
+                }
+              });
+              fixMatColors(model);
+            }
             this.models[entry.id] = model.clone();
             this.loaded++;
             completed++;
@@ -89,6 +93,13 @@ export class ModelLoader {
       head.position.set(0.7, 0.8, 0);
       head.rotation.z = -0.3;
       group.add(head);
+    } else if (id === 'tree') {
+      const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.12, 0.6, 5), new THREE.MeshStandardMaterial({ color: 0x664422, roughness: 1 }));
+      trunk.position.y = 0.3;
+      group.add(trunk);
+      const crown = new THREE.Mesh(new THREE.ConeGeometry(0.5, 0.7, 5), new THREE.MeshStandardMaterial({ color: 0x3d8c40, roughness: 0.9 }));
+      crown.position.y = 0.9;
+      group.add(crown);
     } else if (id === 'house') {
       const walls = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.8, 1.5), new THREE.MeshStandardMaterial({ color: 0xccaa88, roughness: 0.9 }));
       walls.position.y = 0.4;
@@ -131,5 +142,9 @@ export class ModelLoader {
 
   getHouseModel() {
     return this.models['house'] ? this.models['house'].clone() : null;
+  }
+
+  getTreeModel() {
+    return this.models['tree'] ? this.models['tree'].clone() : null;
   }
 }

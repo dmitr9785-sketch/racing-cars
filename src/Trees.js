@@ -3,43 +3,23 @@ import * as THREE from 'three';
 const SPAWN_Z = 60;
 const DESPAWN_Z = -12;
 const POOL_SIZE = 15;
-const ROAD_HALF = 7.5;
-
-function makeTree() {
-  const group = new THREE.Group();
-
-  const trunk = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.06, 0.08, 0.3, 5),
-    new THREE.MeshStandardMaterial({ color: 0x664422, roughness: 1 })
-  );
-  trunk.position.y = 0.15;
-  trunk.castShadow = false;
-  trunk.receiveShadow = false;
-  group.add(trunk);
-
-  const crown = new THREE.Mesh(
-    new THREE.ConeGeometry(0.2, 0.3, 5),
-    new THREE.MeshStandardMaterial({ color: 0x4a9e4a, roughness: 0.8 })
-  );
-  crown.position.y = 0.4;
-  crown.castShadow = false;
-  crown.receiveShadow = false;
-  group.add(crown);
-
-  return group;
-}
-
-const _template = makeTree();
+const ROAD_HALF = 7;
 
 export class Trees {
-  constructor(scene) {
+  constructor(treeModel, scene) {
     this.scene = scene;
     this.trees = [];
 
     for (let i = 0; i < POOL_SIZE; i++) {
-      const mesh = _template.clone();
-      const s = 0.8 + Math.random() * 0.4;
-      mesh.scale.setScalar(s);
+      const mesh = treeModel.clone();
+      const scale = 0.02 + Math.random() * 0.015;
+      mesh.scale.setScalar(scale);
+      mesh.traverse(c => {
+        if (c.isMesh) {
+          c.castShadow = false;
+          c.receiveShadow = false;
+        }
+      });
       mesh.visible = false;
       this.trees.push(mesh);
     }
