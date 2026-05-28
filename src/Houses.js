@@ -7,12 +7,14 @@ const ROAD_HALF = 7;
 const HOUSE_SIDES = [-1, 1, -1, 1, -1, 1];
 
 export class Houses {
-  constructor(houseModel, scene) {
+  constructor(houseModels, scene) {
     this.scene = scene;
+    this.houseModels = houseModels;
     this.houses = [];
 
     for (let i = 0; i < POOL_SIZE; i++) {
-      const mesh = houseModel.clone();
+      const base = houseModels[i % houseModels.length];
+      const mesh = base.clone();
       const s = 0.8 + Math.random() * 0.4;
       mesh.scale.setScalar(s);
       mesh.traverse(c => {

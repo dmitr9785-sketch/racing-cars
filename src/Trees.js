@@ -9,6 +9,7 @@ export class Trees {
   constructor(treeModel, scene) {
     this.scene = scene;
     this.trees = [];
+    this.timeSinceSpawn = 0;
 
     for (let i = 0; i < POOL_SIZE; i++) {
       const mesh = treeModel.clone();
@@ -41,7 +42,11 @@ export class Trees {
   }
 
   update(delta, speed) {
-    if (Math.random() < 0.008) this.spawn();
+    this.timeSinceSpawn += delta;
+    if (this.timeSinceSpawn >= 2.0) {
+      this.spawn();
+      this.timeSinceSpawn = 0;
+    }
 
     for (const tree of this.trees) {
       if (!tree.visible) continue;

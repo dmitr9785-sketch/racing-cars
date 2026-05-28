@@ -15,7 +15,9 @@ const MODEL_LIST = [
   { id: 'obstacle_0', file: 'assets/models/cone.glb' },
   { id: 'obstacle_1', file: 'assets/models/wheel-default.glb' },
   { id: 'pony', file: 'assets/models/pony.glb' },
-  { id: 'house', file: 'assets/models/medieval_village_house__2.glb' },
+  { id: 'house_0', file: 'assets/models/building-sample-house-a.glb' },
+  { id: 'house_1', file: 'assets/models/building-sample-house-b.glb' },
+  { id: 'house_2', file: 'assets/models/building-sample-house-c.glb' },
   { id: 'tree', file: 'assets/models/maple_tree.glb' },
 ];
 
@@ -52,7 +54,7 @@ export class ModelLoader {
           entry.file,
           (gltf) => {
             const model = gltf.scene;
-            const skip = entry.id === 'pony' || entry.id === 'house' || entry.id === 'tree';
+            const skip = entry.id === 'pony' || entry.id.startsWith('house_') || entry.id === 'tree';
             if (!skip) {
               model.scale.setScalar(0.8);
               model.traverse((child) => {
@@ -100,7 +102,7 @@ export class ModelLoader {
       const crown = new THREE.Mesh(new THREE.ConeGeometry(0.5, 0.7, 5), new THREE.MeshStandardMaterial({ color: 0x3d8c40, roughness: 0.9 }));
       crown.position.y = 0.9;
       group.add(crown);
-    } else if (id === 'house') {
+    } else if (id.startsWith('house_')) {
       const walls = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.8, 1.5), new THREE.MeshStandardMaterial({ color: 0xccaa88, roughness: 0.9 }));
       walls.position.y = 0.4;
       group.add(walls);
@@ -140,8 +142,9 @@ export class ModelLoader {
     return this.models['pony'] ? this.models['pony'].clone() : null;
   }
 
-  getHouseModel() {
-    return this.models['house'] ? this.models['house'].clone() : null;
+  getHouseModels() {
+    const ids = Object.keys(this.models).filter(k => k.startsWith('house_'));
+    return ids.map(id => this.models[id].clone());
   }
 
   getTreeModel() {

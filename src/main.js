@@ -37,8 +37,8 @@ async function init() {
   const treeModel = loader.getTreeModel();
   const trees = new Trees(treeModel, sceneSetup.scene);
 
-  const houseModel = loader.getHouseModel();
-  const houses = new Houses(houseModel, sceneSetup.scene);
+  const houseModels = loader.getHouseModels();
+  const houses = new Houses(houseModels, sceneSetup.scene);
 
   const ponyModel = loader.getPonyModel();
   const playerModelRace = loader.getPlayerModel();
@@ -62,7 +62,7 @@ async function init() {
       console.error('Failed to get model for', choice);
       return;
     }
-    const playerScale = choice === 'pony' ? 1.0 : 0.8;
+    const playerScale = choice === 'pony' ? 0.8 : 0.8;
     const player = new Player(model, playerScale);
     game.setPlayer(player);
     game.start();
