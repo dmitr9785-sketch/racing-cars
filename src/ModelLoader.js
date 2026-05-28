@@ -14,7 +14,7 @@ const MODEL_LIST = [
   { id: 'traffic_8', file: 'assets/models/truck.glb' },
   { id: 'obstacle_0', file: 'assets/models/cone.glb' },
   { id: 'obstacle_1', file: 'assets/models/wheel-default.glb' },
-  { id: 'pony', file: 'assets/models/pony_luna.glb' },
+  { id: 'pony', file: 'assets/models/pony.glb' },
   { id: 'house', file: 'assets/models/medieval_village_house__2.glb' },
   { id: 'tree', file: 'assets/models/maple_tree.glb' },
 ];

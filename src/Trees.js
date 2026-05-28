@@ -41,7 +41,7 @@ export class Trees {
   }
 
   update(delta, speed) {
-    if (Math.random() < 0.03) this.spawn();
+    if (Math.random() < 0.008) this.spawn();
 
     for (const tree of this.trees) {
       if (!tree.visible) continue;
