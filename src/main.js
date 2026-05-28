@@ -1,8 +1,10 @@
+import * as THREE from 'three';
 import { SceneSetup } from './SceneSetup.js';
 import { Road } from './Road.js';
 import { ModelLoader } from './ModelLoader.js';
 import { Player } from './Player.js';
 import { Traffic } from './Traffic.js';
+import { Trees } from './Trees.js';
 import { UI } from './UI.js';
 import { Game } from './Game.js';
 
@@ -39,12 +41,26 @@ async function init() {
   }
   const traffic = new Traffic(trafficModels, sceneSetup.scene);
 
+  let treeModel = loader.getTreeModel();
+  if (!treeModel) {
+    const g = new THREE.Group();
+    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.15, 0.8, 6), new THREE.MeshStandardMaterial({ color: 0x664422 }));
+    trunk.position.y = 0.4;
+    g.add(trunk);
+    const crown = new THREE.Mesh(new THREE.ConeGeometry(0.6, 0.8, 6), new THREE.MeshStandardMaterial({ color: 0x3d8c40 }));
+    crown.position.y = 1.0;
+    g.add(crown);
+    treeModel = g;
+  }
+  const trees = new Trees(treeModel, sceneSetup.scene);
+
   const game = new Game(
     sceneSetup.scene,
     sceneSetup.camera,
     sceneSetup.renderer,
     player,
     traffic,
+    trees,
     road,
     ui
   );

@@ -2,12 +2,13 @@ import * as THREE from 'three';
 import { checkCollision } from './Collision.js';
 
 export class Game {
-  constructor(scene, camera, renderer, player, traffic, road, ui) {
+  constructor(scene, camera, renderer, player, traffic, trees, road, ui) {
     this.scene = scene;
     this.camera = camera;
     this.renderer = renderer;
     this.player = player;
     this.traffic = traffic;
+    this.trees = trees;
     this.road = road;
     this.ui = ui;
 
@@ -69,6 +70,7 @@ export class Game {
     this.brakeHeld = false;
     this.lastTime = performance.now();
     this.traffic.reset();
+    this.trees.reset();
     this.player.reset();
     this.ui.hideStartScreen();
     this.ui.hideGameOver();
@@ -117,6 +119,7 @@ export class Game {
 
     this.player.update(delta);
     this.traffic.update(delta, this.actualSpeed);
+    this.trees.update(delta, this.actualSpeed);
     this.road.update(this.actualSpeed, delta);
 
     const playerBox = this.player.getBox();

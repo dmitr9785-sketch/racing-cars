@@ -14,6 +14,7 @@ const MODEL_LIST = [
   { id: 'traffic_8', file: 'assets/models/truck.glb' },
   { id: 'obstacle_0', file: 'assets/models/cone.glb' },
   { id: 'obstacle_1', file: 'assets/models/wheel-default.glb' },
+  { id: 'tree', file: 'assets/models/maple_tree.glb' },
 ];
 
 function fixMatColors(obj) {
@@ -98,6 +99,10 @@ export class ModelLoader {
     return Object.keys(this.models)
       .filter(k => k.startsWith('traffic_'))
       .map(k => this.models[k]);
+  }
+
+  getTreeModel() {
+    return this.models['tree'] ? this.models['tree'].clone() : null;
   }
 
   getPlayerModel() {
