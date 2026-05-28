@@ -15,7 +15,7 @@ export class Houses {
     for (let i = 0; i < POOL_SIZE; i++) {
       const base = houseModels[i % houseModels.length];
       const mesh = base.clone();
-      const s = 0.8 + Math.random() * 0.4;
+      const s = 1.5 + Math.random() * 0.5;
       mesh.scale.setScalar(s);
       mesh.traverse(c => {
         if (c.isMesh) {
