@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { getLanePositions } from './Road.js';
 
 export class Player {
-  constructor(model) {
+  constructor(model, scale = 0.8) {
     this.lanePositions = getLanePositions();
     this.currentLane = 1;
     this.targetLane = 1;
@@ -20,7 +20,7 @@ export class Player {
         }
       }
     });
-    this.mesh.scale.setScalar(0.8);
+    this.mesh.scale.setScalar(scale);
     this.mesh.position.set(this.targetX, 0, this.z);
     this.mesh.traverse(c => { if (c.isMesh) { c.castShadow = true; c.receiveShadow = true; } });
   }

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
-const SPAWN_Z = 60;
-const DESPAWN_Z = -12;
+const SPAWN_Z = 35;
+const DESPAWN_Z = -2;
 const POOL_SIZE = 15;
 const ROAD_HALF = 7;
 

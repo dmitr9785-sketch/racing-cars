@@ -4,10 +4,10 @@ export class SceneSetup {
   constructor() {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x87CEEB);
-    this.scene.fog = new THREE.Fog(0x87CEEB, 60, 120);
+    this.scene.fog = new THREE.Fog(0x87CEEB, 25, 45);
 
     this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
-    this.camera.position.set(0, 5, -8);
+    this.camera.position.set(0, 12, -4);
     this.camera.lookAt(0, 0, 4);
 
     this.renderer = new THREE.WebGLRenderer({ antialias: true });

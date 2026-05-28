@@ -62,7 +62,8 @@ async function init() {
       console.error('Failed to get model for', choice);
       return;
     }
-    const player = new Player(model);
+    const playerScale = choice === 'pony' ? 1.0 : 0.8;
+    const player = new Player(model, playerScale);
     game.setPlayer(player);
     game.start();
   });

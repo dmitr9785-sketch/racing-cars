@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import { getLanePositions } from './Road.js';
 
-const SPAWN_Z = 50;
-const DESPAWN_Z = -4;
+const SPAWN_Z = 25;
+const DESPAWN_Z = -2;
 const POOL_SIZE = 12;
 
 function cloneWithMaterials(src) {
