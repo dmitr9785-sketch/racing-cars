@@ -2,13 +2,14 @@ import * as THREE from 'three';
 import { checkCollision } from './Collision.js';
 
 export class Game {
-  constructor(scene, camera, renderer, player, traffic, trees, road, ui) {
+  constructor(scene, camera, renderer, traffic, trees, houses, road, ui) {
     this.scene = scene;
     this.camera = camera;
     this.renderer = renderer;
-    this.player = player;
+    this.player = null;
     this.traffic = traffic;
     this.trees = trees;
+    this.houses = houses;
     this.road = road;
     this.ui = ui;
 
@@ -22,11 +23,14 @@ export class Game {
     this.gasHeld = false;
     this.brakeHeld = false;
 
-    scene.add(player.mesh);
-
     this._bindKeys();
     this.ui.restartBtn.addEventListener('click', () => this.start());
     this._startLoop();
+  }
+
+  setPlayer(player) {
+    this.player = player;
+    this.scene.add(player.mesh);
   }
 
   _bindKeys() {
@@ -71,6 +75,7 @@ export class Game {
     this.lastTime = performance.now();
     this.traffic.reset();
     this.trees.reset();
+    this.houses.reset();
     this.player.reset();
     this.ui.hideStartScreen();
     this.ui.hideGameOver();
@@ -120,6 +125,7 @@ export class Game {
     this.player.update(delta);
     this.traffic.update(delta, this.actualSpeed);
     this.trees.update(delta, this.actualSpeed);
+    this.houses.update(delta, this.actualSpeed);
     this.road.update(this.actualSpeed, delta);
 
     const playerBox = this.player.getBox();

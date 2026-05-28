@@ -4,6 +4,7 @@ import { ModelLoader } from './ModelLoader.js';
 import { Player } from './Player.js';
 import { Traffic } from './Traffic.js';
 import { Trees } from './Trees.js';
+import { Houses } from './Houses.js';
 import { UI } from './UI.js';
 import { Game } from './Game.js';
 
@@ -26,13 +27,6 @@ async function init() {
   await new Promise(r => setTimeout(r, 300));
   ui.hideLoading();
 
-  const playerModel = loader.getPlayerModel();
-  if (!playerModel) {
-    console.error('Failed to load player model');
-    return;
-  }
-  const player = new Player(playerModel);
-
   const trafficModels = loader.getTrafficModels();
   if (trafficModels.length === 0) {
     console.error('No traffic models loaded');
@@ -42,19 +36,35 @@ async function init() {
 
   const trees = new Trees(sceneSetup.scene);
 
+  const houseModel = loader.getHouseModel();
+  const houses = new Houses(houseModel, sceneSetup.scene);
+
+  const ponyModel = loader.getPonyModel();
+  const playerModelRace = loader.getPlayerModel();
+
   const game = new Game(
     sceneSetup.scene,
     sceneSetup.camera,
     sceneSetup.renderer,
-    player,
     traffic,
     trees,
+    houses,
     road,
     ui
   );
 
   ui.showStartScreen();
-  ui.startBtn.addEventListener('click', () => game.start());
+  ui.startBtn.addEventListener('click', () => {
+    const choice = ui.getSelectedCharacter();
+    const model = choice === 'pony' ? ponyModel : playerModelRace;
+    if (!model) {
+      console.error('Failed to get model for', choice);
+      return;
+    }
+    const player = new Player(model);
+    game.setPlayer(player);
+    game.start();
+  });
 }
 
 init().catch(err => {

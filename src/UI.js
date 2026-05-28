@@ -27,6 +27,16 @@ export class UI {
     this.startScreen.innerHTML = `
       <h1>HIGHWAY RUSH</h1>
       <p style="font-size:18px;opacity:0.7;margin-bottom:20px;">Overtake traffic. Avoid crashes. Last as long as you can.</p>
+      <div class="char-select">
+        <div class="char-card" data-char="race">
+          <div class="char-icon">🚗</div>
+          <div class="char-name">Race Car</div>
+        </div>
+        <div class="char-card" data-char="pony">
+          <div class="char-icon">🦄</div>
+          <div class="char-name">Pony</div>
+        </div>
+      </div>
       <button class="btn" id="start-btn">START</button>
       <p style="font-size:14px;opacity:0.4;margin-top:30px;">
         &larr; &rarr; / A D &mdash; lanes &nbsp;|&nbsp; &uarr; / W &mdash; gas &nbsp;|&nbsp; &darr; / S &mdash; brake
@@ -35,6 +45,17 @@ export class UI {
     this.startScreen.style.display = 'none';
     this.container.appendChild(this.startScreen);
     this.startBtn = this.startScreen.querySelector('#start-btn');
+
+    this.selectedChar = 'race';
+    const cards = this.startScreen.querySelectorAll('.char-card');
+    cards[0].classList.add('selected');
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        cards.forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        this.selectedChar = card.dataset.char;
+      });
+    });
   }
 
   _buildHUD() {
@@ -85,6 +106,10 @@ export class UI {
 
   showStartScreen() {
     this.startScreen.style.display = 'flex';
+  }
+
+  getSelectedCharacter() {
+    return this.selectedChar;
   }
 
   hideStartScreen() {

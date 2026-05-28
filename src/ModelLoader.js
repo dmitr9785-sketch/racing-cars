@@ -14,6 +14,8 @@ const MODEL_LIST = [
   { id: 'traffic_8', file: 'assets/models/truck.glb' },
   { id: 'obstacle_0', file: 'assets/models/cone.glb' },
   { id: 'obstacle_1', file: 'assets/models/wheel-default.glb' },
+  { id: 'pony', file: 'assets/models/pony_luna.glb' },
+  { id: 'house', file: 'assets/models/medieval_village_house__2.glb' },
 ];
 
 function fixMatColors(obj) {
@@ -77,20 +79,39 @@ export class ModelLoader {
 
   _createFallback(id) {
     const group = new THREE.Group();
-    let geo, color;
+    let mesh;
 
-    if (id.startsWith('player') || id.startsWith('traffic')) {
-      geo = new THREE.BoxGeometry(1.8, 0.6, 3.6);
-      color = id.startsWith('player') ? 0x3388ff : 0x888888;
+    if (id === 'pony') {
+      const body = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.8, 1.5), new THREE.MeshStandardMaterial({ color: 0xcc88ff, roughness: 0.6 }));
+      body.position.y = 0.4;
+      group.add(body);
+      const head = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.4, 6), new THREE.MeshStandardMaterial({ color: 0xcc88ff, roughness: 0.6 }));
+      head.position.set(0.7, 0.8, 0);
+      head.rotation.z = -0.3;
+      group.add(head);
+    } else if (id === 'house') {
+      const walls = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.8, 1.5), new THREE.MeshStandardMaterial({ color: 0xccaa88, roughness: 0.9 }));
+      walls.position.y = 0.4;
+      group.add(walls);
+      const roof = new THREE.Mesh(new THREE.ConeGeometry(1.1, 0.6, 4), new THREE.MeshStandardMaterial({ color: 0xcc4444, roughness: 0.8 }));
+      roof.position.y = 1.0;
+      roof.rotation.y = Math.PI / 4;
+      group.add(roof);
+    } else if (id.startsWith('player') || id.startsWith('traffic')) {
+      const geo = new THREE.BoxGeometry(1.8, 0.6, 3.6);
+      const color = id.startsWith('player') ? 0x3388ff : 0x888888;
+      mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color, roughness: 0.6 }));
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      group.add(mesh);
     } else {
-      geo = new THREE.CylinderGeometry(0.4, 0.6, 0.8, 8);
-      color = 0xff6600;
+      const geo = new THREE.CylinderGeometry(0.4, 0.6, 0.8, 8);
+      mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: 0xff6600, roughness: 0.6 }));
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      group.add(mesh);
     }
 
-    const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color, roughness: 0.6 }));
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
-    group.add(mesh);
     return group;
   }
 
@@ -102,5 +123,13 @@ export class ModelLoader {
 
   getPlayerModel() {
     return this.models['player'] ? this.models['player'].clone() : null;
+  }
+
+  getPonyModel() {
+    return this.models['pony'] ? this.models['pony'].clone() : null;
+  }
+
+  getHouseModel() {
+    return this.models['house'] ? this.models['house'].clone() : null;
   }
 }
