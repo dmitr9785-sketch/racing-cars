@@ -108,12 +108,17 @@ export class Road {
       wall.receiveShadow = true;
       this.group.add(wall);
 
-      const stripeMat = new THREE.MeshStandardMaterial({ color: 0xcc3333 });
+      const postGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.7, 6);
+      const postMat = new THREE.MeshStandardMaterial({ color: 0xcc3333 });
+      const instanced = new THREE.InstancedMesh(postGeo, postMat, 24);
+      const dummy = new THREE.Object3D();
       for (let i = 0; i < 24; i++) {
-        const post = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.7, 6), stripeMat);
-        post.position.set(x, 0.6, i * 5);
-        this.group.add(post);
+        dummy.position.set(x, 0.6, i * 5);
+        dummy.updateMatrix();
+        instanced.setMatrixAt(i, dummy.matrix);
       }
+      instanced.instanceMatrix.needsUpdate = true;
+      this.group.add(instanced);
     }
   }
 
