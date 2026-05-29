@@ -19,7 +19,7 @@ function cloneWithMaterials(src) {
   return clone;
 }
 
-const COLORS = [0xcc4444, 0x44aa44, 0x4488cc, 0xcccc44, 0xcc44cc, 0xffffff, 0x444444, 0xdd8833];
+const COLORS = [0xcc4444, 0x44aa44, 0x2266cc, 0xddcc33, 0xdd44aa, 0xffffff, 0x333333, 0xee8833, 0x33bbbb, 0xbb44dd, 0xddaa22, 0x44dd88];
 
 function randomColor(mesh) {
   const c = COLORS[Math.floor(Math.random() * COLORS.length)];
