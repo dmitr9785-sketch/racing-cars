@@ -5,35 +5,22 @@ const DESPAWN_Z = -2;
 const POOL_SIZE = 8;
 const ROAD_HALF = 7;
 
-function makeTree() {
-  const group = new THREE.Group();
-  const trunk = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.04, 0.06, 0.3, 4),
-    new THREE.MeshStandardMaterial({ color: 0x664422, roughness: 1 })
-  );
-  trunk.position.y = 0.15;
-  group.add(trunk);
-  const crown = new THREE.Mesh(
-    new THREE.ConeGeometry(0.15, 0.25, 4),
-    new THREE.MeshStandardMaterial({ color: 0x4a8c3f, roughness: 0.9 })
-  );
-  crown.position.y = 0.35;
-  group.add(crown);
-  return group;
-}
-
-const _template = makeTree();
-
 export class Trees {
-  constructor(scene) {
+  constructor(treeModel, scene) {
     this.scene = scene;
     this.trees = [];
     this.timeSinceSpawn = 2.0;
 
     for (let i = 0; i < POOL_SIZE; i++) {
-      const mesh = _template.clone();
+      const mesh = treeModel.clone();
       const s = 0.8 + Math.random() * 0.4;
       mesh.scale.setScalar(s);
+      mesh.traverse(c => {
+        if (c.isMesh) {
+          c.castShadow = false;
+          c.receiveShadow = false;
+        }
+      });
       mesh.visible = false;
       this.trees.push(mesh);
     }
