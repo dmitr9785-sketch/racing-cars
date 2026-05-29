@@ -3,7 +3,7 @@ import { getLanePositions } from './Road.js';
 
 const SPAWN_Z = 30;
 const DESPAWN_Z = -3;
-const POOL_SIZE = 8;
+const POOL_SIZE = 6;
 
 export class Stars {
   constructor(starModel, scene) {

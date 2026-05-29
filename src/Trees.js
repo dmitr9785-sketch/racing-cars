@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 const SPAWN_Z = 35;
 const DESPAWN_Z = -2;
-const POOL_SIZE = 15;
+const POOL_SIZE = 8;
 const ROAD_HALF = 7;
 
 export class Trees {
@@ -24,6 +24,7 @@ export class Trees {
       mesh.visible = false;
       this.trees.push(mesh);
     }
+    this.timeSinceSpawn = 2.0;
   }
 
   spawn() {

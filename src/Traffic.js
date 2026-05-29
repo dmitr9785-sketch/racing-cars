@@ -3,7 +3,7 @@ import { getLanePositions } from './Road.js';
 
 const SPAWN_Z = 25;
 const DESPAWN_Z = -2;
-const POOL_SIZE = 12;
+const POOL_SIZE = 8;
 
 function cloneWithMaterials(src) {
   const clone = src.clone();
@@ -47,7 +47,7 @@ export class Traffic {
       const mesh = cloneWithMaterials(base);
       mesh.scale.setScalar(0.8);
       randomColor(mesh);
-      mesh.traverse(c => { if (c.isMesh) { c.castShadow = true; c.receiveShadow = true; } });
+      mesh.traverse(c => { if (c.isMesh) { c.castShadow = false; c.receiveShadow = false; } });
       mesh.visible = false;
       this.cars.push(mesh);
     }

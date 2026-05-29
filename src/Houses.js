@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 const SPAWN_Z = 35;
 const DESPAWN_Z = -2;
-const POOL_SIZE = 6;
+const POOL_SIZE = 4;
 const ROAD_HALF = 7;
 const HOUSE_SIDES = [-1, 1, -1, 1, -1, 1];
 
