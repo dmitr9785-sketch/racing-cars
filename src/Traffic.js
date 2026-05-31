@@ -33,12 +33,12 @@ function randomColor(mesh) {
   });
 }
 
-function _buildPool(models, scene, randomizeColors) {
+function _buildPool(models, scene, randomizeColors, scale = 0.8) {
   const pool = [];
   for (let i = 0; i < POOL_SIZE; i++) {
     const base = models[Math.floor(Math.random() * models.length)];
     const mesh = cloneWithMaterials(base);
-    mesh.scale.setScalar(0.8);
+    mesh.scale.setScalar(scale);
     if (randomizeColors) randomColor(mesh);
     mesh.traverse(c => { if (c.isMesh) { c.castShadow = false; c.receiveShadow = false; } });
     mesh.visible = false;
@@ -55,8 +55,8 @@ export class Traffic {
     this.speed = 0;
     this.timeSinceSpawn = 0;
 
-    this.carPool = _buildPool(trafficModels, scene, true);
-    this.ponyPool = ponyModels && ponyModels.length ? _buildPool(ponyModels, scene, false) : [];
+    this.carPool = _buildPool(trafficModels, scene, true, 0.8);
+    this.ponyPool = ponyModels && ponyModels.length ? _buildPool(ponyModels, scene, false, 1.2) : [];
     this.isPony = false;
     this.cars = this.carPool;
   }
