@@ -96,6 +96,7 @@ export class Traffic {
     const invisible = this.cars.filter(c => !c.visible);
     if (!invisible.length) return;
     const car = invisible[Math.floor(Math.random() * invisible.length)];
+    console.log('Spawning', car.userData.modelId, 'poolIdx', this.cars.indexOf(car));
 
     const lane = Math.floor(Math.random() * this.lanePositions.length);
     const x = this.lanePositions[lane];
@@ -154,6 +155,7 @@ export class Traffic {
       if (car.position.z < DESPAWN_Z) {
         car.visible = false;
         this.scene.remove(car);
+        console.log('Despawned', car.userData.modelId);
       }
     }
   }
