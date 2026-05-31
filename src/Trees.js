@@ -8,45 +8,50 @@ const ROAD_HALF = 7;
 export class Trees {
   constructor(treeModel, treeModelAlt, scene) {
     this.scene = scene;
-    this.models = [treeModel, treeModelAlt || treeModel];
-    this.modelIndex = 0;
-    this.trees = [];
+    this.pools = [];
+    this.activePool = 0;
     this.timeSinceSpawn = 2.0;
-    this._buildPool();
-  }
 
-  _buildPool() {
-    for (const t of this.trees) {
-      if (t.visible) { t.visible = false; this.scene.remove(t); }
-    }
-    this.trees = [];
-    const model = this.models[this.modelIndex];
-    const baseScale = this.modelIndex === 1 ? 0.35 : 0.8;
-    const scaleRange = this.modelIndex === 1 ? 0.1 : 0.2;
-    for (let i = 0; i < POOL_SIZE; i++) {
-      const mesh = model.clone();
-      const s = baseScale + Math.random() * scaleRange;
-      mesh.scale.setScalar(s);
-      mesh.traverse(c => {
-        if (c.isMesh) {
-          c.castShadow = false;
-          c.receiveShadow = false;
-        }
-      });
-      mesh.visible = false;
-      this.trees.push(mesh);
+    const models = [treeModel, treeModelAlt || treeModel];
+    for (let m = 0; m < models.length; m++) {
+      const pool = [];
+      const baseScale = m === 1 ? 0.35 : 0.8;
+      const scaleRange = m === 1 ? 0.1 : 0.2;
+      for (let i = 0; i < POOL_SIZE; i++) {
+        const mesh = models[m].clone();
+        const s = baseScale + Math.random() * scaleRange;
+        mesh.scale.setScalar(s);
+        mesh.traverse(c => {
+          if (c.isMesh) {
+            c.castShadow = false;
+            c.receiveShadow = false;
+          }
+        });
+        mesh.visible = false;
+        pool.push(mesh);
+      }
+      this.pools.push(pool);
     }
   }
 
   setModel(index) {
-    if (index === this.modelIndex || !this.models[index]) return;
-    this.modelIndex = index;
-    this._buildPool();
+    if (index === this.activePool || index >= this.pools.length) return;
+    for (const tree of this.pools[this.activePool]) {
+      if (tree.visible) {
+        tree.visible = false;
+        this.scene.remove(tree);
+      }
+    }
+    this.activePool = index;
     this.timeSinceSpawn = 2.0;
   }
 
+  get pool() {
+    return this.pools[this.activePool];
+  }
+
   spawn() {
-    const tree = this.trees.find(t => !t.visible);
+    const tree = this.pool.find(t => !t.visible);
     if (!tree) return;
 
     const side = Math.random() < 0.5 ? -1 : 1;
@@ -67,7 +72,7 @@ export class Trees {
       this.timeSinceSpawn = 0;
     }
 
-    for (const tree of this.trees) {
+    for (const tree of this.pool) {
       if (!tree.visible) continue;
       tree.position.z -= (1.5 + speed * 0.25) * delta;
 
@@ -79,11 +84,14 @@ export class Trees {
   }
 
   reset() {
-    for (const tree of this.trees) {
-      if (tree.visible) {
-        tree.visible = false;
-        this.scene.remove(tree);
+    for (const pool of this.pools) {
+      for (const tree of pool) {
+        if (tree.visible) {
+          tree.visible = false;
+          this.scene.remove(tree);
+        }
       }
     }
+    this.activePool = 0;
   }
 }

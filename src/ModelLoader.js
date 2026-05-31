@@ -112,12 +112,19 @@ export class ModelLoader {
       head.position.set(0.7, 0.8, 0);
       head.rotation.z = -0.3;
       group.add(head);
-    } else if (id === 'tree' || id === 'tree_alt') {
+    } else if (id === 'tree') {
       const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.4, 4), new THREE.MeshStandardMaterial({ color: 0x664422, roughness: 1 }));
       trunk.position.y = 0.2;
       group.add(trunk);
       const crown = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.3, 4), new THREE.MeshStandardMaterial({ color: 0x4a8c3f, roughness: 0.9 }));
       crown.position.y = 0.45;
+      group.add(crown);
+    } else if (id === 'tree_alt') {
+      const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.5, 4), new THREE.MeshStandardMaterial({ color: 0x664422, roughness: 1 }));
+      trunk.position.y = 0.25;
+      group.add(trunk);
+      const crown = new THREE.Mesh(new THREE.ConeGeometry(0.35, 0.4, 6), new THREE.MeshStandardMaterial({ color: 0xdd8833, roughness: 0.9 }));
+      crown.position.y = 0.6;
       group.add(crown);
     } else if (id === 'unlock_car') {
       const body = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.5, 3.6), new THREE.MeshStandardMaterial({ color: 0xff4444, roughness: 0.4, metalness: 0.6 }));
