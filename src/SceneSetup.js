@@ -26,15 +26,22 @@ export class SceneSetup {
     this.sun = new THREE.DirectionalLight(0xffeedd, 1.4);
     this.sun.position.set(10, 20, 5);
     this.sun.castShadow = true;
-    sun.shadow.mapSize.width = 512;
-    sun.shadow.mapSize.height = 512;
-    sun.shadow.camera.near = 0.5;
-    sun.shadow.camera.far = 60;
-    sun.shadow.camera.left = -20;
-    sun.shadow.camera.right = 20;
-    sun.shadow.camera.top = 40;
-    sun.shadow.camera.bottom = -10;
-    this.scene.add(sun);
+    this.sun.shadow.mapSize.width = 512;
+    this.sun.shadow.mapSize.height = 512;
+    this.sun.shadow.camera.near = 0.5;
+    this.sun.shadow.camera.far = 60;
+    this.sun.shadow.camera.left = -20;
+    this.sun.shadow.camera.right = 20;
+    this.sun.shadow.camera.top = 40;
+    this.sun.shadow.camera.bottom = -10;
+    this.scene.add(this.sun);
+
+    window.addEventListener('resize', () => {
+      this.camera.aspect = window.innerWidth / window.innerHeight;
+      this.camera.updateProjectionMatrix();
+      this.renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  }
 
   setBiome(colors) {
     this.scene.background.copy(colors.skyColor);
@@ -45,12 +52,5 @@ export class SceneSetup {
     this.hemi.color.copy(colors.hemiSkyColor);
     this.hemi.groundColor.copy(colors.hemiGroundColor);
     this.sun.color.copy(colors.sunColor);
-  }
-
-    window.addEventListener('resize', () => {
-      this.camera.aspect = window.innerWidth / window.innerHeight;
-      this.camera.updateProjectionMatrix();
-      this.renderer.setSize(window.innerWidth, window.innerHeight);
-    });
   }
 }
