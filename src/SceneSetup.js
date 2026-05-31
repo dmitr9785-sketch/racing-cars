@@ -17,15 +17,15 @@ export class SceneSetup {
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     document.body.prepend(this.renderer.domElement);
 
-    const ambient = new THREE.AmbientLight(0x404060, 0.6);
-    this.scene.add(ambient);
+    this.ambient = new THREE.AmbientLight(0x404060, 0.6);
+    this.scene.add(this.ambient);
 
-    const hemi = new THREE.HemisphereLight(0x87CEEB, 0x3a3a5a, 0.8);
-    this.scene.add(hemi);
+    this.hemi = new THREE.HemisphereLight(0x87CEEB, 0x3a3a5a, 0.8);
+    this.scene.add(this.hemi);
 
-    const sun = new THREE.DirectionalLight(0xffeedd, 1.4);
-    sun.position.set(10, 20, 5);
-    sun.castShadow = true;
+    this.sun = new THREE.DirectionalLight(0xffeedd, 1.4);
+    this.sun.position.set(10, 20, 5);
+    this.sun.castShadow = true;
     sun.shadow.mapSize.width = 512;
     sun.shadow.mapSize.height = 512;
     sun.shadow.camera.near = 0.5;
@@ -35,6 +35,17 @@ export class SceneSetup {
     sun.shadow.camera.top = 40;
     sun.shadow.camera.bottom = -10;
     this.scene.add(sun);
+
+  setBiome(colors) {
+    this.scene.background.copy(colors.skyColor);
+    this.scene.fog.color.copy(colors.fogColor);
+    this.scene.fog.near = colors.fogNear;
+    this.scene.fog.far = colors.fogFar;
+    this.ambient.color.copy(colors.ambientColor);
+    this.hemi.color.copy(colors.hemiSkyColor);
+    this.hemi.groundColor.copy(colors.hemiGroundColor);
+    this.sun.color.copy(colors.sunColor);
+  }
 
     window.addEventListener('resize', () => {
       this.camera.aspect = window.innerWidth / window.innerHeight;

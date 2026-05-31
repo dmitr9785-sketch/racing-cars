@@ -1,11 +1,13 @@
 import * as THREE from 'three';
 import { checkCollision } from './Collision.js';
+import { Biome } from './Biome.js';
 
 export class Game {
-  constructor(scene, camera, renderer, traffic, trees, houses, stars, road, ui) {
+  constructor(scene, camera, renderer, traffic, trees, houses, stars, road, ui, sceneSetup) {
     this.scene = scene;
     this.camera = camera;
     this.renderer = renderer;
+    this.sceneSetup = sceneSetup;
     this.player = null;
     this.traffic = traffic;
     this.trees = trees;
@@ -14,6 +16,7 @@ export class Game {
     this.road = road;
     this.ui = ui;
     this.unlockCarModel = null;
+    this.biome = new Biome();
 
     this.unlocked = false;
 
@@ -28,6 +31,7 @@ export class Game {
     this.gasMultiplier = 1;
     this.gasHeld = false;
     this.brakeHeld = false;
+    this.distance = 0;
 
     this._bindKeys();
     this.ui.restartBtn.addEventListener('click', () => this.start());
@@ -117,6 +121,8 @@ export class Game {
     } else {
       this.ui.updateScore(0);
     }
+    this.distance = 0;
+    this.biome.reset();
     this.ui.updateStars(0);
     this.ui.updateSpeed(1);
   }
@@ -158,6 +164,12 @@ export class Game {
     }
 
     this.actualSpeed = this.baseSpeed * this.gasMultiplier;
+
+    this.distance += this.actualSpeed * delta * 10;
+    const biomeState = this.biome.update(this.distance, delta);
+    this.sceneSetup.setBiome(biomeState);
+    this.road.setBiome(biomeState);
+    this.ui.updateBiome(biomeState.name);
 
     this.player.update(delta);
     this.traffic.update(delta, this.actualSpeed);

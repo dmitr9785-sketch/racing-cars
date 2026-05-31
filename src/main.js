@@ -60,7 +60,8 @@ async function init() {
     houses,
     stars,
     road,
-    ui
+    ui,
+    sceneSetup
   );
 
   const totalStars = parseInt(localStorage.getItem('highway_rush_stars') || '0', 10);

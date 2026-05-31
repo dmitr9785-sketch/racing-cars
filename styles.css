@@ -114,6 +114,12 @@ canvas { display: block; }
   100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
 }
 
+.hud-biome {
+  position: absolute; top: 75px; right: 20px;
+  color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 600;
+  letter-spacing: 1px; text-transform: uppercase;
+}
+
 .controls-hint {
   position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
   color: rgba(255,255,255,0.4); font-size: 14px;

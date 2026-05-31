@@ -108,6 +108,11 @@ export class UI {
     this.hudMode = this.hud.querySelector('#hud-mode');
     this.hudSpeed = this.hud.querySelector('#hud-speed');
 
+    this.biomeLabel = document.createElement('div');
+    this.biomeLabel.className = 'hud-biome';
+    this.biomeLabel.textContent = 'Highway';
+    this.hud.appendChild(this.biomeLabel);
+
     this.starCounter = document.createElement('div');
     this.starCounter.className = 'star-counter';
     this.starCounter.textContent = '⭐ 0';
@@ -204,6 +209,10 @@ export class UI {
 
   updateSpeed(speed) {
     this.hudSpeed.textContent = `Speed: ${speed.toFixed(1)}x`;
+  }
+
+  updateBiome(name) {
+    this.biomeLabel.textContent = name;
   }
 
   showGameOver(score, stars, mode, reason) {
