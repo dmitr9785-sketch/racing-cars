@@ -33,8 +33,8 @@ async function init() {
     console.error('No traffic models loaded');
     return;
   }
-  const ponyTrafficModel = loader.getPonyTrafficModel();
-  const traffic = new Traffic(trafficModels, sceneSetup.scene, ponyTrafficModel);
+  const ponyTrafficModels = loader.getPonyTrafficModels();
+  const traffic = new Traffic(trafficModels, sceneSetup.scene, ponyTrafficModels);
 
   const treeModel = loader.getTreeModel();
   const trees = new Trees(treeModel, sceneSetup.scene);
