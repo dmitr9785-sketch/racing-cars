@@ -31,6 +31,18 @@ function randomColor(mesh) {
   });
 }
 
+function fixVisibility(mesh) {
+  mesh.traverse(child => {
+    if (!child.isMesh) return;
+    const mats = Array.isArray(child.material) ? child.material : [child.material];
+    for (const m of mats) {
+      if (m.transparent) m.transparent = false;
+      if (m.opacity !== undefined) m.opacity = 1;
+      if (m.color && m.color.getHex() < 0x111111) m.color.setHex(0x888888);
+    }
+  });
+}
+
 function _buildPool(models, modelIds, scene, randomizeColors, scale = 0.8) {
   const pool = [];
   for (let i = 0; i < models.length; i++) {
@@ -40,6 +52,7 @@ function _buildPool(models, modelIds, scene, randomizeColors, scale = 0.8) {
     if (modelIds) mesh.userData.modelId = modelIds[i];
     mesh.scale.setScalar(scale);
     if (randomizeColors) randomColor(mesh);
+    fixVisibility(mesh);
     mesh.traverse(c => { if (c.isMesh) { c.castShadow = false; c.receiveShadow = false; } });
     mesh.visible = false;
     pool.push(mesh);
