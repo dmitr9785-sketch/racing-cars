@@ -154,11 +154,22 @@ export class ModelLoader {
   getTrafficModels() {
     return Object.keys(this.models)
       .filter(k => k.startsWith('traffic_'))
+      .sort((a, b) => {
+        const na = parseInt(a.split('_')[1], 10);
+        const nb = parseInt(b.split('_')[1], 10);
+        return na - nb;
+      })
       .map(k => this.models[k]);
   }
 
   getTrafficModelIds() {
-    return Object.keys(this.models).filter(k => k.startsWith('traffic_'));
+    return Object.keys(this.models)
+      .filter(k => k.startsWith('traffic_'))
+      .sort((a, b) => {
+        const na = parseInt(a.split('_')[1], 10);
+        const nb = parseInt(b.split('_')[1], 10);
+        return na - nb;
+      });
   }
 
   getPlayerModel() {

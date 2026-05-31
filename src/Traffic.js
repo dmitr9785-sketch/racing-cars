@@ -68,7 +68,7 @@ export class Traffic {
     this.speed = 0;
     this.timeSinceSpawn = 0;
 
-    this.carPool = _buildPool(trafficModels, trafficModelIds, scene, true, 0.8);
+    this.carPool = _buildPool(trafficModels, trafficModelIds, scene, false, 0.8);
     this.ponyPool = ponyModels && ponyModels.length ? _buildPool(ponyModels, null, scene, false, 2.5) : [];
     this.isPony = false;
     this.cars = this.carPool;
