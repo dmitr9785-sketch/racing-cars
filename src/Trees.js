@@ -7,11 +7,11 @@ const ROAD_HALF = 7;
 
 function buildFallbackTree() {
   const group = new THREE.Group();
-  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.4, 4), new THREE.MeshStandardMaterial({ color: 0x664422, roughness: 1 }));
-  trunk.position.y = 0.2;
+  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.7, 2, 4), new THREE.MeshStandardMaterial({ color: 0x664422, roughness: 1 }));
+  trunk.position.y = 1;
   group.add(trunk);
-  const crown = new THREE.Mesh(new THREE.ConeGeometry(0.35, 0.4, 6), new THREE.MeshStandardMaterial({ color: 0xdd8833, roughness: 0.9 }));
-  crown.position.y = 0.6;
+  const crown = new THREE.Mesh(new THREE.ConeGeometry(2, 2.5, 6), new THREE.MeshStandardMaterial({ color: 0xdd8833, roughness: 0.9 }));
+  crown.position.y = 3;
   group.add(crown);
   return group;
 }
@@ -28,7 +28,7 @@ export class Trees {
       const pool = [];
       for (let i = 0; i < POOL_SIZE; i++) {
         const mesh = models[m].clone();
-        const s = 0.003 + Math.random() * 0.002;
+        const s = 0.06 + Math.random() * 0.03;
         mesh.scale.setScalar(s);
         mesh.traverse(c => {
           if (c.isMesh) {
@@ -68,7 +68,7 @@ export class Trees {
     const z = SPAWN_Z + Math.random() * 20;
     const rot = Math.random() * Math.PI * 2;
 
-    tree.position.set(x, -0.2, z);
+    tree.position.set(x, -0.5, z);
     tree.rotation.set(0, rot, 0);
     tree.visible = true;
     this.scene.add(tree);
