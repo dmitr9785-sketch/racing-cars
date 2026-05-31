@@ -161,10 +161,16 @@ export class Traffic {
   }
 
   getBoxes() {
-    return this.cars.filter(c => c.visible).map(c => ({
-      mesh: c,
-      box: new THREE.Box3().setFromObject(c),
-    }));
+    return this.cars.filter(c => c.visible).map(c => {
+      const box = new THREE.Box3();
+      c.traverse(child => {
+        if (child.isMesh && child.visible) {
+          box.expandByObject(child);
+        }
+      });
+      if (box.min.x === Infinity) box.setFromObject(c);
+      return { mesh: c, box };
+    });
   }
 
   reset() {

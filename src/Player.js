@@ -47,7 +47,14 @@ export class Player {
   }
 
   getBox() {
-    return new THREE.Box3().setFromObject(this.mesh);
+    const box = new THREE.Box3();
+    this.mesh.traverse(child => {
+      if (child.isMesh && child.visible) {
+        box.expandByObject(child);
+      }
+    });
+    if (box.min.x === Infinity) return new THREE.Box3().setFromObject(this.mesh);
+    return box;
   }
 
   reset() {
