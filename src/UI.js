@@ -169,8 +169,9 @@ export class UI {
     this.hudSpeed.textContent = `Speed: ${speed.toFixed(1)}x`;
   }
 
-  showGameOver(score, stars, mode) {
-    const label = mode === 'time' ? 'Time' : mode === 'stars' ? 'Time' : 'Score';
+  showGameOver(score, stars, mode, reason) {
+    const titleEl = this.gameoverScreen.querySelector('h1');
+    titleEl.textContent = reason && reason !== 'crash' ? 'CONGRATULATIONS' : 'CRASHED';
     this.finalScore.textContent = mode === 'time' ? `⭐ ${stars} collected` : mode === 'stars' ? `Time: ${Math.floor(score)}s` : `Score: ${Math.floor(score)}  ⭐ ${stars}`;
     this.gameoverScreen.classList.add('show');
     this.hud.style.display = 'none';

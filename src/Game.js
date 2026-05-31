@@ -196,7 +196,7 @@ export class Game {
     }
 
     setTimeout(() => {
-      this.ui.showGameOver(this.score, this.starCount, this.mode);
+      this.ui.showGameOver(this.score, this.starCount, this.mode, reason);
     }, 400);
   }
 }
