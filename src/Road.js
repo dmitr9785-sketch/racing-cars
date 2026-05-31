@@ -164,8 +164,7 @@ export class Road {
   }
 
   setBiome(colors) {
-    const road = colors.roadColor;
-    const rd = new THREE.Color(road.r * 255, road.g * 255, road.b * 255);
+    const rd = colors.roadColor.clone();
     const stroke = rd.clone().multiplyScalar(1.15);
     this._paintRoad(rd.getHex(), stroke.getHex());
 
