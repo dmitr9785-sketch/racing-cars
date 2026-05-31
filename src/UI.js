@@ -108,11 +108,15 @@ export class UI {
     this.gameoverScreen.innerHTML = `
       <h1>CRASHED</h1>
       <div class="final-score" id="final-score">Score: 0</div>
-      <button class="btn" id="restart-btn">RESTART</button>
+      <div class="gameover-btns">
+        <button class="btn" id="restart-btn">RESTART</button>
+        <button class="btn btn-secondary" id="menu-btn">MAIN MENU</button>
+      </div>
     `;
     this.container.appendChild(this.gameoverScreen);
     this.finalScore = this.gameoverScreen.querySelector('#final-score');
     this.restartBtn = this.gameoverScreen.querySelector('#restart-btn');
+    this.menuBtn = this.gameoverScreen.querySelector('#menu-btn');
   }
 
   _buildControlsHint() {
@@ -181,5 +185,10 @@ export class UI {
 
   hideGameOver() {
     this.gameoverScreen.classList.remove('show');
+  }
+
+  showMainMenu() {
+    this.gameoverScreen.classList.remove('show');
+    this.startScreen.style.display = 'flex';
   }
 }

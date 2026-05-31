@@ -92,6 +92,14 @@ canvas { display: block; }
   letter-spacing: 1px;
 }
 
+.gameover-btns {
+  display: flex; gap: 16px;
+}
+.btn-secondary {
+  background: rgba(255,255,255,0.15); color: #fff;
+}
+.btn-secondary:hover { background: rgba(255,255,255,0.25); }
+
 .controls-hint {
   position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
   color: rgba(255,255,255,0.4); font-size: 14px;

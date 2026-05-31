@@ -28,6 +28,7 @@ export class Game {
 
     this._bindKeys();
     this.ui.restartBtn.addEventListener('click', () => this.start());
+    this.ui.menuBtn.addEventListener('click', () => this.goToMainMenu());
     this._startLoop();
   }
 
@@ -38,6 +39,15 @@ export class Game {
   setPlayer(player) {
     this.player = player;
     this.scene.add(player.mesh);
+  }
+
+  goToMainMenu() {
+    this.state = 'start_screen';
+    if (this.player) {
+      this.scene.remove(this.player.mesh);
+      this.player = null;
+    }
+    this.ui.showMainMenu();
   }
 
   _bindKeys() {
