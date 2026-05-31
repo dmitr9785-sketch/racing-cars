@@ -68,7 +68,7 @@ export class Traffic {
     this.speed = 0;
     this.timeSinceSpawn = 0;
 
-    this.carPool = _buildPool(trafficModels, trafficModelIds, scene, false, 0.8);
+    this.carPool = _buildPool(trafficModels, trafficModelIds, scene, true, 0.8);
     this.ponyPool = ponyModels && ponyModels.length ? _buildPool(ponyModels, null, scene, false, 2.5) : [];
     this.isPony = false;
     this.cars = this.carPool;
@@ -115,6 +115,9 @@ export class Traffic {
       z = SPAWN_Z + Math.random() * 15;
       attempts++;
     }
+
+    const box = new THREE.Box3().setFromObject(car);
+    if (box.min.x === Infinity) console.warn('Traffic: empty bounding box for', car.userData.modelId);
 
     if (car.userData.modelId === 'traffic_9') {
       car.scale.setScalar(0.6);
