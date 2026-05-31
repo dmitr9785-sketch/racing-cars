@@ -50,7 +50,7 @@ export class Trees {
 
     for (const tree of this.trees) {
       if (!tree.visible) continue;
-      tree.position.z -= (2 + speed * 0.4) * delta;
+      tree.position.z -= (1.5 + speed * 0.25) * delta;
 
       if (tree.position.z < DESPAWN_Z) {
         tree.visible = false;

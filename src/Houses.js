@@ -48,7 +48,7 @@ export class Houses {
 
     for (const house of this.houses) {
       if (!house.visible) continue;
-      house.position.z -= (2 + speed * 0.4) * delta;
+      house.position.z -= (1.5 + speed * 0.25) * delta;
 
       if (house.position.z < DESPAWN_Z) {
         house.visible = false;

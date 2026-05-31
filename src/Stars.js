@@ -51,7 +51,7 @@ export class Stars {
 
     for (const star of this.stars) {
       if (!star.visible) continue;
-      star.position.z -= (2 + speed * 0.8) * delta;
+      star.position.z -= (1.5 + speed * 0.5) * delta;
       star.rotation.y += delta * 2;
       star.position.y = 0.3 + Math.sin(performance.now() / 300) * 0.15;
 

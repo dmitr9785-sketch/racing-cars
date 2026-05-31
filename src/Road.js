@@ -150,15 +150,15 @@ export class Road {
   }
 
   update(speed, delta) {
-    const factor = 6 + speed * 0.5;
+    const factor = 4 + speed * 0.3;
     const offset = this.surfaceTexture.offset.y + speed * delta * factor;
     this.surfaceTexture.offset.y = offset % 1;
     this.laneTexture.offset.y = offset % 1;
 
     const scroll = speed * delta * factor;
     this.barriersGroup.position.z -= scroll;
-    if (this.barriersGroup.position.z < -ROAD_LENGTH) {
-      this.barriersGroup.position.z += ROAD_LENGTH;
+    if (this.barriersGroup.position.z < -25) {
+      this.barriersGroup.position.z += 25;
     }
   }
 }

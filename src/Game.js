@@ -145,7 +145,7 @@ export class Game {
   _update(delta) {
     this.timeElapsed += delta;
     this.score = this.timeElapsed;
-    this.baseSpeed = 1 + this.timeElapsed * 0.15;
+    this.baseSpeed = 1 + this.timeElapsed * 0.08;
 
     if (this.gasHeld) {
       this.gasMultiplier = Math.min(8, this.gasMultiplier + delta * 2.0);

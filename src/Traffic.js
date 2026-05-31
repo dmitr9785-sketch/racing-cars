@@ -118,7 +118,7 @@ export class Traffic {
       this.timeSinceSpawn = 0;
     }
 
-    const closeRate = 2 + this.speed * 0.8;
+    const closeRate = 1.5 + this.speed * 0.5;
     for (const car of this.cars) {
       if (!car.visible) continue;
       car.position.z -= closeRate * delta;
