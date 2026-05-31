@@ -105,7 +105,11 @@ export class Traffic {
       attempts++;
     }
 
-    if (car.userData.modelId === 'traffic_10') {
+    if (car.userData.modelId === 'traffic_9') {
+      car.scale.setScalar(0.4);
+      car.rotation.set(0, 0, 0);
+      car.position.set(x, 0.2, z);
+    } else if (car.userData.modelId === 'traffic_10') {
       car.scale.setScalar(0.8);
       car.rotation.set(0, -Math.PI / 6, 0);
       car.position.set(x - 0.5, 0, z);
