@@ -26,7 +26,7 @@ const MODEL_LIST = [
   { id: 'house_2', file: 'assets/models/building-sample-house-c.glb' },
   { id: 'tree', file: 'assets/models/low_poly_tree.glb' },
   { id: 'star', file: 'assets/models/shining_star_low_poly.glb' },
-  { id: 'unlock_car', file: 'assets/models/mazda_rx7_stylised.glb' },
+  { id: 'unlock_car', file: 'assets/models/mazda_rx7_veilside_stylized_toon.glb' },
 ];
 
 function fixMatColors(obj) {
