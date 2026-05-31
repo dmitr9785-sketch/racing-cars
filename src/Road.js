@@ -100,6 +100,7 @@ export class Road {
   }
 
   _createBarriers() {
+    this.barriersGroup = new THREE.Group();
     const mat = new THREE.MeshStandardMaterial({ color: 0xcccccc, roughness: 0.7 });
 
     for (const side of [-1, 1]) {
@@ -107,7 +108,7 @@ export class Road {
       const wall = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, ROAD_LENGTH), mat);
       wall.position.set(x, 0.25, ROAD_LENGTH / 2 - 5);
       wall.receiveShadow = true;
-      this.group.add(wall);
+      this.barriersGroup.add(wall);
 
       const postGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.7, 6);
       const postMat = new THREE.MeshStandardMaterial({ color: 0xcc3333 });
@@ -119,8 +120,9 @@ export class Road {
         instanced.setMatrixAt(i, dummy.matrix);
       }
       instanced.instanceMatrix.needsUpdate = true;
-      this.group.add(instanced);
+      this.barriersGroup.add(instanced);
     }
+    this.group.add(this.barriersGroup);
   }
 
   _createEdgeMarkings() {
@@ -152,5 +154,11 @@ export class Road {
     const offset = this.surfaceTexture.offset.y + speed * delta * factor;
     this.surfaceTexture.offset.y = offset % 1;
     this.laneTexture.offset.y = offset % 1;
+
+    const scroll = speed * delta * factor;
+    this.barriersGroup.position.z -= scroll;
+    if (this.barriersGroup.position.z < -ROAD_LENGTH) {
+      this.barriersGroup.position.z += ROAD_LENGTH;
+    }
   }
 }
