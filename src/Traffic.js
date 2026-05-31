@@ -105,8 +105,13 @@ export class Traffic {
       attempts++;
     }
 
-    car.scale.setScalar(0.8);
-    car.rotation.set(0, 0, 0);
+    if (car.userData.modelId === 'traffic_10') {
+      car.scale.setScalar(0.8);
+      car.rotation.set(0, -Math.PI / 6, 0);
+    } else {
+      car.scale.setScalar(0.8);
+      car.rotation.set(0, 0, 0);
+    }
     car.position.set(x, 0, z);
     car.visible = true;
     this.scene.add(car);
