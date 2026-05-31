@@ -26,9 +26,9 @@ export class Trees {
     const models = [treeModel, buildFallbackTree()];
     for (let m = 0; m < models.length; m++) {
       const pool = [];
-      const s = 0.003 + Math.random() * 0.002;
       for (let i = 0; i < POOL_SIZE; i++) {
         const mesh = models[m].clone();
+        const s = 0.003 + Math.random() * 0.002;
         mesh.scale.setScalar(s);
         mesh.traverse(c => {
           if (c.isMesh) {
