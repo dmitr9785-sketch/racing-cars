@@ -129,7 +129,6 @@ export class Traffic {
       car.rotation.set(0, 0, 0);
       car.position.set(x, 0, z);
     } else {
-      car.scale.setScalar(0.8);
       car.rotation.set(0, 0, 0);
       car.position.set(x, 0, z);
     }
