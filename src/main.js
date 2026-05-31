@@ -29,12 +29,13 @@ async function init() {
   ui.hideLoading();
 
   const trafficModels = loader.getTrafficModels();
+  const trafficModelIds = loader.getTrafficModelIds();
   if (trafficModels.length === 0) {
     console.error('No traffic models loaded');
     return;
   }
   const ponyTrafficModels = loader.getPonyTrafficModels();
-  const traffic = new Traffic(trafficModels, sceneSetup.scene, ponyTrafficModels);
+  const traffic = new Traffic(trafficModels, trafficModelIds, sceneSetup.scene, ponyTrafficModels);
 
   const treeModel = loader.getTreeModel();
   const trees = new Trees(treeModel, sceneSetup.scene);

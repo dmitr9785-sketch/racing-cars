@@ -154,11 +154,11 @@ export class ModelLoader {
   getTrafficModels() {
     return Object.keys(this.models)
       .filter(k => k.startsWith('traffic_'))
-      .map(k => {
-        const m = this.models[k].clone();
-        m.userData.modelId = k;
-        return m;
-      });
+      .map(k => this.models[k]);
+  }
+
+  getTrafficModelIds() {
+    return Object.keys(this.models).filter(k => k.startsWith('traffic_'));
   }
 
   getPlayerModel() {

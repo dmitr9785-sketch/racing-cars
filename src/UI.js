@@ -159,6 +159,15 @@ export class UI {
     if (this.totalStars >= 100) this.unlockRX7();
   }
 
+  unlockRX7() {
+    const card = this.startScreen.querySelector('.char-card[data-char="rx7"]');
+    if (card) {
+      card.classList.remove('locked');
+      const lock = card.querySelector('.char-lock');
+      if (lock) lock.remove();
+    }
+  }
+
   getSelectedCharacter() {
     return this.selectedChar;
   }

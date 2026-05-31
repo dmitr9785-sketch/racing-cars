@@ -33,11 +33,14 @@ function randomColor(mesh) {
   });
 }
 
-function _buildPool(models, scene, randomizeColors, scale = 0.8) {
+function _buildPool(models, modelIds, scene, randomizeColors, scale = 0.8) {
   const pool = [];
   for (let i = 0; i < POOL_SIZE; i++) {
-    const base = models[Math.floor(Math.random() * models.length)];
+    const idx = Math.floor(Math.random() * models.length);
+    const base = models[idx];
     const mesh = cloneWithMaterials(base);
+    mesh.userData.modelIdx = idx;
+    if (modelIds) mesh.userData.modelId = modelIds[idx];
     mesh.scale.setScalar(scale);
     if (randomizeColors) randomColor(mesh);
     mesh.traverse(c => { if (c.isMesh) { c.castShadow = false; c.receiveShadow = false; } });
@@ -48,15 +51,15 @@ function _buildPool(models, scene, randomizeColors, scale = 0.8) {
 }
 
 export class Traffic {
-  constructor(trafficModels, scene, ponyModels) {
+  constructor(trafficModels, trafficModelIds, scene, ponyModels) {
     this.trafficModels = trafficModels;
     this.scene = scene;
     this.lanePositions = getLanePositions();
     this.speed = 0;
     this.timeSinceSpawn = 0;
 
-    this.carPool = _buildPool(trafficModels, scene, false, 0.8);
-    this.ponyPool = ponyModels && ponyModels.length ? _buildPool(ponyModels, scene, false, 2.5) : [];
+    this.carPool = _buildPool(trafficModels, trafficModelIds, scene, false, 0.8);
+    this.ponyPool = ponyModels && ponyModels.length ? _buildPool(ponyModels, null, scene, false, 2.5) : [];
     this.isPony = false;
     this.cars = this.carPool;
   }
@@ -83,7 +86,6 @@ export class Traffic {
     const car = this.cars.find(c => !c.visible);
     if (!car) return;
 
-    const isMuscle = car.userData.modelId === 'traffic_9';
     const lane = Math.floor(Math.random() * this.lanePositions.length);
     const x = this.lanePositions[lane];
     let z = SPAWN_Z + Math.random() * 15;
@@ -103,7 +105,7 @@ export class Traffic {
       attempts++;
     }
 
-    if (isMuscle) {
+    if (car.userData.modelId === 'traffic_9') {
       car.scale.setScalar(0.4);
       car.rotation.set(0, Math.PI / 4, 0);
     } else {
