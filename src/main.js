@@ -74,7 +74,6 @@ async function init() {
 
     if (choice === 'pony') {
       model = ponyModel;
-      playerScale = 0.6;
     } else if (choice === 'rx7') {
       model = unlockCarModel;
       playerScale = 0.55;
