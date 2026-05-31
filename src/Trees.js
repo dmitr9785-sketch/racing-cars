@@ -6,13 +6,23 @@ const POOL_SIZE = 8;
 const ROAD_HALF = 7;
 
 export class Trees {
-  constructor(treeModel, scene) {
+  constructor(treeModel, treeModelAlt, scene) {
     this.scene = scene;
+    this.models = [treeModel, treeModelAlt || treeModel];
+    this.modelIndex = 0;
     this.trees = [];
     this.timeSinceSpawn = 2.0;
+    this._buildPool();
+  }
 
+  _buildPool() {
+    for (const t of this.trees) {
+      if (t.visible) { t.visible = false; this.scene.remove(t); }
+    }
+    this.trees = [];
+    const model = this.models[this.modelIndex];
     for (let i = 0; i < POOL_SIZE; i++) {
-      const mesh = treeModel.clone();
+      const mesh = model.clone();
       const s = 0.003 + Math.random() * 0.002;
       mesh.scale.setScalar(s);
       mesh.traverse(c => {
@@ -24,6 +34,12 @@ export class Trees {
       mesh.visible = false;
       this.trees.push(mesh);
     }
+  }
+
+  setModel(index) {
+    if (index === this.modelIndex || !this.models[index]) return;
+    this.modelIndex = index;
+    this._buildPool();
   }
 
   spawn() {

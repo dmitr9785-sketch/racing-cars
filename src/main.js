@@ -38,7 +38,8 @@ async function init() {
   const traffic = new Traffic(trafficModels, trafficModelIds, sceneSetup.scene, ponyTrafficModels);
 
   const treeModel = loader.getTreeModel();
-  const trees = new Trees(treeModel, sceneSetup.scene);
+  const treeModelAlt = loader.getTreeModelAlt();
+  const trees = new Trees(treeModel, treeModelAlt, sceneSetup.scene);
 
   const houseModels = loader.getHouseModels();
   const houses = new Houses(houseModels, sceneSetup.scene);
