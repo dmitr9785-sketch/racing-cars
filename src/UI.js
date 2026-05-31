@@ -154,6 +154,7 @@ export class UI {
 
   showStartScreen() {
     this.startScreen.style.display = 'flex';
+    this.totalStars = parseInt(localStorage.getItem('highway_rush_stars') || '0', 10);
     this.starProgress.textContent = `⭐ Total: ${this.totalStars}`;
     if (this.totalStars >= 100) this.unlockRX7();
   }

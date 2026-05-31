@@ -70,6 +70,24 @@ canvas { display: block; }
 .char-card.locked:hover { transform: none; background: rgba(255,255,255,0.08); }
 .char-lock { font-size: 11px; opacity: 0.7; }
 
+.mode-select {
+  display: flex; gap: 12px; margin-bottom: 20px;
+}
+.mode-card {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 12px 18px; background: rgba(255,255,255,0.08);
+  border: 2px solid rgba(255,255,255,0.15); border-radius: 12px;
+  cursor: pointer; transition: border-color 0.2s, background 0.2s, transform 0.15s;
+  user-select: none;
+}
+.mode-card:hover { background: rgba(255,255,255,0.15); transform: scale(1.05); }
+.mode-card.selected { border-color: #ffdd44; background: rgba(255,220,0,0.15); }
+.mode-name { font-size: 16px; font-weight: 700; }
+.mode-desc { font-size: 11px; opacity: 0.6; }
+.mode-card.selected .mode-name { opacity: 1; }
+
+.hud-mode { font-size: 14px; opacity: 0.6; margin-top: 2px; }
+
 .star-counter {
   position: absolute; top: 20px; left: 30px;
   color: #ffdd44; font-size: 28px; font-weight: 800;
