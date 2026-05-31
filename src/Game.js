@@ -71,7 +71,7 @@ export class Game {
         if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
           this.player.switchLane(-1);
         }
-        if (e.code === 'KeyR') {
+        if (e.key === 'r' || e.key === 'R' || e.key === 'к' || e.key === 'К') {
           if (this.state === 'gameover') this.start();
         }
       }

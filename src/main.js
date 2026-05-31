@@ -33,7 +33,8 @@ async function init() {
     console.error('No traffic models loaded');
     return;
   }
-  const traffic = new Traffic(trafficModels, sceneSetup.scene);
+  const ponyTrafficModel = loader.getPonyTrafficModel();
+  const traffic = new Traffic(trafficModels, sceneSetup.scene, ponyTrafficModel);
 
   const treeModel = loader.getTreeModel();
   const trees = new Trees(treeModel, sceneSetup.scene);
@@ -71,6 +72,7 @@ async function init() {
     const player = new Player(model, playerScale);
     game.setMode(ui.getSelectedMode());
     game.setPlayer(player);
+    traffic.setPonyMode(choice === 'pony');
     game.start();
   });
 }

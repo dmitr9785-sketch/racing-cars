@@ -15,6 +15,7 @@ const MODEL_LIST = [
   { id: 'obstacle_0', file: 'assets/models/cone.glb' },
   { id: 'obstacle_1', file: 'assets/models/wheel-default.glb' },
   { id: 'pony', file: 'assets/models/pony.glb' },
+  { id: 'pony_traffic', file: 'assets/models/pony_dance.glb' },
   { id: 'house_0', file: 'assets/models/building-sample-house-a.glb' },
   { id: 'house_1', file: 'assets/models/building-sample-house-b.glb' },
   { id: 'house_2', file: 'assets/models/building-sample-house-c.glb' },
@@ -55,7 +56,7 @@ export class ModelLoader {
           entry.file,
           (gltf) => {
             const model = gltf.scene;
-            const skip = entry.id === 'pony' || entry.id.startsWith('house_') || entry.id === 'tree' || entry.id === 'star';
+            const skip = entry.id === 'pony' || entry.id === 'pony_traffic' || entry.id.startsWith('house_') || entry.id === 'tree' || entry.id === 'star';
             if (!skip) {
               model.scale.setScalar(0.8);
               model.traverse((child) => {
@@ -88,7 +89,15 @@ export class ModelLoader {
     const group = new THREE.Group();
     let mesh;
 
-    if (id === 'pony') {
+    if (id === 'pony_traffic') {
+      const body = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.6, 1.2), new THREE.MeshStandardMaterial({ color: 0xcc88ff, roughness: 0.6 }));
+      body.position.y = 0.3;
+      group.add(body);
+      const head = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.3, 6), new THREE.MeshStandardMaterial({ color: 0xcc88ff, roughness: 0.6 }));
+      head.position.set(0.5, 0.6, 0);
+      head.rotation.z = -0.3;
+      group.add(head);
+    } else if (id === 'pony') {
       const body = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.8, 1.5), new THREE.MeshStandardMaterial({ color: 0xcc88ff, roughness: 0.6 }));
       body.position.y = 0.4;
       group.add(body);
@@ -144,6 +153,10 @@ export class ModelLoader {
 
   getPonyModel() {
     return this.models['pony'] ? this.models['pony'].clone() : null;
+  }
+
+  getPonyTrafficModel() {
+    return this.models['pony_traffic'] ? this.models['pony_traffic'].clone() : null;
   }
 
   getHouseModels() {

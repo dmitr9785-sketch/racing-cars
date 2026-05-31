@@ -33,28 +33,50 @@ function randomColor(mesh) {
   });
 }
 
+function _buildPool(models, scene) {
+  const pool = [];
+  for (let i = 0; i < POOL_SIZE; i++) {
+    const base = models[Math.floor(Math.random() * models.length)];
+    const mesh = cloneWithMaterials(base);
+    mesh.scale.setScalar(0.8);
+    if (!models[0].userData?.isPony) randomColor(mesh);
+    mesh.traverse(c => { if (c.isMesh) { c.castShadow = false; c.receiveShadow = false; } });
+    mesh.visible = false;
+    pool.push(mesh);
+  }
+  return pool;
+}
+
 export class Traffic {
-  constructor(trafficModels, scene) {
+  constructor(trafficModels, scene, ponyModel) {
     this.trafficModels = trafficModels;
     this.scene = scene;
     this.lanePositions = getLanePositions();
-    this.cars = [];
     this.speed = 0;
     this.timeSinceSpawn = 0;
 
-    for (let i = 0; i < POOL_SIZE; i++) {
-      const base = this._randomModel();
-      const mesh = cloneWithMaterials(base);
-      mesh.scale.setScalar(0.8);
-      randomColor(mesh);
-      mesh.traverse(c => { if (c.isMesh) { c.castShadow = false; c.receiveShadow = false; } });
-      mesh.visible = false;
-      this.cars.push(mesh);
-    }
+    this.carPool = _buildPool(trafficModels, scene);
+    this.ponyPool = ponyModel ? _buildPool([ponyModel], scene) : [];
+    this.isPony = false;
+    this.cars = this.carPool;
   }
 
-  _randomModel() {
-    return this.trafficModels[Math.floor(Math.random() * this.trafficModels.length)];
+  setPonyMode(on) {
+    if (on === this.isPony) return;
+    this.isPony = on;
+
+    const hide = on ? this.carPool : this.ponyPool;
+    const show = on ? this.ponyPool : this.carPool;
+
+    for (const car of hide) {
+      if (car.visible) {
+        car.visible = false;
+        this.scene.remove(car);
+      }
+    }
+
+    this.cars = show;
+    this.timeSinceSpawn = 999;
   }
 
   spawn() {
@@ -101,11 +123,11 @@ export class Traffic {
   }
 
   reset() {
-    for (const car of this.cars) {
-      if (car.visible) {
-        car.visible = false;
-        this.scene.remove(car);
-      }
+    for (const car of this.carPool) {
+      if (car.visible) { car.visible = false; this.scene.remove(car); }
+    }
+    for (const car of this.ponyPool) {
+      if (car.visible) { car.visible = false; this.scene.remove(car); }
     }
     this.timeSinceSpawn = 0;
   }
