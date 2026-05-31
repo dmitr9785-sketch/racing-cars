@@ -26,7 +26,7 @@ export class UI {
     this.startScreen.id = 'start-screen';
     this.startScreen.innerHTML = `
       <h1>HIGHWAY RUSH</h1>
-      <p style="font-size:18px;opacity:0.7;margin-bottom:20px;">Overtake traffic. Avoid crashes. Last as long as you can.</p>
+      <p style="font-size:15px;opacity:0.6;margin-bottom:16px;">Choose your vehicle</p>
       <div class="char-select">
         <div class="char-card" data-char="race">
           <div class="char-icon">🚗</div>
@@ -37,8 +37,23 @@ export class UI {
           <div class="char-name">Pony</div>
         </div>
       </div>
+      <p style="font-size:15px;opacity:0.6;margin:16px 0 12px;">Game Mode</p>
+      <div class="mode-select">
+        <div class="mode-card" data-mode="endless">
+          <div class="mode-name">Endless</div>
+          <div class="mode-desc">Survive as long as you can</div>
+        </div>
+        <div class="mode-card" data-mode="time">
+          <div class="mode-name">60 Seconds</div>
+          <div class="mode-desc">Survive 60s, collect stars</div>
+        </div>
+        <div class="mode-card" data-mode="stars">
+          <div class="mode-name">Star Rush</div>
+          <div class="mode-desc">Collect 10 stars fast</div>
+        </div>
+      </div>
       <button class="btn" id="start-btn">START</button>
-      <p style="font-size:14px;opacity:0.4;margin-top:30px;">
+      <p style="font-size:14px;opacity:0.4;margin-top:24px;">
         &larr; &rarr; / A D &mdash; lanes &nbsp;|&nbsp; &uarr; / W &mdash; gas &nbsp;|&nbsp; &darr; / S &mdash; brake
       </p>
     `;
@@ -47,15 +62,23 @@ export class UI {
     this.startBtn = this.startScreen.querySelector('#start-btn');
 
     this.selectedChar = 'race';
-    const cards = this.startScreen.querySelectorAll('.char-card');
-    cards[0].classList.add('selected');
-    cards.forEach(card => {
+    this.selectedMode = 'endless';
+    this.startScreen.querySelectorAll('.char-card').forEach(card => {
       card.addEventListener('click', () => {
-        cards.forEach(c => c.classList.remove('selected'));
+        this.startScreen.querySelectorAll('.char-card').forEach(c => c.classList.remove('selected'));
         card.classList.add('selected');
         this.selectedChar = card.dataset.char;
       });
     });
+    this.startScreen.querySelectorAll('.char-card')[0].classList.add('selected');
+    this.startScreen.querySelectorAll('.mode-card').forEach(card => {
+      card.addEventListener('click', () => {
+        this.startScreen.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        this.selectedMode = card.dataset.mode;
+      });
+    });
+    this.startScreen.querySelectorAll('.mode-card')[0].classList.add('selected');
   }
 
   _buildHUD() {
@@ -64,10 +87,12 @@ export class UI {
     this.hud.style.display = 'none';
     this.hud.innerHTML = `
       <div class="hud-score" id="hud-score">0</div>
+      <div class="hud-mode" id="hud-mode"></div>
       <div class="hud-speed" id="hud-speed">Speed: 1x</div>
     `;
     this.container.appendChild(this.hud);
     this.hudScore = this.hud.querySelector('#hud-score');
+    this.hudMode = this.hud.querySelector('#hud-mode');
     this.hudSpeed = this.hud.querySelector('#hud-speed');
 
     this.starCounter = document.createElement('div');
@@ -118,6 +143,10 @@ export class UI {
     return this.selectedChar;
   }
 
+  getSelectedMode() {
+    return this.selectedMode;
+  }
+
   hideStartScreen() {
     this.startScreen.style.display = 'none';
   }
@@ -140,8 +169,9 @@ export class UI {
     this.hudSpeed.textContent = `Speed: ${speed.toFixed(1)}x`;
   }
 
-  showGameOver(score, stars) {
-    this.finalScore.textContent = `Score: ${Math.floor(score)}  ⭐ ${stars}`;
+  showGameOver(score, stars, mode) {
+    const label = mode === 'time' ? 'Time' : mode === 'stars' ? 'Time' : 'Score';
+    this.finalScore.textContent = mode === 'time' ? `⭐ ${stars} collected` : mode === 'stars' ? `Time: ${Math.floor(score)}s` : `Score: ${Math.floor(score)}  ⭐ ${stars}`;
     this.gameoverScreen.classList.add('show');
     this.hud.style.display = 'none';
     this.starCounter.style.display = 'none';

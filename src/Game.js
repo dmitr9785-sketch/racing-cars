@@ -15,6 +15,7 @@ export class Game {
     this.ui = ui;
 
     this.state = 'start_screen';
+    this.mode = 'endless';
     this.score = 0;
     this.starCount = 0;
     this.baseSpeed = 1;
@@ -28,6 +29,10 @@ export class Game {
     this._bindKeys();
     this.ui.restartBtn.addEventListener('click', () => this.start());
     this._startLoop();
+  }
+
+  setMode(mode) {
+    this.mode = mode;
   }
 
   setPlayer(player) {
@@ -68,6 +73,7 @@ export class Game {
   start() {
     this.state = 'playing';
     this.score = 0;
+    this.starCount = 0;
     this.baseSpeed = 1;
     this.actualSpeed = 1;
     this.timeElapsed = 0;
@@ -79,12 +85,21 @@ export class Game {
     this.trees.reset();
     this.houses.reset();
     this.stars.reset();
-    this.starCount = 0;
     this.player.reset();
     this.ui.hideStartScreen();
     this.ui.hideGameOver();
     this.ui.showHUD();
-    this.ui.updateScore(0);
+
+    const modeLabels = { endless: 'Endless', time: '60 Seconds', stars: 'Star Rush' };
+    this.ui.hudMode.textContent = modeLabels[this.mode] || '';
+
+    if (this.mode === 'time') {
+      this.timeLimit = 60;
+      this.ui.updateScore(this.timeLimit);
+    } else {
+      this.ui.updateScore(0);
+    }
+    this.ui.updateStars(0);
     this.ui.updateSpeed(1);
   }
 
@@ -139,27 +154,49 @@ export class Game {
 
     const trafficBoxes = this.traffic.getBoxes();
     const hit = checkCollision(playerBox, trafficBoxes);
-    if (hit) {
-      this._onCollision(hit);
-      return;
+
+    if (this.mode === 'time') {
+      const remaining = Math.max(0, this.timeLimit - this.timeElapsed);
+      this.ui.updateScore(remaining);
+      if (hit || remaining <= 0) {
+        this._onGameOver(hit ? 'crash' : 'time', hit || null);
+        return;
+      }
+    } else if (this.mode === 'stars') {
+      if (hit) {
+        this._onGameOver('crash', hit);
+        return;
+      }
+      if (this.starCount >= 10) {
+        this._onGameOver('stars');
+        return;
+      }
+      this.ui.updateScore(this.score);
+    } else {
+      if (hit) {
+        this._onGameOver('crash', hit);
+        return;
+      }
+      this.ui.updateScore(this.score);
     }
 
-    this.ui.updateScore(this.score);
     this.ui.updateSpeed(this.gasMultiplier);
   }
 
-  _onCollision(hitMesh) {
+  _onGameOver(reason, hitMesh) {
     this.state = 'gameover';
     this.traffic.speed = 0;
 
-    hitMesh.traverse(child => {
-      if (child.isMesh && child.material && child.material.color) {
-        child.material.color.setHex(0xff0000);
-      }
-    });
+    if (hitMesh) {
+      hitMesh.traverse(child => {
+        if (child.isMesh && child.material && child.material.color) {
+          child.material.color.setHex(0xff0000);
+        }
+      });
+    }
 
     setTimeout(() => {
-      this.ui.showGameOver(this.score, this.starCount);
+      this.ui.showGameOver(this.score, this.starCount, this.mode);
     }, 400);
   }
 }

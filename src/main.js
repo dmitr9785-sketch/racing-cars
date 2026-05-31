@@ -69,6 +69,7 @@ async function init() {
     }
     const playerScale = choice === 'pony' ? 0.8 : 0.8;
     const player = new Player(model, playerScale);
+    game.setMode(ui.getSelectedMode());
     game.setPlayer(player);
     game.start();
   });

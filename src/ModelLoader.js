@@ -18,7 +18,7 @@ const MODEL_LIST = [
   { id: 'house_0', file: 'assets/models/building-sample-house-a.glb' },
   { id: 'house_1', file: 'assets/models/building-sample-house-b.glb' },
   { id: 'house_2', file: 'assets/models/building-sample-house-c.glb' },
-  { id: 'tree', file: 'assets/models/low_poly_tree_for_game_asset.glb' },
+  { id: 'tree', file: 'assets/models/low_poly_tree.glb' },
   { id: 'star', file: 'assets/models/shining_star_low_poly.glb' },
 ];
 

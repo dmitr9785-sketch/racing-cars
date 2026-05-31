@@ -13,7 +13,7 @@ export class Trees {
 
     for (let i = 0; i < POOL_SIZE; i++) {
       const mesh = treeModel.clone();
-      const s = 0.8 + Math.random() * 0.4;
+      const s = 0.003 + Math.random() * 0.002;
       mesh.scale.setScalar(s);
       mesh.traverse(c => {
         if (c.isMesh) {
