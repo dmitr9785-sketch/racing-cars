@@ -125,7 +125,7 @@ export class Traffic {
       car.rotation.set(0, 0, 0);
       car.position.set(x, 0.1, z);
     } else if (car.userData.modelId === 'traffic_10') {
-      car.scale.setScalar(0.5);
+      car.scale.setScalar(0.1);
       car.rotation.set(0, 0, 0);
       car.position.set(x, 0, z);
     } else {
