@@ -226,6 +226,10 @@ export class Game {
       });
     }
 
+    const prev = parseInt(localStorage.getItem('highway_rush_stars') || '0', 10);
+    const total = prev + this.starCount;
+    localStorage.setItem('highway_rush_stars', total.toString());
+
     setTimeout(() => {
       this.ui.showGameOver(this.score, this.starCount, this.mode, reason);
     }, 400);

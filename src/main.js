@@ -62,17 +62,30 @@ async function init() {
     ui
   );
 
+  const totalStars = parseInt(localStorage.getItem('highway_rush_stars') || '0', 10);
+  ui.totalStars = totalStars;
+
   ui.showStartScreen();
   ui.startBtn.addEventListener('click', () => {
     const choice = ui.getSelectedCharacter();
-    const model = choice === 'pony' ? ponyModel : playerModelRace;
+    let model;
+    let playerScale = 0.8;
+
+    if (choice === 'pony') {
+      model = ponyModel;
+    } else if (choice === 'rx7') {
+      model = unlockCarModel;
+    } else {
+      model = playerModelRace;
+    }
+
     if (!model) {
       console.error('Failed to get model for', choice);
       return;
     }
-    const playerScale = choice === 'pony' ? 0.8 : 0.8;
+
     const player = new Player(model, playerScale);
-    if (choice !== 'pony') {
+    if (choice === 'race') {
       player.mesh.traverse(c => {
         if (c.isMesh && c.material && c.material.color) {
           c.material.color.setHex(0xcc2222);

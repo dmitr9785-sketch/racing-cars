@@ -27,7 +27,7 @@ export class UI {
     this.startScreen.innerHTML = `
       <h1>HIGHWAY RUSH</h1>
       <p style="font-size:15px;opacity:0.6;margin-bottom:16px;">Choose your vehicle</p>
-      <div class="char-select">
+      <div class="char-select" id="char-select">
         <div class="char-card" data-char="race">
           <div class="char-icon">🚗</div>
           <div class="char-name">Race Car</div>
@@ -35,6 +35,11 @@ export class UI {
         <div class="char-card" data-char="pony">
           <div class="char-icon">🦄</div>
           <div class="char-name">Pony</div>
+        </div>
+        <div class="char-card locked" data-char="rx7">
+          <div class="char-icon">🏎️</div>
+          <div class="char-name">Mazda RX7</div>
+          <div class="char-lock">🔒 100⭐</div>
         </div>
       </div>
       <p style="font-size:15px;opacity:0.6;margin:16px 0 12px;">Game Mode</p>
@@ -61,10 +66,18 @@ export class UI {
     this.container.appendChild(this.startScreen);
     this.startBtn = this.startScreen.querySelector('#start-btn');
 
+    this.totalStars = 0;
+
+    this.starProgress = document.createElement('div');
+    this.starProgress.style.cssText = 'font-size:14px;opacity:0.5;margin-bottom:12px;';
+    this.starProgress.textContent = '⭐ Total: 0';
+    this.startScreen.querySelector('#char-select').after(this.starProgress);
+
     this.selectedChar = 'race';
     this.selectedMode = 'endless';
     this.startScreen.querySelectorAll('.char-card').forEach(card => {
       card.addEventListener('click', () => {
+        if (card.classList.contains('locked')) return;
         this.startScreen.querySelectorAll('.char-card').forEach(c => c.classList.remove('selected'));
         card.classList.add('selected');
         this.selectedChar = card.dataset.char;
@@ -141,6 +154,8 @@ export class UI {
 
   showStartScreen() {
     this.startScreen.style.display = 'flex';
+    this.starProgress.textContent = `⭐ Total: ${this.totalStars}`;
+    if (this.totalStars >= 100) this.unlockRX7();
   }
 
   getSelectedCharacter() {
