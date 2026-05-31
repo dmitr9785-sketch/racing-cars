@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 
+const DISTANCE_MULT = 1.5;
+
 const BIOMES = [
   {
     name: 'Highway',
@@ -20,7 +22,7 @@ const BIOMES = [
   },
   {
     name: 'Savanna',
-    distanceStart: 800,
+    distanceStart: 800 * DISTANCE_MULT,
     roadColor: new THREE.Color(0x6a6a4a),
     grassColor: new THREE.Color(0x8a9a4a),
     grass2Color: new THREE.Color(0x7a8a3a),
@@ -37,7 +39,7 @@ const BIOMES = [
   },
   {
     name: 'Desert',
-    distanceStart: 2000,
+    distanceStart: 2000 * DISTANCE_MULT,
     roadColor: new THREE.Color(0x8a7a5a),
     grassColor: new THREE.Color(0x9a8a5a),
     grass2Color: new THREE.Color(0x8a7a4a),
@@ -54,7 +56,7 @@ const BIOMES = [
   },
   {
     name: 'Winter',
-    distanceStart: 3200,
+    distanceStart: 3200 * DISTANCE_MULT,
     roadColor: new THREE.Color(0x8a8a9a),
     grassColor: new THREE.Color(0xddeeff),
     grass2Color: new THREE.Color(0xcceeff),
@@ -71,7 +73,7 @@ const BIOMES = [
   },
   {
     name: 'Bridge',
-    distanceStart: 4400,
+    distanceStart: 4400 * DISTANCE_MULT,
     roadColor: new THREE.Color(0x5a6a7a),
     grassColor: new THREE.Color(0x2a6a9a),
     grass2Color: new THREE.Color(0x1a5a8a),
@@ -88,7 +90,7 @@ const BIOMES = [
   },
   {
     name: 'Highway Night',
-    distanceStart: 5600,
+    distanceStart: 5600 * DISTANCE_MULT,
     roadColor: new THREE.Color(0x2a2a3a),
     grassColor: new THREE.Color(0x2a4a2a),
     grass2Color: new THREE.Color(0x1a3a1a),
@@ -104,6 +106,8 @@ const BIOMES = [
     fogFar: 30,
   },
 ];
+
+const CYCLE_LENGTH = 5600 * DISTANCE_MULT;
 
 function lerpColor(a, b, t) {
   const c = new THREE.Color();
@@ -142,19 +146,15 @@ export class Biome {
   }
 
   update(distance, delta) {
+    const d = distance % CYCLE_LENGTH;
     for (let i = BIOMES.length - 1; i >= 0; i--) {
-      if (distance >= BIOMES[i].distanceStart) {
+      if (d >= BIOMES[i].distanceStart) {
         if (this.currentIndex !== i) {
           this.currentIndex = i;
-          this.nextIndex = Math.min(i + 1, BIOMES.length - 1);
+          this.nextIndex = i + 1 < BIOMES.length ? i + 1 : 0;
           this.transitionProgress = 0;
           this.current = this._copyProps(BIOMES[i]);
-          if (this.nextIndex > i) {
-            this.target = this._copyProps(BIOMES[this.nextIndex]);
-          } else {
-            this.target = this._copyProps(BIOMES[i]);
-            this.transitionProgress = 1;
-          }
+          this.target = this._copyProps(BIOMES[this.nextIndex]);
         }
         break;
       }
@@ -169,7 +169,7 @@ export class Biome {
     const to = this.target;
 
     return {
-      name: t < 1 ? `${from.name} → ${to.name}` : to.name,
+      name: BIOMES[this.currentIndex].name,
       roadColor: lerpColor(from.roadColor, to.roadColor, t),
       grassColor: lerpColor(from.grassColor, to.grassColor, t),
       grass2Color: lerpColor(from.grass2Color, to.grass2Color, t),
