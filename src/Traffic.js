@@ -56,7 +56,7 @@ export class Traffic {
     this.timeSinceSpawn = 0;
 
     this.carPool = _buildPool(trafficModels, scene, true, 0.8);
-    this.ponyPool = ponyModels && ponyModels.length ? _buildPool(ponyModels, scene, false, 1.2) : [];
+    this.ponyPool = ponyModels && ponyModels.length ? _buildPool(ponyModels, scene, false, 2.5) : [];
     this.isPony = false;
     this.cars = this.carPool;
   }
@@ -85,7 +85,22 @@ export class Traffic {
 
     const lane = Math.floor(Math.random() * this.lanePositions.length);
     const x = this.lanePositions[lane];
-    const z = SPAWN_Z + Math.random() * 15;
+    let z = SPAWN_Z + Math.random() * 15;
+    let attempts = 0;
+
+    while (attempts < 5) {
+      let blocked = false;
+      for (const other of this.cars) {
+        if (!other.visible || other === car) continue;
+        if (Math.abs(other.position.x - x) < 2 && Math.abs(other.position.z - z) < 5) {
+          blocked = true;
+          break;
+        }
+      }
+      if (!blocked) break;
+      z = SPAWN_Z + Math.random() * 15;
+      attempts++;
+    }
 
     car.position.set(x, 0, z);
     car.rotation.set(0, 0, 0);
