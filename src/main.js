@@ -70,6 +70,13 @@ async function init() {
     }
     const playerScale = choice === 'pony' ? 0.8 : 0.8;
     const player = new Player(model, playerScale);
+    if (choice !== 'pony') {
+      player.mesh.traverse(c => {
+        if (c.isMesh && c.material && c.material.color) {
+          c.material.color.setHex(0xcc2222);
+        }
+      });
+    }
     game.setMode(ui.getSelectedMode());
     game.setPlayer(player);
     traffic.setPonyMode(choice === 'pony');
