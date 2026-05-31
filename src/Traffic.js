@@ -3,8 +3,6 @@ import { getLanePositions } from './Road.js';
 
 const SPAWN_Z = 25;
 const DESPAWN_Z = -2;
-const POOL_SIZE = 8;
-
 function cloneWithMaterials(src) {
   const clone = src.clone();
   clone.traverse(child => {
@@ -35,12 +33,11 @@ function randomColor(mesh) {
 
 function _buildPool(models, modelIds, scene, randomizeColors, scale = 0.8) {
   const pool = [];
-  for (let i = 0; i < POOL_SIZE; i++) {
-    const idx = Math.floor(Math.random() * models.length);
-    const base = models[idx];
+  for (let i = 0; i < models.length; i++) {
+    const base = models[i];
     const mesh = cloneWithMaterials(base);
-    mesh.userData.modelIdx = idx;
-    if (modelIds) mesh.userData.modelId = modelIds[idx];
+    mesh.userData.modelIdx = i;
+    if (modelIds) mesh.userData.modelId = modelIds[i];
     mesh.scale.setScalar(scale);
     if (randomizeColors) randomColor(mesh);
     mesh.traverse(c => { if (c.isMesh) { c.castShadow = false; c.receiveShadow = false; } });
