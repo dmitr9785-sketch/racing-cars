@@ -185,6 +185,14 @@ export class Game {
 
     const trafficBoxes = this.traffic.getBoxes();
     const hit = checkCollision(playerBox, trafficBoxes);
+    if (hit) {
+      console.log('CRASH! playerBox:', JSON.stringify({min: playerBox.min.toArray(), max: playerBox.max.toArray()}), 'traffic count:', trafficBoxes.length);
+      for (const t of trafficBoxes) {
+        if (t.box.intersectsBox(playerBox)) {
+          console.log('  hit car:', t.mesh.userData.modelId, 'box:', JSON.stringify({min: t.box.min.toArray(), max: t.box.max.toArray()}));
+        }
+      }
+    }
 
     if (this.mode === 'time') {
       const remaining = Math.max(0, this.timeLimit - this.timeElapsed);

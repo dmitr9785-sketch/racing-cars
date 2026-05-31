@@ -140,6 +140,10 @@ export class Traffic {
   update(delta, speed) {
     this.speed = speed;
     this.timeSinceSpawn += delta;
+    const visibleCars = this.cars.filter(c => c.visible).length;
+    if (this.timeSinceSpawn < 0.1) {
+      console.log('Traffic update start: visibleCars=', visibleCars, 'cars in pool=', this.cars.length);
+    }
 
     const interval = Math.max(0.6, 4 - this.speed * 0.2);
     if (this.timeSinceSpawn >= interval) {
