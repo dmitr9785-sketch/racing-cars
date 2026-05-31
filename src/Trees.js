@@ -5,29 +5,62 @@ const DESPAWN_Z = -2;
 const POOL_SIZE = 8;
 const ROAD_HALF = 7;
 
+function buildFallbackTree() {
+  const group = new THREE.Group();
+  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.4, 4), new THREE.MeshStandardMaterial({ color: 0x664422, roughness: 1 }));
+  trunk.position.y = 0.2;
+  group.add(trunk);
+  const crown = new THREE.Mesh(new THREE.ConeGeometry(0.35, 0.4, 6), new THREE.MeshStandardMaterial({ color: 0xdd8833, roughness: 0.9 }));
+  crown.position.y = 0.6;
+  group.add(crown);
+  return group;
+}
+
 export class Trees {
   constructor(treeModel, scene) {
     this.scene = scene;
-    this.trees = [];
+    this.pools = [];
+    this.activePool = 0;
     this.timeSinceSpawn = 2.0;
 
-    for (let i = 0; i < POOL_SIZE; i++) {
-      const mesh = treeModel.clone();
+    const models = [treeModel, buildFallbackTree()];
+    for (let m = 0; m < models.length; m++) {
+      const pool = [];
       const s = 0.003 + Math.random() * 0.002;
-      mesh.scale.setScalar(s);
-      mesh.traverse(c => {
-        if (c.isMesh) {
-          c.castShadow = false;
-          c.receiveShadow = false;
-        }
-      });
-      mesh.visible = false;
-      this.trees.push(mesh);
+      for (let i = 0; i < POOL_SIZE; i++) {
+        const mesh = models[m].clone();
+        mesh.scale.setScalar(s);
+        mesh.traverse(c => {
+          if (c.isMesh) {
+            c.castShadow = false;
+            c.receiveShadow = false;
+          }
+        });
+        mesh.visible = false;
+        pool.push(mesh);
+      }
+      this.pools.push(pool);
     }
   }
 
+  setModel(index) {
+    if (index === this.activePool || index >= this.pools.length) return;
+    for (const tree of this.pools[this.activePool]) {
+      if (tree.visible) {
+        tree.visible = false;
+        this.scene.remove(tree);
+      }
+    }
+    this.activePool = index;
+    this.timeSinceSpawn = 2.0;
+  }
+
+  get pool() {
+    return this.pools[this.activePool];
+  }
+
   spawn() {
-    const tree = this.trees.find(t => !t.visible);
+    const tree = this.pool.find(t => !t.visible);
     if (!tree) return;
 
     const side = Math.random() < 0.5 ? -1 : 1;
@@ -48,7 +81,7 @@ export class Trees {
       this.timeSinceSpawn = 0;
     }
 
-    for (const tree of this.trees) {
+    for (const tree of this.pool) {
       if (!tree.visible) continue;
       tree.position.z -= (1.5 + speed * 0.25) * delta;
 
@@ -60,11 +93,14 @@ export class Trees {
   }
 
   reset() {
-    for (const tree of this.trees) {
-      if (tree.visible) {
-        tree.visible = false;
-        this.scene.remove(tree);
+    for (const pool of this.pools) {
+      for (const tree of pool) {
+        if (tree.visible) {
+          tree.visible = false;
+          this.scene.remove(tree);
+        }
       }
     }
+    this.activePool = 0;
   }
 }

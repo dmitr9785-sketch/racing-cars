@@ -122,6 +122,7 @@ export class Game {
       this.ui.updateScore(0);
     }
     this.distance = 0;
+    this._treeIdx = -1;
     this.biome.reset();
     this.ui.updateStars(0);
     this.ui.updateSpeed(1);
@@ -170,6 +171,12 @@ export class Game {
     this.sceneSetup.setBiome(biomeState);
     this.road.setBiome(biomeState);
     this.ui.updateBiome(biomeState.name);
+
+    const treeIdx = biomeState.name === 'Savanna' ? 1 : 0;
+    if (treeIdx !== this._treeIdx) {
+      this._treeIdx = treeIdx;
+      this.trees.setModel(treeIdx);
+    }
 
     this.player.update(delta);
     this.traffic.update(delta, this.actualSpeed);
