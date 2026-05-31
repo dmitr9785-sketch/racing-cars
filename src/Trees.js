@@ -21,11 +21,9 @@ export class Trees {
     }
     this.trees = [];
     const model = this.models[this.modelIndex];
-    const baseScale = this.modelIndex === 1 ? 0.35 : 0.8;
-    const scaleRange = this.modelIndex === 1 ? 0.1 : 0.2;
     for (let i = 0; i < POOL_SIZE; i++) {
       const mesh = model.clone();
-      const s = baseScale + Math.random() * scaleRange;
+      const s = 0.003 + Math.random() * 0.002;
       mesh.scale.setScalar(s);
       mesh.traverse(c => {
         if (c.isMesh) {
@@ -42,7 +40,6 @@ export class Trees {
     if (index === this.modelIndex || !this.models[index]) return;
     this.modelIndex = index;
     this._buildPool();
-    this.timeSinceSpawn = 2.0;
   }
 
   spawn() {
