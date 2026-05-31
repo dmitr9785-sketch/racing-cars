@@ -1,7 +1,5 @@
 import * as THREE from 'three';
 
-const DISTANCE_MULT = 1.5;
-
 const BIOMES = [
   {
     name: 'Highway',
@@ -22,7 +20,7 @@ const BIOMES = [
   },
   {
     name: 'Savanna',
-    distanceStart: 800 * DISTANCE_MULT,
+    distanceStart: 800,
     roadColor: new THREE.Color(0x6a6a4a),
     grassColor: new THREE.Color(0x8a9a4a),
     grass2Color: new THREE.Color(0x7a8a3a),
@@ -39,7 +37,7 @@ const BIOMES = [
   },
   {
     name: 'Desert',
-    distanceStart: 2000 * DISTANCE_MULT,
+    distanceStart: 2000,
     roadColor: new THREE.Color(0x8a7a5a),
     grassColor: new THREE.Color(0x9a8a5a),
     grass2Color: new THREE.Color(0x8a7a4a),
@@ -56,7 +54,7 @@ const BIOMES = [
   },
   {
     name: 'Winter',
-    distanceStart: 3200 * DISTANCE_MULT,
+    distanceStart: 3200,
     roadColor: new THREE.Color(0x8a8a9a),
     grassColor: new THREE.Color(0xddeeff),
     grass2Color: new THREE.Color(0xcceeff),
@@ -73,7 +71,7 @@ const BIOMES = [
   },
   {
     name: 'Bridge',
-    distanceStart: 4400 * DISTANCE_MULT,
+    distanceStart: 4400,
     roadColor: new THREE.Color(0x5a6a7a),
     grassColor: new THREE.Color(0x2a6a9a),
     grass2Color: new THREE.Color(0x1a5a8a),
@@ -90,7 +88,7 @@ const BIOMES = [
   },
   {
     name: 'Highway Night',
-    distanceStart: 5600 * DISTANCE_MULT,
+    distanceStart: 5600,
     roadColor: new THREE.Color(0x2a2a3a),
     grassColor: new THREE.Color(0x2a4a2a),
     grass2Color: new THREE.Color(0x1a3a1a),
@@ -107,7 +105,7 @@ const BIOMES = [
   },
 ];
 
-const CYCLE_LENGTH = 5600 * DISTANCE_MULT;
+const CYCLE_LENGTH = 5600;
 
 function lerpColor(a, b, t) {
   const c = new THREE.Color();
