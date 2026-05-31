@@ -47,10 +47,15 @@ export class Player {
   }
 
   getBox() {
+    this.mesh.updateMatrixWorld(true);
     const box = new THREE.Box3();
     this.mesh.traverse(child => {
-      if (child.isMesh && child.visible) {
-        box.expandByObject(child);
+      if (child.isMesh && child.visible && child.geometry) {
+        const geo = child.geometry;
+        if (geo.boundingBox === null) geo.computeBoundingBox();
+        const b = geo.boundingBox.clone().applyMatrix4(child.matrixWorld);
+        box.expandByPoint(b.min);
+        box.expandByPoint(b.max);
       }
     });
     if (box.min.x === Infinity) return new THREE.Box3().setFromObject(this.mesh);

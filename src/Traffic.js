@@ -166,10 +166,16 @@ export class Traffic {
 
   getBoxes() {
     return this.cars.filter(c => c.visible).map(c => {
+      c.updateMatrixWorld(true);
       const box = new THREE.Box3();
+      const tmpVec = new THREE.Vector3();
       c.traverse(child => {
-        if (child.isMesh && child.visible) {
-          box.expandByObject(child);
+        if (child.isMesh && child.visible && child.geometry) {
+          const geo = child.geometry;
+          if (geo.boundingBox === null) geo.computeBoundingBox();
+          const b = geo.boundingBox.clone().applyMatrix4(child.matrixWorld);
+          box.expandByPoint(b.min);
+          box.expandByPoint(b.max);
         }
       });
       if (box.min.x === Infinity) box.setFromObject(c);
