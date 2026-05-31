@@ -83,6 +83,7 @@ export class Traffic {
     const car = this.cars.find(c => !c.visible);
     if (!car) return;
 
+    const isMuscle = car.userData.modelId === 'traffic_9';
     const lane = Math.floor(Math.random() * this.lanePositions.length);
     const x = this.lanePositions[lane];
     let z = SPAWN_Z + Math.random() * 15;
@@ -102,8 +103,14 @@ export class Traffic {
       attempts++;
     }
 
+    if (isMuscle) {
+      car.scale.setScalar(0.4);
+      car.rotation.set(0, Math.PI / 4, 0);
+    } else {
+      car.scale.setScalar(0.8);
+      car.rotation.set(0, 0, 0);
+    }
     car.position.set(x, 0, z);
-    car.rotation.set(0, 0, 0);
     car.visible = true;
     this.scene.add(car);
   }
