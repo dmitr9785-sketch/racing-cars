@@ -73,7 +73,7 @@ export class ModelLoader {
               });
               fixMatColors(model);
             } else if (entry.id === 'unlock_car') {
-              model.scale.setScalar(0.15);
+              model.scale.setScalar(0.3);
               model.traverse((child) => {
                 if (child.isMesh) {
                   child.castShadow = true;
