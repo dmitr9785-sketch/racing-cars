@@ -12,7 +12,7 @@ const MODEL_LIST = [
   { id: 'traffic_6', file: 'assets/models/suv.glb' },
   { id: 'traffic_7', file: 'assets/models/ambulance.glb' },
   { id: 'traffic_8', file: 'assets/models/truck.glb' },
-  { id: 'traffic_9', file: 'assets/models/classic_muscle_car.glb' },
+  { id: 'traffic_9', file: 'assets/models/low_poly_car_muscle_car_2_stanced.glb' },
   { id: 'traffic_10', file: 'assets/models/low_poly_car.glb' },
   { id: 'traffic_11', file: 'assets/models/low_poly_car_1.glb' },
   { id: 'obstacle_0', file: 'assets/models/cone.glb' },
