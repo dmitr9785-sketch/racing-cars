@@ -28,8 +28,8 @@ async function init() {
   await new Promise(r => setTimeout(r, 300));
   ui.hideLoading();
 
-  const trafficModels = loader.getTrafficModels().slice(0, 11);
-  const trafficModelIds = loader.getTrafficModelIds().slice(0, 11);
+  const trafficModels = loader.getTrafficModels();
+  const trafficModelIds = loader.getTrafficModelIds();
   if (trafficModels.length === 0) {
     console.error('No traffic models loaded');
     return;
