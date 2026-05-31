@@ -165,7 +165,7 @@ export class Game {
 
     this.actualSpeed = this.baseSpeed * this.gasMultiplier;
 
-    this.distance += this.actualSpeed * delta * 10;
+    this.distance += delta * 30;
     const biomeState = this.biome.update(this.distance, delta);
     this.sceneSetup.setBiome(biomeState);
     this.road.setBiome(biomeState);
