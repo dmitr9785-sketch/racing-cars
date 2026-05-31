@@ -12,6 +12,9 @@ const MODEL_LIST = [
   { id: 'traffic_6', file: 'assets/models/suv.glb' },
   { id: 'traffic_7', file: 'assets/models/ambulance.glb' },
   { id: 'traffic_8', file: 'assets/models/truck.glb' },
+  { id: 'traffic_9', file: 'assets/models/classic_muscle_car.glb' },
+  { id: 'traffic_10', file: 'assets/models/low_poly_car.glb' },
+  { id: 'traffic_11', file: 'assets/models/low_poly_car_1.glb' },
   { id: 'obstacle_0', file: 'assets/models/cone.glb' },
   { id: 'obstacle_1', file: 'assets/models/wheel-default.glb' },
   { id: 'pony', file: 'assets/models/pony.glb' },
@@ -23,6 +26,7 @@ const MODEL_LIST = [
   { id: 'house_2', file: 'assets/models/building-sample-house-c.glb' },
   { id: 'tree', file: 'assets/models/low_poly_tree.glb' },
   { id: 'star', file: 'assets/models/shining_star_low_poly.glb' },
+  { id: 'unlock_car', file: 'assets/models/mazda_rx7_stylised.glb' },
 ];
 
 function fixMatColors(obj) {
@@ -58,7 +62,7 @@ export class ModelLoader {
           entry.file,
           (gltf) => {
             const model = gltf.scene;
-            const skip = entry.id === 'pony' || entry.id.startsWith('pony_traffic') || entry.id.startsWith('house_') || entry.id === 'tree' || entry.id === 'star';
+            const skip = entry.id === 'pony' || entry.id.startsWith('pony_traffic') || entry.id.startsWith('house_') || entry.id === 'tree' || entry.id === 'star' || entry.id === 'unlock_car';
             if (!skip) {
               model.scale.setScalar(0.8);
               model.traverse((child) => {
@@ -114,6 +118,10 @@ export class ModelLoader {
       const crown = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.3, 4), new THREE.MeshStandardMaterial({ color: 0x4a8c3f, roughness: 0.9 }));
       crown.position.y = 0.45;
       group.add(crown);
+    } else if (id === 'unlock_car') {
+      const body = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.5, 3.6), new THREE.MeshStandardMaterial({ color: 0xff4444, roughness: 0.4, metalness: 0.6 }));
+      body.position.y = 0.25;
+      group.add(body);
     } else if (id === 'star') {
       const star = new THREE.Mesh(new THREE.OctahedronGeometry(0.3, 0), new THREE.MeshStandardMaterial({ color: 0xffdd44, emissive: 0xff8800, emissiveIntensity: 0.5 }));
       group.add(star);
@@ -173,5 +181,9 @@ export class ModelLoader {
 
   getStarModel() {
     return this.models['star'] ? this.models['star'].clone() : null;
+  }
+
+  getUnlockCarModel() {
+    return this.models['unlock_car'] ? this.models['unlock_car'].clone() : null;
   }
 }

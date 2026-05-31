@@ -13,6 +13,9 @@ export class Game {
     this.stars = stars;
     this.road = road;
     this.ui = ui;
+    this.unlockCarModel = null;
+
+    this.unlocked = false;
 
     this.state = 'start_screen';
     this.mode = 'endless';
@@ -30,6 +33,10 @@ export class Game {
     this.ui.restartBtn.addEventListener('click', () => this.start());
     this.ui.menuBtn.addEventListener('click', () => this.goToMainMenu());
     this._startLoop();
+  }
+
+  setUnlockCarModel(model) {
+    this.unlockCarModel = model;
   }
 
   setMode(mode) {
@@ -84,6 +91,7 @@ export class Game {
     this.state = 'playing';
     this.score = 0;
     this.starCount = 0;
+    this.unlocked = false;
     this.baseSpeed = 1;
     this.actualSpeed = 1;
     this.timeElapsed = 0;
@@ -161,6 +169,19 @@ export class Game {
     const playerBox = this.player.getBox();
     this.starCount += this.stars.checkCollection(playerBox);
     this.ui.updateStars(this.starCount);
+
+    if (this.starCount >= 100 && !this.unlocked && this.unlockCarModel) {
+      this.unlocked = true;
+      const newMesh = this.unlockCarModel.clone();
+      newMesh.position.copy(this.player.mesh.position);
+      newMesh.rotation.copy(this.player.mesh.rotation);
+      newMesh.scale.setScalar(0.8);
+      newMesh.traverse(c => { if (c.isMesh) { c.castShadow = true; c.receiveShadow = true; } });
+      this.scene.remove(this.player.mesh);
+      this.scene.add(newMesh);
+      this.player.mesh = newMesh;
+      this.ui.showUnlockMessage();
+    }
 
     const trafficBoxes = this.traffic.getBoxes();
     const hit = checkCollision(playerBox, trafficBoxes);

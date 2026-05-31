@@ -100,6 +100,17 @@ canvas { display: block; }
 }
 .btn-secondary:hover { background: rgba(255,255,255,0.25); }
 
+.unlock-msg {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  color: #ffdd00; font-size: 36px; font-weight: 800; text-align: center;
+  text-shadow: 0 0 20px rgba(255,200,0,0.8), 0 0 40px rgba(255,200,0,0.4);
+  pointer-events: none; z-index: 200; animation: unlockPulse 0.5s ease-out;
+}
+@keyframes unlockPulse {
+  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
 .controls-hint {
   position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
   color: rgba(255,255,255,0.4); font-size: 14px;

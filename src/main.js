@@ -45,6 +45,8 @@ async function init() {
   const starModel = loader.getStarModel();
   const stars = new Stars(starModel, sceneSetup.scene);
 
+  const unlockCarModel = loader.getUnlockCarModel();
+
   const ponyModel = loader.getPonyModel();
   const playerModelRace = loader.getPlayerModel();
 
@@ -79,6 +81,7 @@ async function init() {
     }
     game.setMode(ui.getSelectedMode());
     game.setPlayer(player);
+    game.setUnlockCarModel(unlockCarModel);
     traffic.setPonyMode(choice === 'pony');
     game.start();
   });

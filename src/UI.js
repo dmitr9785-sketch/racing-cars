@@ -161,6 +161,14 @@ export class UI {
     this.hint.style.display = 'block';
   }
 
+  showUnlockMessage() {
+    const el = document.createElement('div');
+    el.className = 'unlock-msg';
+    el.textContent = '🚗 MAZDA RX7 UNLOCKED! 🚗';
+    this.container.appendChild(el);
+    setTimeout(() => el.remove(), 2500);
+  }
+
   updateStars(count) {
     this.starCounter.textContent = `⭐ ${count}`;
   }
