@@ -4,6 +4,7 @@ const SPAWN_Z = 35;
 const DESPAWN_Z = -2;
 const POOL_SIZE = 8;
 const ROAD_HALF = 7;
+const SCALES = [0.0075, 0.015, 0.015];
 
 export class Trees {
   constructor(models, scene) {
