@@ -209,7 +209,7 @@ export class Biome {
 
     const range = this._transEnd - this._transStart;
     const progress = range > 0 ? (d - this._transStart) / range : 1;
-    this.transitionProgress = Math.max(0, Math.min(1, progress * 3 - 2));
+    this.transitionProgress = Math.max(0, Math.min(1, progress * 10 - 9));
 
     const t = this.transitionProgress;
     const from = this.current;
