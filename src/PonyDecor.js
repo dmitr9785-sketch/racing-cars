@@ -11,9 +11,18 @@ export class PonyDecor {
     this.timeSinceSpawn = 2.0;
 
     this.pools = [
-      this._buildPool([flowerModel, flowerTwoModel], 0.4),
+      this._buildPool([flowerModel, flowerTwoModel], 0.027),
       this._buildPool([starModel], 0.6),
     ];
+
+    for (const obj of this.pools[1]) {
+      obj.traverse(c => {
+        if (c.isMesh && c.material) {
+          c.material.emissive = new THREE.Color(0xffcc44);
+          c.material.emissiveIntensity = 0.8;
+        }
+      });
+    }
   }
 
   _buildPool(models, baseScale) {
