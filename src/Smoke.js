@@ -39,8 +39,8 @@ export class Smoke {
     });
     this.scene.add(puff.mesh);
     puff.life = LIFETIME;
-    puff.vx = side * 0.5;
-    puff.vz = 1.5;
+    puff.vx = side * 1.2;
+    puff.vz = 3;
   }
 
   update(delta) {
