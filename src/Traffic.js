@@ -101,6 +101,7 @@ export class Traffic {
     const invisible = this.cars.filter(c => !c.visible);
     if (!invisible.length) return;
     const car = invisible[Math.floor(Math.random() * invisible.length)];
+    console.log('Spawning', car.userData.modelId, 'poolIdx', this.cars.indexOf(car));
 
     let lane = Math.floor(Math.random() * this.lanePositions.length);
     let x = this.lanePositions[lane];
@@ -154,6 +155,10 @@ export class Traffic {
   update(delta, speed) {
     this.speed = speed;
     this.timeSinceSpawn += delta;
+    const visibleCars = this.cars.filter(c => c.visible).length;
+    if (this.timeSinceSpawn < 0.1) {
+      console.log('Traffic update start: visibleCars=', visibleCars, 'cars in pool=', this.cars.length);
+    }
 
     const interval = Math.max(0.6, 4 - this.speed * 0.2);
     if (this.timeSinceSpawn >= interval) {
