@@ -55,7 +55,7 @@ export class Trees {
     if (!tree) return;
 
     const side = Math.random() < 0.5 ? -1 : 1;
-    const x = side * (ROAD_HALF + 1.5 + Math.random() * 3);
+    const x = side * (ROAD_HALF + 3 + Math.random() * 5);
     const z = SPAWN_Z + Math.random() * 20;
     const rot = Math.random() * Math.PI * 2;
 
