@@ -4,7 +4,7 @@ const POOL_SIZE = 8;
 const SPAWN_Z = 35;
 const DESPAWN_Z = -2;
 
-const SUN_POS = new THREE.Vector3(0, 6, -30);
+const SUN_POS = new THREE.Vector3(0, 3, 25);
 
 export class PonyDecor {
   constructor(flowerModel, flowerTwoModel, starModel, sunModel, scene) {
@@ -18,6 +18,12 @@ export class PonyDecor {
       this._sunMesh = sunModel.clone();
       this._sunMesh.position.copy(SUN_POS);
       this._sunMesh.scale.setScalar(1.5);
+      this._sunMesh.traverse(c => {
+        if (c.isMesh && c.material) {
+          c.material.emissive = new THREE.Color(0xffaa44);
+          c.material.emissiveIntensity = 1.0;
+        }
+      });
     }
 
     this.pools = [
@@ -101,6 +107,13 @@ export class PonyDecor {
     if (this.timeSinceSpawn >= 2.0) {
       this.spawn();
       this.timeSinceSpawn = 0;
+    }
+
+    if (this._sunMesh && this._sunInScene) {
+      this._sunMesh.position.z -= (1.5 + speed * 0.25) * delta;
+      if (this._sunMesh.position.z < DESPAWN_Z) {
+        this._sunMesh.position.z = 30;
+      }
     }
 
     for (const obj of this.pool) {
