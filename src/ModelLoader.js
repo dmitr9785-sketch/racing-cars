@@ -29,7 +29,7 @@ const MODEL_LIST = [
   { id: 'unlock_car', file: 'assets/models/mazda_rx7_veilside_stylized_toon.glb' },
   { id: 'smoke', file: 'assets/models/smoke.glb' },
   { id: 'cactus', file: 'assets/models/cactus_low_poly.glb' },
-  { id: 'piramide', file: 'assets/models/piramide.glb' },
+  { id: 'piramide', file: 'assets/models/low_poly_khafre.glb' },
 ];
 
 function fixMatColors(obj) {
