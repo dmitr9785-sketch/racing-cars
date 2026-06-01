@@ -54,7 +54,7 @@ const BIOMES = [
   },
   {
     name: 'Winter',
-    distanceStart: 3200,
+    distanceStart: 5000,
     roadColor: new THREE.Color(0x8a8a9a),
     grassColor: new THREE.Color(0xddeeff),
     grass2Color: new THREE.Color(0xcceeff),
@@ -71,7 +71,7 @@ const BIOMES = [
   },
   {
     name: 'Bridge',
-    distanceStart: 4400,
+    distanceStart: 6500,
     roadColor: new THREE.Color(0x5a6a7a),
     grassColor: new THREE.Color(0x2a6a9a),
     grass2Color: new THREE.Color(0x1a5a8a),
@@ -88,7 +88,7 @@ const BIOMES = [
   },
   {
     name: 'Highway Night',
-    distanceStart: 5600,
+    distanceStart: 8000,
     roadColor: new THREE.Color(0x2a2a3a),
     grassColor: new THREE.Color(0x2a4a2a),
     grass2Color: new THREE.Color(0x1a3a1a),
@@ -105,7 +105,7 @@ const BIOMES = [
   },
 ];
 
-const CYCLE_LENGTH = 5600;
+const CYCLE_LENGTH = 9800;
 
 function lerpColor(a, b, t) {
   const c = new THREE.Color();
@@ -122,6 +122,8 @@ export class Biome {
     this.transitionProgress = 1;
     this.current = this._copyProps(BIOMES[0]);
     this.target = this._copyProps(BIOMES[0]);
+    this._transStart = 0;
+    this._transEnd = BIOMES[1] ? BIOMES[1].distanceStart : CYCLE_LENGTH;
   }
 
   _copyProps(src) {
@@ -153,14 +155,16 @@ export class Biome {
           this.transitionProgress = 0;
           this.current = this._copyProps(BIOMES[i]);
           this.target = this._copyProps(BIOMES[this.nextIndex]);
+          this._transStart = BIOMES[i].distanceStart;
+          this._transEnd = BIOMES[this.nextIndex].distanceStart;
         }
         break;
       }
     }
 
-    if (this.transitionProgress < 1) {
-      this.transitionProgress = Math.min(1, this.transitionProgress + delta * 0.15);
-    }
+    const range = this._transEnd - this._transStart;
+    const progress = range > 0 ? (d - this._transStart) / range : 1;
+    this.transitionProgress = Math.max(0, Math.min(1, progress * 3 - 2));
 
     const t = this.transitionProgress;
     const from = this.current;
@@ -190,6 +194,8 @@ export class Biome {
     this.transitionProgress = 1;
     this.current = this._copyProps(BIOMES[0]);
     this.target = this._copyProps(BIOMES[0]);
+    this._transStart = 0;
+    this._transEnd = BIOMES[1] ? BIOMES[1].distanceStart : CYCLE_LENGTH;
   }
 
   getCurrentName() {
