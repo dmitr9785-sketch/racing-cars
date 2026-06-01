@@ -176,6 +176,10 @@ export class Road {
     this._postMat.color.copy(colors.postColor);
   }
 
+  setPonyMode(on) {
+    this.group.visible = !on;
+  }
+
   update(speed, delta) {
     const factor = 4 + speed * 0.3;
     const offset = this.surfaceTexture.offset.y + speed * delta * factor;

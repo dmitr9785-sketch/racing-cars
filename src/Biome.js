@@ -105,6 +105,43 @@ const BIOMES = [
   },
 ];
 
+const PONY_BIOMES = [
+  {
+    name: 'Pony-Field',
+    distanceStart: 0,
+    roadColor: new THREE.Color(0x4a8c3f),
+    grassColor: new THREE.Color(0x6ab84a),
+    grass2Color: new THREE.Color(0x58a83a),
+    fogColor: new THREE.Color(0x88ddff),
+    skyColor: new THREE.Color(0x88ddff),
+    barrierColor: new THREE.Color(0x4a8c3f),
+    postColor: new THREE.Color(0x4a8c3f),
+    ambientColor: new THREE.Color(0x406050),
+    hemiSkyColor: new THREE.Color(0x88ddff),
+    hemiGroundColor: new THREE.Color(0x4a6a3a),
+    sunColor: new THREE.Color(0xffeecc),
+    fogNear: 30,
+    fogFar: 60,
+  },
+  {
+    name: 'Pony-Sky',
+    distanceStart: 2000,
+    roadColor: new THREE.Color(0xaaccff),
+    grassColor: new THREE.Color(0xaaccff),
+    grass2Color: new THREE.Color(0x99bbff),
+    fogColor: new THREE.Color(0xccddff),
+    skyColor: new THREE.Color(0xccddff),
+    barrierColor: new THREE.Color(0xaaccff),
+    postColor: new THREE.Color(0xaaccff),
+    ambientColor: new THREE.Color(0x8090c0),
+    hemiSkyColor: new THREE.Color(0xccddff),
+    hemiGroundColor: new THREE.Color(0x6688aa),
+    sunColor: new THREE.Color(0xffffcc),
+    fogNear: 40,
+    fogFar: 80,
+  },
+];
+
 const CYCLE_LENGTH = 9800;
 
 function lerpColor(a, b, t) {
@@ -117,13 +154,21 @@ function lerpColor(a, b, t) {
 
 export class Biome {
   constructor() {
+    this._biomes = BIOMES;
+    this._cycleLength = CYCLE_LENGTH;
     this.currentIndex = 0;
     this.nextIndex = 0;
     this.transitionProgress = 1;
-    this.current = this._copyProps(BIOMES[0]);
-    this.target = this._copyProps(BIOMES[0]);
+    this.current = this._copyProps(this._biomes[0]);
+    this.target = this._copyProps(this._biomes[0]);
     this._transStart = 0;
-    this._transEnd = BIOMES[1] ? BIOMES[1].distanceStart : CYCLE_LENGTH;
+    this._transEnd = this._biomes[1] ? this._biomes[1].distanceStart : this._cycleLength;
+  }
+
+  setPonyMode(on) {
+    this._biomes = on ? PONY_BIOMES : BIOMES;
+    this._cycleLength = on ? 4000 : CYCLE_LENGTH;
+    this.reset();
   }
 
   _copyProps(src) {
@@ -146,17 +191,17 @@ export class Biome {
   }
 
   update(distance, delta) {
-    const d = distance % CYCLE_LENGTH;
-    for (let i = BIOMES.length - 1; i >= 0; i--) {
-      if (d >= BIOMES[i].distanceStart) {
+    const d = distance % this._cycleLength;
+    for (let i = this._biomes.length - 1; i >= 0; i--) {
+      if (d >= this._biomes[i].distanceStart) {
         if (this.currentIndex !== i) {
           this.currentIndex = i;
-          this.nextIndex = i + 1 < BIOMES.length ? i + 1 : 0;
+          this.nextIndex = i + 1 < this._biomes.length ? i + 1 : 0;
           this.transitionProgress = 0;
-          this.current = this._copyProps(BIOMES[i]);
-          this.target = this._copyProps(BIOMES[this.nextIndex]);
-          this._transStart = BIOMES[i].distanceStart;
-          this._transEnd = BIOMES[this.nextIndex].distanceStart;
+          this.current = this._copyProps(this._biomes[i]);
+          this.target = this._copyProps(this._biomes[this.nextIndex]);
+          this._transStart = this._biomes[i].distanceStart;
+          this._transEnd = this._biomes[this.nextIndex].distanceStart;
         }
         break;
       }
@@ -171,7 +216,7 @@ export class Biome {
     const to = this.target;
 
     return {
-      name: BIOMES[this.currentIndex].name,
+      name: this._biomes[this.currentIndex].name,
       roadColor: lerpColor(from.roadColor, to.roadColor, t),
       grassColor: lerpColor(from.grassColor, to.grassColor, t),
       grass2Color: lerpColor(from.grass2Color, to.grass2Color, t),
@@ -192,13 +237,13 @@ export class Biome {
     this.currentIndex = 0;
     this.nextIndex = 0;
     this.transitionProgress = 1;
-    this.current = this._copyProps(BIOMES[0]);
-    this.target = this._copyProps(BIOMES[0]);
+    this.current = this._copyProps(this._biomes[0]);
+    this.target = this._copyProps(this._biomes[0]);
     this._transStart = 0;
-    this._transEnd = BIOMES[1] ? BIOMES[1].distanceStart : CYCLE_LENGTH;
+    this._transEnd = this._biomes[1] ? this._biomes[1].distanceStart : this._cycleLength;
   }
 
   getCurrentName() {
-    return BIOMES[this.currentIndex].name;
+    return this._biomes[this.currentIndex].name;
   }
 }

@@ -30,6 +30,9 @@ const MODEL_LIST = [
   { id: 'smoke', file: 'assets/models/smoke.glb' },
   { id: 'cactus', file: 'assets/models/cactus_low_poly.glb' },
   { id: 'piramide', file: 'assets/models/low_poly_khafre.glb' },
+  { id: 'pony_flower', file: 'assets/models/low_poly_flowers.glb' },
+  { id: 'pony_flower2', file: 'assets/models/low_poly_flowers(1).glb' },
+  { id: 'pony_star', file: 'assets/models/star for pony .glb' },
 ];
 
 function fixMatColors(obj) {
@@ -65,7 +68,7 @@ export class ModelLoader {
           entry.file,
           (gltf) => {
             const model = gltf.scene;
-            const skip = entry.id === 'pony' || entry.id.startsWith('pony_traffic') || entry.id.startsWith('house_') || entry.id === 'tree' || entry.id === 'star' || entry.id === 'unlock_car' || entry.id === 'smoke' || entry.id === 'cactus' || entry.id === 'piramide';
+            const skip = entry.id === 'pony' || entry.id.startsWith('pony_traffic') || entry.id.startsWith('house_') || entry.id === 'tree' || entry.id === 'star' || entry.id === 'unlock_car' || entry.id === 'smoke' || entry.id === 'cactus' || entry.id === 'piramide' || entry.id.startsWith('pony_');
             if (!skip) {
               model.scale.setScalar(0.8);
               model.traverse((child) => {
@@ -236,5 +239,17 @@ export class ModelLoader {
 
   getPiramideModel() {
     return this.models['piramide'] ? this.models['piramide'].clone() : null;
+  }
+
+  getPonyFlowerModel() {
+    return this.models['pony_flower'] ? this.models['pony_flower'].clone() : null;
+  }
+
+  getPonyFlowerTwoModel() {
+    return this.models['pony_flower2'] ? this.models['pony_flower2'].clone() : null;
+  }
+
+  getPonyStarModel() {
+    return this.models['pony_star'] ? this.models['pony_star'].clone() : null;
   }
 }

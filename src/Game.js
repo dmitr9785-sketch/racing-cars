@@ -3,7 +3,7 @@ import { checkCollision } from './Collision.js';
 import { Biome } from './Biome.js';
 
 export class Game {
-  constructor(scene, camera, renderer, traffic, trees, houses, stars, road, ui, sceneSetup, smoke) {
+  constructor(scene, camera, renderer, traffic, trees, houses, stars, road, ui, sceneSetup, smoke, ponyDecor) {
     this.scene = scene;
     this.camera = camera;
     this.renderer = renderer;
@@ -16,8 +16,10 @@ export class Game {
     this.road = road;
     this.ui = ui;
     this.smoke = smoke;
+    this.ponyDecor = ponyDecor;
     this.unlockCarModel = null;
     this.biome = new Biome();
+    this.ponyMode = false;
 
     this.unlocked = false;
 
@@ -136,7 +138,9 @@ export class Game {
     }
     this.distance = 0;
     this._treeIdx = -1;
-    this.biome.reset();
+    this.biome.setPonyMode(this.ponyMode);
+    this.road.setPonyMode(this.ponyMode);
+    if (this.ponyDecor) this.ponyDecor.reset();
     this.ui.updateStars(0);
     this.ui.updateSpeed(1);
   }
@@ -185,17 +189,24 @@ export class Game {
     this.road.setBiome(biomeState);
     this.ui.updateBiome(biomeState.name);
 
-    const treeIdx = biomeState.name === 'Savanna' ? 1 : biomeState.name === 'Desert' ? 2 : 0;
-    if (treeIdx !== this._treeIdx) {
-      this._treeIdx = treeIdx;
-      this.trees.setModel(treeIdx);
-      this.houses.setEnabled(biomeState.name !== 'Desert');
+    if (this.ponyMode) {
+      if (this.ponyDecor) {
+        this.ponyDecor.setBiome(biomeState.name);
+        this.ponyDecor.update(delta, this.actualSpeed);
+      }
+    } else {
+      const treeIdx = biomeState.name === 'Savanna' ? 1 : biomeState.name === 'Desert' ? 2 : 0;
+      if (treeIdx !== this._treeIdx) {
+        this._treeIdx = treeIdx;
+        this.trees.setModel(treeIdx);
+        this.houses.setEnabled(biomeState.name !== 'Desert');
+      }
+      this.trees.update(delta, this.actualSpeed);
+      this.houses.update(delta, this.actualSpeed);
     }
 
     this.player.update(delta);
     this.traffic.update(delta, this.actualSpeed);
-    this.trees.update(delta, this.actualSpeed);
-    this.houses.update(delta, this.actualSpeed);
     this.stars.update(delta, this.actualSpeed);
     if (this.smoke) this.smoke.update(delta);
     this.road.update(this.actualSpeed, delta);

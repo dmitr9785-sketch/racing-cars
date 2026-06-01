@@ -1,0 +1,98 @@
+import * as THREE from 'three';
+
+const POOL_SIZE = 8;
+const SPAWN_Z = 35;
+const DESPAWN_Z = -2;
+
+export class PonyDecor {
+  constructor(flowerModel, flowerTwoModel, starModel, scene) {
+    this.scene = scene;
+    this.activePool = 0;
+    this.timeSinceSpawn = 2.0;
+
+    this.pools = [
+      this._buildPool([flowerModel, flowerTwoModel], 0.4),
+      this._buildPool([starModel], 0.6),
+    ];
+  }
+
+  _buildPool(models, baseScale) {
+    const pool = [];
+    for (let i = 0; i < POOL_SIZE; i++) {
+      const m = models[i % models.length];
+      if (!m) continue;
+      const mesh = m.clone();
+      const s = baseScale + Math.random() * baseScale * 0.5;
+      mesh.scale.setScalar(s);
+      mesh.traverse(c => {
+        if (c.isMesh) {
+          c.castShadow = false;
+          c.receiveShadow = false;
+        }
+      });
+      mesh.visible = false;
+      pool.push(mesh);
+    }
+    return pool;
+  }
+
+  setBiome(name) {
+    const idx = name === 'Pony-Sky' ? 1 : 0;
+    if (idx === this.activePool) return;
+    for (const obj of this.pools[this.activePool]) {
+      if (obj.visible) {
+        obj.visible = false;
+        this.scene.remove(obj);
+      }
+    }
+    this.activePool = idx;
+    this.timeSinceSpawn = 2.0;
+  }
+
+  get pool() {
+    return this.pools[this.activePool];
+  }
+
+  spawn() {
+    const obj = this.pool.find(o => !o.visible);
+    if (!obj) return;
+
+    const side = Math.random() < 0.5 ? -1 : 1;
+    const x = side * (12 + Math.random() * 8);
+    const z = SPAWN_Z + Math.random() * 20;
+
+    obj.position.set(x, 0, z);
+    obj.rotation.set(0, Math.random() * Math.PI * 2, 0);
+    obj.visible = true;
+    this.scene.add(obj);
+  }
+
+  update(delta, speed) {
+    this.timeSinceSpawn += delta;
+    if (this.timeSinceSpawn >= 2.0) {
+      this.spawn();
+      this.timeSinceSpawn = 0;
+    }
+
+    for (const obj of this.pool) {
+      if (!obj.visible) continue;
+      obj.position.z -= (1.5 + speed * 0.25) * delta;
+      if (obj.position.z < DESPAWN_Z) {
+        obj.visible = false;
+        this.scene.remove(obj);
+      }
+    }
+  }
+
+  reset() {
+    for (const pool of this.pools) {
+      for (const obj of pool) {
+        if (obj.visible) {
+          obj.visible = false;
+          this.scene.remove(obj);
+        }
+      }
+    }
+    this.activePool = 0;
+  }
+}

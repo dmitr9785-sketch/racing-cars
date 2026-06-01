@@ -9,6 +9,7 @@ import { Stars } from './Stars.js';
 import { UI } from './UI.js';
 import { Game } from './Game.js';
 import { Smoke } from './Smoke.js';
+import { PonyDecor } from './PonyDecor.js';
 
 async function init() {
   const ui = new UI();
@@ -57,6 +58,11 @@ async function init() {
   const smokeModel = loader.getSmokeModel();
   const smoke = new Smoke(smokeModel, sceneSetup.scene);
 
+  const flowerModel = loader.getPonyFlowerModel();
+  const flowerTwoModel = loader.getPonyFlowerTwoModel();
+  const ponyStarModel = loader.getPonyStarModel();
+  const ponyDecor = new PonyDecor(flowerModel, flowerTwoModel, ponyStarModel, sceneSetup.scene);
+
   const game = new Game(
     sceneSetup.scene,
     sceneSetup.camera,
@@ -68,7 +74,8 @@ async function init() {
     road,
     ui,
     sceneSetup,
-    smoke
+    smoke,
+    ponyDecor
   );
 
   const totalStars = parseInt(localStorage.getItem('highway_rush_stars') || '0', 10);
@@ -106,7 +113,9 @@ async function init() {
     game.setMode(ui.getSelectedMode());
     game.setPlayer(player);
     game.setUnlockCarModel(unlockCarModel);
-    traffic.setPonyMode(choice === 'pony');
+    const isPony = choice === 'pony';
+    traffic.setPonyMode(isPony);
+    game.ponyMode = isPony;
     game.start();
   });
 }
