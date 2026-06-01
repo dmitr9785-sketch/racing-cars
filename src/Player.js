@@ -23,6 +23,7 @@ export class Player {
     this.mesh.scale.setScalar(scale);
     this.mesh.position.set(this.targetX, 0, this.z);
     this.mesh.traverse(c => { if (c.isMesh) { c.castShadow = true; c.receiveShadow = true; } });
+    this._pitch = 0;
   }
 
   switchLane(direction) {
@@ -33,7 +34,7 @@ export class Player {
     this.targetX = this.lanePositions[newLane];
   }
 
-  update(delta) {
+  update(delta, gasMultiplier) {
     const dx = this.targetX - this.mesh.position.x;
     if (Math.abs(dx) > 0.01) {
       const step = this.switchSpeed * delta;
@@ -44,6 +45,10 @@ export class Player {
       this.mesh.position.x = this.targetX;
       this.mesh.rotation.z *= 0.9;
     }
+
+    const targetPitch = gasMultiplier > 1.05 ? -0.12 : gasMultiplier < 0.95 ? 0.08 : 0;
+    this._pitch += (targetPitch - this._pitch) * Math.min(1, delta * 5);
+    this.mesh.rotation.x = this._pitch;
   }
 
   getBox() {
