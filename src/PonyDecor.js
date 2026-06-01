@@ -17,7 +17,7 @@ export class PonyDecor {
 
     if (sunModel) {
       this._sunMesh = sunModel.clone();
-      this._sunMesh.scale.setScalar(0.5);
+      this._sunMesh.scale.setScalar(0.0025);
       this._sunMesh.traverse(c => {
         if (c.isMesh && c.material) {
           c.material.emissive = new THREE.Color(0xffaa44);
