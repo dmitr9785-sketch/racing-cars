@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 
-const POOL_SIZE = 12;
-const LIFETIME = 0.5;
-const GROW = 3;
+const POOL_SIZE = 20;
+const LIFETIME = 1.2;
+const GROW = 4;
 
 export class Smoke {
   constructor(model, scene) {
@@ -15,6 +15,7 @@ export class Smoke {
       mesh.visible = false;
       mesh.traverse(c => {
         if (c.isMesh && c.material) {
+          c.material.color.setHex(0xffffff);
           c.material.transparent = true;
           c.material.opacity = 0;
           c.material.depthWrite = false;
@@ -24,11 +25,11 @@ export class Smoke {
     }
   }
 
-  emit(x, y, z, side) {
+  emit(x, z, side) {
     const puff = this.pool.find(p => p.life <= 0);
     if (!puff) return;
 
-    puff.mesh.position.set(x + side * 0.3, y + 0.05, z - side * 0.2);
+    puff.mesh.position.set(x + side * 0.4, 0.05, z + 0.6);
     puff.mesh.scale.setScalar(0.01);
     puff.mesh.visible = true;
     puff.mesh.traverse(c => {

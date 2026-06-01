@@ -135,7 +135,7 @@ export class ModelLoader {
       roof.rotation.y = Math.PI / 4;
       group.add(roof);
     } else if (id === 'smoke') {
-      const puff = new THREE.Mesh(new THREE.SphereGeometry(0.5, 6, 6), new THREE.MeshStandardMaterial({ color: 0xcccccc, transparent: true, opacity: 0.6, roughness: 1, metalness: 0 }));
+      const puff = new THREE.Mesh(new THREE.SphereGeometry(0.5, 6, 6), new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.6, roughness: 1, metalness: 0 }));
       group.add(puff);
     } else if (id.startsWith('player') || id.startsWith('traffic')) {
       const geo = new THREE.BoxGeometry(1.8, 0.6, 3.6);

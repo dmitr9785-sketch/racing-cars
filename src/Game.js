@@ -82,8 +82,8 @@ export class Game {
           if (this.smoke && !this.traffic.isPony) {
             const px = this.player.mesh.position.x;
             const pz = this.player.mesh.position.z;
-            this.smoke.emit(px, 0, pz, 1);
-            this.smoke.emit(px, 0, pz, -1);
+            this.smoke.emit(px, pz, 1);
+            this.smoke.emit(px, pz, -1);
           }
         }
         if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
@@ -91,8 +91,8 @@ export class Game {
           if (this.smoke && !this.traffic.isPony) {
             const px = this.player.mesh.position.x;
             const pz = this.player.mesh.position.z;
-            this.smoke.emit(px, 0, pz, 1);
-            this.smoke.emit(px, 0, pz, -1);
+            this.smoke.emit(px, pz, 1);
+            this.smoke.emit(px, pz, -1);
           }
         }
         if (e.key === 'r' || e.key === 'R' || e.key === 'к' || e.key === 'К') {
