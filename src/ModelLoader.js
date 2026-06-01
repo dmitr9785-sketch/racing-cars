@@ -139,6 +139,24 @@ export class ModelLoader {
     } else if (id === 'smoke') {
       const puff = new THREE.Mesh(new THREE.SphereGeometry(0.5, 6, 6), new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.6, roughness: 1, metalness: 0 }));
       group.add(puff);
+    } else if (id === 'cactus') {
+      const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.2, 0.8, 6), new THREE.MeshStandardMaterial({ color: 0x44aa44, roughness: 0.9 }));
+      trunk.position.y = 0.4;
+      group.add(trunk);
+      const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 0.4, 6), new THREE.MeshStandardMaterial({ color: 0x44aa44, roughness: 0.9 }));
+      arm.position.set(0.2, 0.7, 0);
+      arm.rotation.z = -0.5;
+      group.add(arm);
+    } else if (id === 'piramide') {
+      const base = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.3, 0.4), new THREE.MeshStandardMaterial({ color: 0xccaa66, roughness: 0.9 }));
+      base.position.y = 0.15;
+      group.add(base);
+      const mid = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.2, 0.3), new THREE.MeshStandardMaterial({ color: 0xccaa66, roughness: 0.9 }));
+      mid.position.y = 0.4;
+      group.add(mid);
+      const top = new THREE.Mesh(new THREE.ConeGeometry(0.15, 0.2, 4), new THREE.MeshStandardMaterial({ color: 0xddbb77, roughness: 0.9 }));
+      top.position.y = 0.6;
+      group.add(top);
     } else if (id.startsWith('player') || id.startsWith('traffic')) {
       const geo = new THREE.BoxGeometry(1.8, 0.6, 3.6);
       const color = id.startsWith('player') ? 0x3388ff : 0x888888;
