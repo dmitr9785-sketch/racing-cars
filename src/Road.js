@@ -19,7 +19,7 @@ export class Road {
     this._createLaneMarkings();
     this._createBarriers();
     this._createEdgeMarkings();
-    this._createGrass();
+    this._createGrass(scene);
 
     scene.add(this.group);
   }
@@ -148,8 +148,9 @@ export class Road {
     }
   }
 
-  _createGrass() {
+  _createGrass(scene) {
     this._grassMats = [];
+    this._grassMeshes = [];
     for (const side of [-1, 1]) {
       const centerX = side * (ROAD_WIDTH / 2 + 15);
       const mat = new THREE.MeshStandardMaterial({ color: 0x4a8c3f, roughness: 1, metalness: 0 });
@@ -159,7 +160,8 @@ export class Road {
       mesh.rotation.x = -Math.PI / 2;
       mesh.position.set(centerX, -0.05, ROAD_LENGTH / 2 - 5);
       mesh.receiveShadow = true;
-      this.group.add(mesh);
+      scene.add(mesh);
+      this._grassMeshes.push(mesh);
     }
   }
 
@@ -171,6 +173,9 @@ export class Road {
     for (const mat of this._grassMats) {
       mat.color.copy(colors.grassColor);
     }
+    if (this._ponyGrassMat) {
+      this._ponyGrassMat.color.copy(colors.grassColor);
+    }
 
     this._barrierMat.color.copy(colors.barrierColor);
     this._postMat.color.copy(colors.postColor);
@@ -178,6 +183,23 @@ export class Road {
 
   setPonyMode(on) {
     this.group.visible = !on;
+    for (const mesh of this._grassMeshes) {
+      mesh.visible = !on;
+    }
+    if (on && !this._ponyGrass) {
+      const mat = new THREE.MeshStandardMaterial({ color: 0x6ab84a, roughness: 1, metalness: 0 });
+      this._ponyGrassMat = mat;
+      const geo = new THREE.PlaneGeometry(60, ROAD_LENGTH);
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.rotation.x = -Math.PI / 2;
+      mesh.position.set(0, -0.05, ROAD_LENGTH / 2 - 5);
+      mesh.receiveShadow = true;
+      this.scene.add(mesh);
+      this._ponyGrass = mesh;
+    }
+    if (this._ponyGrass) {
+      this._ponyGrass.visible = on;
+    }
   }
 
   update(speed, delta) {
