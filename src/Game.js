@@ -134,7 +134,7 @@ export class Game {
     } else {
       this.ui.updateScore(0);
     }
-    this.distance = 2000;
+    this.distance = 0;
     this._treeIdx = -1;
     this.biome.reset();
     this.ui.updateStars(0);
