@@ -4,7 +4,7 @@ const POOL_SIZE = 8;
 const SPAWN_Z = 35;
 const DESPAWN_Z = -2;
 
-const SUN_POS = new THREE.Vector3(2, 2, 8);
+const SUN_POS = new THREE.Vector3(0, 4, 10);
 
 export class PonyDecor {
   constructor(flowerModel, flowerTwoModel, starModel, sunModel, scene) {
@@ -14,18 +14,13 @@ export class PonyDecor {
     this._sunMesh = null;
     this._sunInScene = false;
 
-    if (sunModel) {
-      this._sunMesh = sunModel.clone();
-      this._sunMesh.position.copy(SUN_POS);
-      this._sunMesh.scale.setScalar(5);
-      this._sunMesh.traverse(c => {
-        if (c.isMesh && c.material) {
-          c.material.emissive = new THREE.Color(0xff8800);
-          c.material.emissiveIntensity = 3.0;
-        }
-      });
-      console.log('PonyDecor: sun mesh created, children:', this._sunMesh.children.length);
-    }
+    this._sunMesh = new THREE.Mesh(
+      new THREE.SphereGeometry(1, 16, 16),
+      new THREE.MeshStandardMaterial({ color: 0xff8800, emissive: 0xff4400, emissiveIntensity: 4.0 })
+    );
+    this._sunMesh.position.copy(SUN_POS);
+    this._sunMesh.scale.setScalar(2);
+    console.log('PonyDecor: sun mesh created');
 
     this.pools = [
       this._buildPool([flowerModel, flowerTwoModel], 0.027),
@@ -67,7 +62,6 @@ export class PonyDecor {
     if (idx === this.activePool && name !== 'Pony-Sky') return;
 
     if (idx === 1 && !this._sunInScene && this._sunMesh) {
-      console.log('PonyDecor: adding sun to scene at', this._sunMesh.position.toArray());
       this.scene.add(this._sunMesh);
       this._sunInScene = true;
     } else if (idx === 0 && this._sunInScene && this._sunMesh) {
