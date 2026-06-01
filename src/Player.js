@@ -34,7 +34,7 @@ export class Player {
     this.targetX = this.lanePositions[newLane];
   }
 
-  update(delta, gasMultiplier) {
+  update(delta, gasHeld, brakeHeld) {
     const dx = this.targetX - this.mesh.position.x;
     if (Math.abs(dx) > 0.01) {
       const step = this.switchSpeed * delta;
@@ -46,7 +46,7 @@ export class Player {
       this.mesh.rotation.z *= 0.9;
     }
 
-    const targetPitch = gasMultiplier > 1.05 ? -0.12 : gasMultiplier < 0.95 ? 0.08 : 0;
+    const targetPitch = gasHeld ? -0.12 : brakeHeld ? 0.08 : 0;
     this._pitch += (targetPitch - this._pitch) * Math.min(1, delta * 5);
     this.mesh.rotation.x = this._pitch;
   }

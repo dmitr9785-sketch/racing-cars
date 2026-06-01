@@ -205,7 +205,7 @@ export class Game {
       this.houses.update(delta, this.actualSpeed);
     }
 
-    this.player.update(delta, this.gasMultiplier);
+    this.player.update(delta, this.gasHeld, this.brakeHeld);
     this.traffic.update(delta, this.actualSpeed);
     this.stars.update(delta, this.actualSpeed);
     if (this.smoke) this.smoke.update(delta);
