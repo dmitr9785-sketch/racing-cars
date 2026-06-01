@@ -4,7 +4,7 @@ const POOL_SIZE = 8;
 const SPAWN_Z = 35;
 const DESPAWN_Z = -2;
 
-const SUN_OFFSET = new THREE.Vector3(8, 6, 5);
+const SUN_OFFSET = new THREE.Vector3(4, 10, 0);
 
 export class PonyDecor {
   constructor(flowerModel, flowerTwoModel, starModel, sunModel, scene, camera) {
@@ -17,7 +17,7 @@ export class PonyDecor {
 
     if (sunModel) {
       this._sunMesh = sunModel.clone();
-      this._sunMesh.scale.setScalar(0.0025);
+      this._sunMesh.scale.setScalar(3);
       this._sunMesh.traverse(c => {
         if (c.isMesh && c.material) {
           c.material.emissive = new THREE.Color(0xffaa44);
