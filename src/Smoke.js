@@ -39,6 +39,8 @@ export class Smoke {
     });
     this.scene.add(puff.mesh);
     puff.life = LIFETIME;
+    puff.vx = side * 0.5;
+    puff.vz = 1.5;
   }
 
   update(delta) {
@@ -48,6 +50,8 @@ export class Smoke {
       const t = 1 - puff.life / LIFETIME;
       const s = 0.01 + t * GROW;
       puff.mesh.scale.setScalar(s);
+      puff.mesh.position.x += puff.vx * delta;
+      puff.mesh.position.z += puff.vz * delta;
       puff.mesh.traverse(c => {
         if (c.isMesh && c.material) {
           c.material.opacity = 0.7 * (1 - t);
