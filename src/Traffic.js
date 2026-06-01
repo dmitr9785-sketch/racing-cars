@@ -98,24 +98,35 @@ export class Traffic {
     const car = invisible[Math.floor(Math.random() * invisible.length)];
     console.log('Spawning', car.userData.modelId, 'poolIdx', this.cars.indexOf(car));
 
-    const lane = Math.floor(Math.random() * this.lanePositions.length);
-    const x = this.lanePositions[lane];
+    let lane = Math.floor(Math.random() * this.lanePositions.length);
+    let x = this.lanePositions[lane];
     let z = SPAWN_Z + Math.random() * 15;
     let attempts = 0;
 
-    while (attempts < 5) {
-      let blocked = false;
+    while (attempts < 10) {
+      const occupiedLanes = new Set();
       for (const other of this.cars) {
         if (!other.visible || other === car) continue;
-        if (Math.abs(other.position.x - x) < 2 && Math.abs(other.position.z - z) < 5) {
-          blocked = true;
-          break;
+        if (Math.abs(other.position.z - z) >= 5) continue;
+        for (let l = 0; l < this.lanePositions.length; l++) {
+          if (Math.abs(other.position.x - this.lanePositions[l]) < 2) {
+            occupiedLanes.add(l);
+          }
         }
       }
-      if (!blocked) break;
+      if (occupiedLanes.size < this.lanePositions.length) {
+        const freeLanes = [];
+        for (let l = 0; l < this.lanePositions.length; l++) {
+          if (!occupiedLanes.has(l)) freeLanes.push(l);
+        }
+        lane = freeLanes[Math.floor(Math.random() * freeLanes.length)];
+        x = this.lanePositions[lane];
+        break;
+      }
       z = SPAWN_Z + Math.random() * 15;
       attempts++;
     }
+    if (attempts >= 10) return;
 
     const box = new THREE.Box3().setFromObject(car);
     if (box.min.x === Infinity) console.warn('Traffic: empty bounding box for', car.userData.modelId);
