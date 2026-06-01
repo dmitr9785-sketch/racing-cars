@@ -185,7 +185,7 @@ export class Game {
     this.road.setBiome(biomeState);
     this.ui.updateBiome(biomeState.name);
 
-    const treeIdx = biomeState.name === 'Savanna' ? 1 : 0;
+    const treeIdx = biomeState.name === 'Savanna' ? 1 : biomeState.name === 'Desert' ? 2 : 0;
     if (treeIdx !== this._treeIdx) {
       this._treeIdx = treeIdx;
       this.trees.setModel(treeIdx);

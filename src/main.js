@@ -39,7 +39,9 @@ async function init() {
   const traffic = new Traffic(trafficModels, trafficModelIds, sceneSetup.scene, ponyTrafficModels);
 
   const treeModel = loader.getTreeModel();
-  const trees = new Trees(treeModel, sceneSetup.scene);
+  const cactusModel = loader.getCactusModel();
+  const piramideModel = loader.getPiramideModel();
+  const trees = new Trees([treeModel, cactusModel, piramideModel], sceneSetup.scene);
 
   const houseModels = loader.getHouseModels();
   const houses = new Houses(houseModels, sceneSetup.scene);

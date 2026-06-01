@@ -5,29 +5,17 @@ const DESPAWN_Z = -2;
 const POOL_SIZE = 8;
 const ROAD_HALF = 7;
 
-function buildFallbackTree() {
-  const group = new THREE.Group();
-  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.7, 2, 4), new THREE.MeshStandardMaterial({ color: 0x664422, roughness: 1 }));
-  trunk.position.y = 1;
-  group.add(trunk);
-  const crown = new THREE.Mesh(new THREE.ConeGeometry(2, 2.5, 6), new THREE.MeshStandardMaterial({ color: 0xdd8833, roughness: 0.9 }));
-  crown.position.y = 3;
-  group.add(crown);
-  return group;
-}
-
 export class Trees {
-  constructor(treeModel, scene) {
+  constructor(models, scene) {
     this.scene = scene;
     this.pools = [];
     this.activePool = 0;
     this.timeSinceSpawn = 2.0;
 
-    const models = [treeModel, buildFallbackTree()];
     for (let m = 0; m < models.length; m++) {
       const pool = [];
-      const baseScale = m === 0 ? 0.0075 : 0.015;
-      const scaleRange = m === 0 ? 0.00375 : 0.0075;
+      const baseScale = SCALES[m] || 0.015;
+      const scaleRange = baseScale * 0.5;
       for (let i = 0; i < POOL_SIZE; i++) {
         const mesh = models[m].clone();
         const s = baseScale + Math.random() * scaleRange;
