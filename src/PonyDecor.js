@@ -4,11 +4,21 @@ const POOL_SIZE = 8;
 const SPAWN_Z = 35;
 const DESPAWN_Z = -2;
 
+const SUN_POS = new THREE.Vector3(0, 6, -30);
+
 export class PonyDecor {
-  constructor(flowerModel, flowerTwoModel, starModel, scene) {
+  constructor(flowerModel, flowerTwoModel, starModel, sunModel, scene) {
     this.scene = scene;
     this.activePool = 0;
     this.timeSinceSpawn = 2.0;
+    this._sunMesh = null;
+    this._sunInScene = false;
+
+    if (sunModel) {
+      this._sunMesh = sunModel.clone();
+      this._sunMesh.position.copy(SUN_POS);
+      this._sunMesh.scale.setScalar(1.5);
+    }
 
     this.pools = [
       this._buildPool([flowerModel, flowerTwoModel], 0.027),
@@ -47,6 +57,16 @@ export class PonyDecor {
 
   setBiome(name) {
     const idx = name === 'Pony-Sky' ? 1 : 0;
+    if (idx === this.activePool && name !== 'Pony-Sky') return;
+
+    if (idx === 1 && !this._sunInScene && this._sunMesh) {
+      this.scene.add(this._sunMesh);
+      this._sunInScene = true;
+    } else if (idx === 0 && this._sunInScene && this._sunMesh) {
+      this.scene.remove(this._sunMesh);
+      this._sunInScene = false;
+    }
+
     if (idx === this.activePool) return;
     for (const obj of this.pools[this.activePool]) {
       if (obj.visible) {
@@ -101,6 +121,10 @@ export class PonyDecor {
           this.scene.remove(obj);
         }
       }
+    }
+    if (this._sunInScene && this._sunMesh) {
+      this.scene.remove(this._sunMesh);
+      this._sunInScene = false;
     }
     this.activePool = 0;
   }
