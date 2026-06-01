@@ -104,13 +104,6 @@ async function init() {
     }
 
     const player = new Player(model, playerScale);
-    if (choice === 'race') {
-      player.mesh.traverse(c => {
-        if (c.isMesh && c.material && c.material.color) {
-          c.material.color.setHex(0xcc2222);
-        }
-      });
-    }
     game.setMode(ui.getSelectedMode());
     game.setPlayer(player);
     game.setUnlockCarModel(unlockCarModel);

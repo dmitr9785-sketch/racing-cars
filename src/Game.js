@@ -271,14 +271,6 @@ export class Game {
     this.state = 'gameover';
     this.traffic.speed = 0;
 
-    if (hitMesh) {
-      hitMesh.traverse(child => {
-        if (child.isMesh && child.material && child.material.color) {
-          child.material.color.setHex(0xff0000);
-        }
-      });
-    }
-
     const prev = parseInt(localStorage.getItem('highway_rush_stars') || '0', 10);
     const total = prev + this.starCount;
     localStorage.setItem('highway_rush_stars', total.toString());
