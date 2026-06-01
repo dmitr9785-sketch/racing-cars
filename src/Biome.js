@@ -54,7 +54,7 @@ const BIOMES = [
   },
   {
     name: 'Winter',
-    distanceStart: 3200,
+    distanceStart: 5000,
     roadColor: new THREE.Color(0x8a8a9a),
     grassColor: new THREE.Color(0xddeeff),
     grass2Color: new THREE.Color(0xcceeff),
@@ -71,7 +71,7 @@ const BIOMES = [
   },
   {
     name: 'Bridge',
-    distanceStart: 4400,
+    distanceStart: 6500,
     roadColor: new THREE.Color(0x5a6a7a),
     grassColor: new THREE.Color(0x2a6a9a),
     grass2Color: new THREE.Color(0x1a5a8a),
@@ -88,7 +88,7 @@ const BIOMES = [
   },
   {
     name: 'Highway Night',
-    distanceStart: 5600,
+    distanceStart: 8000,
     roadColor: new THREE.Color(0x2a2a3a),
     grassColor: new THREE.Color(0x2a4a2a),
     grass2Color: new THREE.Color(0x1a3a1a),
@@ -105,7 +105,7 @@ const BIOMES = [
   },
 ];
 
-const CYCLE_LENGTH = 5600;
+const CYCLE_LENGTH = 9800;
 
 function lerpColor(a, b, t) {
   const c = new THREE.Color();
