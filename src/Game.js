@@ -189,6 +189,7 @@ export class Game {
     if (treeIdx !== this._treeIdx) {
       this._treeIdx = treeIdx;
       this.trees.setModel(treeIdx);
+      this.houses.setEnabled(biomeState.name !== 'Desert');
     }
 
     this.player.update(delta);

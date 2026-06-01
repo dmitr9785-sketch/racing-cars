@@ -11,6 +11,7 @@ export class Houses {
     this.scene = scene;
     this.houseModels = houseModels;
     this.houses = [];
+    this.enabled = true;
 
     for (let i = 0; i < POOL_SIZE; i++) {
       const base = houseModels[i % houseModels.length];
@@ -43,8 +44,20 @@ export class Houses {
     this.scene.add(house);
   }
 
+  setEnabled(on) {
+    this.enabled = on;
+    if (!on) {
+      for (const house of this.houses) {
+        if (house.visible) {
+          house.visible = false;
+          this.scene.remove(house);
+        }
+      }
+    }
+  }
+
   update(delta, speed) {
-    if (Math.random() < 0.02) this.spawn();
+    if (this.enabled && Math.random() < 0.02) this.spawn();
 
     for (const house of this.houses) {
       if (!house.visible) continue;
