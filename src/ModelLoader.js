@@ -27,6 +27,7 @@ const MODEL_LIST = [
   { id: 'tree', file: 'assets/models/low_poly_tree.glb' },
   { id: 'star', file: 'assets/models/shining_star_low_poly.glb' },
   { id: 'unlock_car', file: 'assets/models/mazda_rx7_veilside_stylized_toon.glb' },
+  { id: 'smoke', file: 'assets/models/smoke.glb' },
 ];
 
 function fixMatColors(obj) {
@@ -62,7 +63,7 @@ export class ModelLoader {
           entry.file,
           (gltf) => {
             const model = gltf.scene;
-            const skip = entry.id === 'pony' || entry.id.startsWith('pony_traffic') || entry.id.startsWith('house_') || entry.id === 'tree' || entry.id === 'star' || entry.id === 'unlock_car';
+            const skip = entry.id === 'pony' || entry.id.startsWith('pony_traffic') || entry.id.startsWith('house_') || entry.id === 'tree' || entry.id === 'star' || entry.id === 'unlock_car' || entry.id === 'smoke';
             if (!skip) {
               model.scale.setScalar(0.8);
               model.traverse((child) => {
@@ -133,6 +134,9 @@ export class ModelLoader {
       roof.position.y = 1.0;
       roof.rotation.y = Math.PI / 4;
       group.add(roof);
+    } else if (id === 'smoke') {
+      const puff = new THREE.Mesh(new THREE.SphereGeometry(0.5, 6, 6), new THREE.MeshStandardMaterial({ color: 0xcccccc, transparent: true, opacity: 0.6, roughness: 1, metalness: 0 }));
+      group.add(puff);
     } else if (id.startsWith('player') || id.startsWith('traffic')) {
       const geo = new THREE.BoxGeometry(1.8, 0.6, 3.6);
       const color = id.startsWith('player') ? 0x3388ff : 0x888888;
@@ -200,5 +204,9 @@ export class ModelLoader {
 
   getUnlockCarModel() {
     return this.models['unlock_car'] ? this.models['unlock_car'].clone() : null;
+  }
+
+  getSmokeModel() {
+    return this.models['smoke'] ? this.models['smoke'].clone() : null;
   }
 }

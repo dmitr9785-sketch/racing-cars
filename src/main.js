@@ -8,6 +8,7 @@ import { Houses } from './Houses.js';
 import { Stars } from './Stars.js';
 import { UI } from './UI.js';
 import { Game } from './Game.js';
+import { Smoke } from './Smoke.js';
 
 async function init() {
   const ui = new UI();
@@ -51,6 +52,9 @@ async function init() {
   const ponyModel = loader.getPonyModel();
   const playerModelRace = loader.getPlayerModel();
 
+  const smokeModel = loader.getSmokeModel();
+  const smoke = new Smoke(smokeModel, sceneSetup.scene);
+
   const game = new Game(
     sceneSetup.scene,
     sceneSetup.camera,
@@ -61,7 +65,8 @@ async function init() {
     stars,
     road,
     ui,
-    sceneSetup
+    sceneSetup,
+    smoke
   );
 
   const totalStars = parseInt(localStorage.getItem('highway_rush_stars') || '0', 10);

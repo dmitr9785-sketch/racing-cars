@@ -3,7 +3,7 @@ import { checkCollision } from './Collision.js';
 import { Biome } from './Biome.js';
 
 export class Game {
-  constructor(scene, camera, renderer, traffic, trees, houses, stars, road, ui, sceneSetup) {
+  constructor(scene, camera, renderer, traffic, trees, houses, stars, road, ui, sceneSetup, smoke) {
     this.scene = scene;
     this.camera = camera;
     this.renderer = renderer;
@@ -15,6 +15,7 @@ export class Game {
     this.stars = stars;
     this.road = road;
     this.ui = ui;
+    this.smoke = smoke;
     this.unlockCarModel = null;
     this.biome = new Biome();
 
@@ -78,9 +79,21 @@ export class Game {
       if (pressed) {
         if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
           this.player.switchLane(1);
+          if (this.smoke && !this.traffic.isPony) {
+            const px = this.player.mesh.position.x;
+            const pz = this.player.mesh.position.z;
+            this.smoke.emit(px, 0, pz, 1);
+            this.smoke.emit(px, 0, pz, -1);
+          }
         }
         if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
           this.player.switchLane(-1);
+          if (this.smoke && !this.traffic.isPony) {
+            const px = this.player.mesh.position.x;
+            const pz = this.player.mesh.position.z;
+            this.smoke.emit(px, 0, pz, 1);
+            this.smoke.emit(px, 0, pz, -1);
+          }
         }
         if (e.key === 'r' || e.key === 'R' || e.key === 'к' || e.key === 'К') {
           if (this.state === 'gameover') this.start();
@@ -183,6 +196,7 @@ export class Game {
     this.trees.update(delta, this.actualSpeed);
     this.houses.update(delta, this.actualSpeed);
     this.stars.update(delta, this.actualSpeed);
+    if (this.smoke) this.smoke.update(delta);
     this.road.update(this.actualSpeed, delta);
 
     const playerBox = this.player.getBox();
