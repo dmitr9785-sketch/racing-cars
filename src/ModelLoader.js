@@ -28,7 +28,7 @@ const MODEL_LIST = [
   { id: 'star', file: 'assets/models/shining_star_low_poly.glb' },
   { id: 'unlock_car', file: 'assets/models/mazda_rx7_veilside_stylized_toon.glb' },
   { id: 'smoke', file: 'assets/models/smoke.glb' },
-  { id: 'cactus', file: 'assets/models/cactus.glb' },
+  { id: 'cactus', file: 'assets/models/cactus_low_poly.glb' },
   { id: 'piramide', file: 'assets/models/piramide.glb' },
 ];
 
