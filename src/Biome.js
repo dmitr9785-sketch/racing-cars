@@ -137,8 +137,8 @@ const PONY_BIOMES = [
     hemiSkyColor: new THREE.Color(0x080820),
     hemiGroundColor: new THREE.Color(0x050510),
     sunColor: new THREE.Color(0x224488),
-    fogNear: 10,
-    fogFar: 25,
+    fogNear: 8,
+    fogFar: 30,
   },
 ];
 

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 const POOL_SIZE = 8;
-const SPAWN_Z = 35;
+const SPAWN_Z = 15;
 const DESPAWN_Z = -2;
 
 const SUN_OFFSET = new THREE.Vector3(4, 10, 0);
@@ -26,9 +26,10 @@ export class PonyDecor {
       });
     }
 
+    const starForPony = starModel || this._makeStarFallback();
     this.pools = [
       this._buildPool([flowerModel, flowerTwoModel], 0.027),
-      this._buildPool([starModel], 0.6),
+      this._buildPool([starForPony], 0.6),
     ];
 
     for (const obj of this.pools[1]) {
@@ -59,6 +60,14 @@ export class PonyDecor {
       pool.push(mesh);
     }
     return pool;
+  }
+
+  _makeStarFallback() {
+    const star = new THREE.Mesh(
+      new THREE.OctahedronGeometry(0.5, 0),
+      new THREE.MeshStandardMaterial({ color: 0xffdd44, emissive: 0xffaa00, emissiveIntensity: 1.5 })
+    );
+    return star;
   }
 
   setBiome(name) {
