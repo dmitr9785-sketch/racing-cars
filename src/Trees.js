@@ -4,7 +4,7 @@ const SPAWN_Z = 35;
 const DESPAWN_Z = -2;
 const POOL_SIZE = 8;
 const ROAD_HALF = 7;
-const SCALES = [0.0075, 0.5, 0.5];
+const SCALES = [0.0075, 0.5, 5];
 
 export class Trees {
   constructor(models, scene) {
@@ -55,7 +55,7 @@ export class Trees {
     if (!tree) return;
 
     const side = Math.random() < 0.5 ? -1 : 1;
-    const x = side * (ROAD_HALF + 3 + Math.random() * 5);
+    const x = side * (ROAD_HALF + 5 + Math.random() * 6);
     const z = SPAWN_Z + Math.random() * 20;
     const rot = Math.random() * Math.PI * 2;
 
