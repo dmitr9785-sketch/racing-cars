@@ -62,7 +62,7 @@ async function init() {
   const flowerTwoModel = loader.getPonyFlowerTwoModel();
   const ponyStarModel = loader.getPonyStarModel();
   const ponySunModel = loader.getPonySunModel();
-  const ponyDecor = new PonyDecor(flowerModel, flowerTwoModel, ponyStarModel, ponySunModel, sceneSetup.scene);
+  const ponyDecor = new PonyDecor(flowerModel, flowerTwoModel, ponyStarModel, ponySunModel, sceneSetup.scene, sceneSetup.camera);
 
   const game = new Game(
     sceneSetup.scene,

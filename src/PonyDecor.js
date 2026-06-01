@@ -4,23 +4,27 @@ const POOL_SIZE = 8;
 const SPAWN_Z = 35;
 const DESPAWN_Z = -2;
 
-const SUN_POS = new THREE.Vector3(0, 4, 10);
+const SUN_OFFSET = new THREE.Vector3(8, 6, 5);
 
 export class PonyDecor {
-  constructor(flowerModel, flowerTwoModel, starModel, sunModel, scene) {
+  constructor(flowerModel, flowerTwoModel, starModel, sunModel, scene, camera) {
     this.scene = scene;
+    this.camera = camera;
     this.activePool = 0;
     this.timeSinceSpawn = 2.0;
     this._sunMesh = null;
     this._sunInScene = false;
 
-    this._sunMesh = new THREE.Mesh(
-      new THREE.SphereGeometry(1, 16, 16),
-      new THREE.MeshStandardMaterial({ color: 0xff8800, emissive: 0xff4400, emissiveIntensity: 4.0 })
-    );
-    this._sunMesh.position.copy(SUN_POS);
-    this._sunMesh.scale.setScalar(2);
-    console.log('PonyDecor: sun mesh created');
+    if (sunModel) {
+      this._sunMesh = sunModel.clone();
+      this._sunMesh.scale.setScalar(0.5);
+      this._sunMesh.traverse(c => {
+        if (c.isMesh && c.material) {
+          c.material.emissive = new THREE.Color(0xffaa44);
+          c.material.emissiveIntensity = 1.5;
+        }
+      });
+    }
 
     this.pools = [
       this._buildPool([flowerModel, flowerTwoModel], 0.027),
@@ -61,7 +65,8 @@ export class PonyDecor {
     const idx = name === 'Pony-Sky' ? 1 : 0;
     if (idx === this.activePool && name !== 'Pony-Sky') return;
 
-    if (idx === 1 && !this._sunInScene && this._sunMesh) {
+    if (idx === 1 && !this._sunInScene && this._sunMesh && this.camera) {
+      this._sunMesh.position.copy(this.camera.position).add(SUN_OFFSET);
       this.scene.add(this._sunMesh);
       this._sunInScene = true;
     } else if (idx === 0 && this._sunInScene && this._sunMesh) {
@@ -105,11 +110,8 @@ export class PonyDecor {
       this.timeSinceSpawn = 0;
     }
 
-    if (this._sunMesh && this._sunInScene) {
-      this._sunMesh.position.z -= (1.5 + speed * 0.25) * delta;
-      if (this._sunMesh.position.z < DESPAWN_Z) {
-        this._sunMesh.position.z = 30;
-      }
+    if (this._sunMesh && this._sunInScene && this.camera) {
+      this._sunMesh.position.copy(this.camera.position).add(SUN_OFFSET);
     }
 
     for (const obj of this.pool) {

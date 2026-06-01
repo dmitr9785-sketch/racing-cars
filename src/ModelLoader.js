@@ -33,7 +33,7 @@ const MODEL_LIST = [
   { id: 'pony_flower', file: 'assets/models/low_poly_flowers.glb' },
   { id: 'pony_flower2', file: 'assets/models/low_poly_flowers(1).glb' },
   { id: 'pony_star', file: 'assets/models/star for pony .glb' },
-  { id: 'pony_sun', file: 'assets/models/cloud__sun_lowpoly.glb' },
+  { id: 'pony_sun', file: 'assets/models/low_poly_sun.glb' },
 ];
 
 function fixMatColors(obj) {
