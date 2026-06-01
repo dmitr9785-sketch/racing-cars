@@ -72,6 +72,11 @@ export class Traffic {
     this.ponyPool = ponyModels && ponyModels.length ? _buildPool(ponyModels, null, scene, false, 2) : [];
     this.isPony = false;
     this.cars = this.carPool;
+    this._playerLane = 1;
+  }
+
+  setPlayerLane(lane) {
+    this._playerLane = lane;
   }
 
   setPonyMode(on) {
@@ -169,8 +174,39 @@ export class Traffic {
       if (car.position.z < DESPAWN_Z) {
         car.visible = false;
         this.scene.remove(car);
-        console.log('Despawned', car.userData.modelId);
       }
+    }
+
+    const visible = this.cars.filter(c => c.visible);
+    for (let i = 0; i < visible.length; i++) {
+      const a = visible[i];
+      if (!a.visible) continue;
+      const group = [a];
+      for (let j = i + 1; j < visible.length; j++) {
+        const b = visible[j];
+        if (!b.visible) continue;
+        if (Math.abs(a.position.z - b.position.z) < 6) group.push(b);
+      }
+      const occupiedLanes = new Set();
+      for (const c of group) {
+        for (let l = 0; l < this.lanePositions.length; l++) {
+          if (Math.abs(c.position.x - this.lanePositions[l]) < 2) occupiedLanes.add(l);
+        }
+      }
+      if (occupiedLanes.size >= this.lanePositions.length) {
+        const playerLane = this._playerLane !== undefined ? this._playerLane : 1;
+        const toRemove = group.filter(c => Math.abs(c.position.x - this.lanePositions[playerLane]) < 2);
+        if (toRemove.length > 0) {
+          const car = toRemove[0];
+          car.visible = false;
+          this.scene.remove(car);
+        } else {
+          const car = group[group.length - 1];
+          car.visible = false;
+          this.scene.remove(car);
+        }
+      }
+    }
     }
   }
 

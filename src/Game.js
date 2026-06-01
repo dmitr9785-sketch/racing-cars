@@ -192,6 +192,7 @@ export class Game {
     }
 
     this.player.update(delta);
+    this.traffic.setPlayerLane(this.player.currentLane);
     this.traffic.update(delta, this.actualSpeed);
     this.trees.update(delta, this.actualSpeed);
     this.houses.update(delta, this.actualSpeed);
