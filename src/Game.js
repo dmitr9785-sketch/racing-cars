@@ -189,7 +189,7 @@ export class Game {
 
   _update(delta) {
     this.timeElapsed += delta;
-    this.score = this.timeElapsed;
+    this.score = this.timeElapsed * 100;
     this.baseSpeed = 1 + this.timeElapsed * 0.08;
 
     if (this.gasHeld) {
@@ -318,7 +318,8 @@ export class Game {
     saveStars(total);
 
     setTimeout(() => {
-      this.ui.showGameOver(this.score, this.starCount, this.mode, reason);
+      const displayScore = this.mode === 'stars' ? this.timeElapsed : this.score;
+      this.ui.showGameOver(displayScore, this.starCount, this.mode, reason);
     }, 400);
   }
 }
