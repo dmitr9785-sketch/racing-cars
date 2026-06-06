@@ -122,15 +122,13 @@ export class TouchControls {
     const c = document.createElement('div');
     c.id = 'touch-buttons';
     c.innerHTML = `
-      <div class="tb-left">
+      <div class="tb-half tb-half-left">
         <button class="tb-btn tb-btn-left" data-dir="left">&#8592;</button>
-      </div>
-      <div class="tb-right">
         <button class="tb-btn tb-btn-right" data-dir="right">&#8594;</button>
       </div>
-      <div class="tb-pedals">
-        <button class="tb-btn tb-brake">ТОРМОЗ</button>
+      <div class="tb-half tb-half-right">
         <button class="tb-btn tb-gas">ГАЗ</button>
+        <button class="tb-btn tb-brake">ТОРМОЗ</button>
       </div>
     `;
     document.body.appendChild(c);

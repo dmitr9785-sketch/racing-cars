@@ -134,11 +134,18 @@ canvas { display: block; touch-action: none; }
 }
 #touch-buttons > * { pointer-events: auto; }
 
-.tb-left, .tb-right {
-  position: absolute; top: 50%; transform: translateY(-50%);
+.tb-half {
+  position: absolute; top: 0; bottom: 0;
+  display: flex; align-items: center; justify-content: center;
 }
-.tb-left { left: 4vw; }
-.tb-right { right: 4vw; }
+.tb-half-left {
+  left: 0; width: 50vw;
+  flex-direction: row; gap: clamp(8px, 2vw, 16px);
+}
+.tb-half-right {
+  right: 0; width: 50vw;
+  flex-direction: column; gap: clamp(12px, 3vh, 24px);
+}
 .tb-btn {
   width: clamp(48px, 10vw, 64px); height: clamp(48px, 10vw, 64px);
   border-radius: 50%; border: none;
@@ -150,31 +157,14 @@ canvas { display: block; touch-action: none; }
 }
 .tb-btn:active { background: rgba(255,255,255,0.3); }
 
-.tb-pedals {
-  position: absolute; bottom: clamp(16px, 4vh, 30px);
-  left: 50%; transform: translateX(-50%);
-  display: flex; gap: clamp(12px, 4vw, 24px);
+.tb-half-right .tb-btn {
+  width: clamp(72px, 16vw, 100px); height: clamp(44px, 8vh, 56px);
+  border-radius: 12px; font-size: clamp(12px, 2.5vw, 16px);
 }
-.tb-gas {
-  width: clamp(72px, 18vw, 100px); height: clamp(44px, 8vh, 56px);
-  border-radius: 12px; border: none;
-  background: rgba(0,200,80,0.4); color: #fff;
-  font-size: clamp(12px, 2.5vw, 16px); font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; user-select: none;
-  -webkit-tap-highlight-color: transparent;
-}
-.tb-gas:active { background: rgba(0,200,80,0.7); }
-.tb-brake {
-  width: clamp(72px, 18vw, 100px); height: clamp(44px, 8vh, 56px);
-  border-radius: 12px; border: none;
-  background: rgba(200,40,40,0.4); color: #fff;
-  font-size: clamp(12px, 2.5vw, 16px); font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; user-select: none;
-  -webkit-tap-highlight-color: transparent;
-}
-.tb-brake:active { background: rgba(200,40,40,0.7); }
+.tb-half-right .tb-gas { background: rgba(0,200,80,0.4); }
+.tb-half-right .tb-gas:active { background: rgba(0,200,80,0.7); }
+.tb-half-right .tb-brake { background: rgba(200,40,40,0.4); }
+.tb-half-right .tb-brake:active { background: rgba(200,40,40,0.7); }
 
 /* ---- Fullscreen Button ---- */
 #fs-btn {
