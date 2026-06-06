@@ -103,10 +103,10 @@ export class Game {
       }
       if (pressed) {
         if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
-          this._switchLane(-1);
+          this._switchLane(1);
         }
         if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
-          this._switchLane(1);
+          this._switchLane(-1);
         }
         if (e.key === 'r' || e.key === 'R' || e.key === 'к' || e.key === 'К') {
           if (this.state === 'gameover') this.start();
