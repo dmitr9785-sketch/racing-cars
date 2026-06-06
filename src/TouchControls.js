@@ -143,12 +143,12 @@ export class TouchControls {
 
     this._leftBtn.addEventListener('touchstart', (e) => {
       e.preventDefault();
-      this.game._switchLane(1);
+      this.game._switchLane(-1);
     }, { passive: false });
 
     this._rightBtn.addEventListener('touchstart', (e) => {
       e.preventDefault();
-      this.game._switchLane(-1);
+      this.game._switchLane(1);
     }, { passive: false });
 
     this._gasBtn.addEventListener('touchstart', (e) => {
