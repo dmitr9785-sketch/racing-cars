@@ -96,7 +96,7 @@ export class TouchControls {
     const dx = t.clientX - this._startX;
     if (!this._swipeTriggered && Math.abs(dx) > 30) {
       this._swipeTriggered = true;
-      this.game._switchLane(dx > 0 ? 1 : -1);
+      this.game._switchLane(dx > 0 ? -1 : 1);
     }
   }
 
@@ -143,12 +143,12 @@ export class TouchControls {
 
     this._leftBtn.addEventListener('touchstart', (e) => {
       e.preventDefault();
-      this.game._switchLane(-1);
+      this.game._switchLane(1);
     }, { passive: false });
 
     this._rightBtn.addEventListener('touchstart', (e) => {
       e.preventDefault();
-      this.game._switchLane(1);
+      this.game._switchLane(-1);
     }, { passive: false });
 
     this._gasBtn.addEventListener('touchstart', (e) => {
