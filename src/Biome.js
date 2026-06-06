@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 const BIOMES = [
   {
-    name: 'Highway',
+    name: 'Трасса',
     distanceStart: 0,
     roadColor: new THREE.Color(0x3a3a4a),
     grassColor: new THREE.Color(0x4a8c3f),
@@ -19,7 +19,7 @@ const BIOMES = [
     fogFar: 45,
   },
   {
-    name: 'Savanna',
+    name: 'Саванна',
     distanceStart: 800,
     roadColor: new THREE.Color(0x6a6a4a),
     grassColor: new THREE.Color(0x8a9a4a),
@@ -36,7 +36,7 @@ const BIOMES = [
     fogFar: 40,
   },
   {
-    name: 'Desert',
+    name: 'Пустыня',
     distanceStart: 2000,
     roadColor: new THREE.Color(0xc4a46a),
     grassColor: new THREE.Color(0xd4b87a),
@@ -53,7 +53,7 @@ const BIOMES = [
     fogFar: 38,
   },
   {
-    name: 'Winter',
+    name: 'Зима',
     distanceStart: 5000,
     roadColor: new THREE.Color(0x8a8a9a),
     grassColor: new THREE.Color(0xddeeff),
@@ -70,7 +70,7 @@ const BIOMES = [
     fogFar: 42,
   },
   {
-    name: 'Bridge',
+    name: 'Мост',
     distanceStart: 6500,
     roadColor: new THREE.Color(0x5a6a7a),
     grassColor: new THREE.Color(0x2a6a9a),
@@ -87,7 +87,7 @@ const BIOMES = [
     fogFar: 55,
   },
   {
-    name: 'Highway Night',
+    name: 'Ночная трасса',
     distanceStart: 8000,
     roadColor: new THREE.Color(0x2a2a3a),
     grassColor: new THREE.Color(0x2a4a2a),

@@ -1,11 +1,13 @@
 export class UI {
-  constructor() {
+  constructor(sound) {
+    this.sound = sound;
     this.container = document.getElementById('ui-overlay');
     this._buildLoading();
     this._buildStartScreen();
     this._buildHUD();
     this._buildGameOver();
     this._buildControlsHint();
+    this._buildPortraitWarning();
   }
 
   _buildLoading() {
@@ -14,7 +16,7 @@ export class UI {
     this.loadingScreen.innerHTML = `
       <h1>HIGHWAY RUSH</h1>
       <div class="loading-bar-track"><div class="loading-bar-fill" id="load-fill"></div></div>
-      <div class="hint">Loading assets...</div>
+      <div class="hint">Загрузка...</div>
     `;
     this.container.appendChild(this.loadingScreen);
     this.loadFill = this.loadingScreen.querySelector('#load-fill');
@@ -26,15 +28,11 @@ export class UI {
     this.startScreen.id = 'start-screen';
     this.startScreen.innerHTML = `
       <h1>HIGHWAY RUSH</h1>
-      <p style="font-size:15px;opacity:0.6;margin-bottom:16px;">Choose your vehicle</p>
+      <p style="font-size:15px;opacity:0.6;margin-bottom:16px;">Выберите автомобиль</p>
       <div class="char-select" id="char-select">
         <div class="char-card" data-char="race">
           <div class="char-icon">🚗</div>
-          <div class="char-name">Race Car</div>
-        </div>
-        <div class="char-card" data-char="pony">
-          <div class="char-icon">🦄</div>
-          <div class="char-name">Pony</div>
+          <div class="char-name">Гоночная машина</div>
         </div>
         <div class="char-card locked" data-char="rx7">
           <div class="char-icon">🏎️</div>
@@ -42,24 +40,28 @@ export class UI {
           <div class="char-lock">🔒 100⭐</div>
         </div>
       </div>
-      <p style="font-size:15px;opacity:0.6;margin:16px 0 12px;">Game Mode</p>
+      <p style="font-size:15px;opacity:0.6;margin:16px 0 12px;">Режим игры</p>
       <div class="mode-select">
         <div class="mode-card" data-mode="endless">
-          <div class="mode-name">Endless</div>
-          <div class="mode-desc">Survive as long as you can</div>
+          <div class="mode-name">Бесконечный</div>
+          <div class="mode-desc">Держись как можно дольше</div>
         </div>
         <div class="mode-card" data-mode="time">
-          <div class="mode-name">60 Seconds</div>
-          <div class="mode-desc">Survive 60s, collect stars</div>
+          <div class="mode-name">60 Секунд</div>
+          <div class="mode-desc">Продержись 60 сек, собери звёзды</div>
         </div>
         <div class="mode-card" data-mode="stars">
-          <div class="mode-name">Star Rush</div>
-          <div class="mode-desc">Collect 10 stars fast</div>
+          <div class="mode-name">Гонка за звёздами</div>
+          <div class="mode-desc">Собери 10 звёзд быстрее</div>
         </div>
       </div>
-      <button class="btn" id="start-btn">START</button>
+      <div id="control-mode-select">
+        <div class="cm-card" data-control="swipe">👆 Свайпы</div>
+        <div class="cm-card" data-control="buttons">🕹️ Кнопки</div>
+      </div>
+      <button class="btn" id="start-btn">СТАРТ</button>
       <p style="font-size:14px;opacity:0.4;margin-top:24px;">
-        &larr; &rarr; / A D &mdash; lanes &nbsp;|&nbsp; &uarr; / W &mdash; gas &nbsp;|&nbsp; &darr; / S &mdash; brake
+        &larr; &rarr; / A D &mdash; ряд &nbsp;|&nbsp; &uarr; / W &mdash; газ &nbsp;|&nbsp; &darr; / S &mdash; тормоз
       </p>
     `;
     this.startScreen.style.display = 'none';
@@ -70,14 +72,16 @@ export class UI {
 
     this.starProgress = document.createElement('div');
     this.starProgress.style.cssText = 'font-size:14px;opacity:0.5;margin-bottom:12px;';
-    this.starProgress.textContent = '⭐ Total: 0';
+    this.starProgress.textContent = '⭐ Всего: 0';
     this.startScreen.querySelector('#char-select').after(this.starProgress);
 
     this.selectedChar = 'race';
     this.selectedMode = 'endless';
+    this.selectedControl = 'swipe';
     this.startScreen.querySelectorAll('.char-card').forEach(card => {
       card.addEventListener('click', () => {
         if (card.classList.contains('locked')) return;
+        if (this.sound) this.sound.play('click', 0.5);
         this.startScreen.querySelectorAll('.char-card').forEach(c => c.classList.remove('selected'));
         card.classList.add('selected');
         this.selectedChar = card.dataset.char;
@@ -86,12 +90,27 @@ export class UI {
     this.startScreen.querySelectorAll('.char-card')[0].classList.add('selected');
     this.startScreen.querySelectorAll('.mode-card').forEach(card => {
       card.addEventListener('click', () => {
+        if (this.sound) this.sound.play('click', 0.5);
         this.startScreen.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
         card.classList.add('selected');
         this.selectedMode = card.dataset.mode;
       });
     });
     this.startScreen.querySelectorAll('.mode-card')[0].classList.add('selected');
+
+    this.startScreen.querySelectorAll('.cm-card').forEach(card => {
+      card.addEventListener('click', () => {
+        if (this.sound) this.sound.play('click', 0.5);
+        this.startScreen.querySelectorAll('.cm-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        this.selectedControl = card.dataset.control;
+      });
+    });
+    this.startScreen.querySelectorAll('.cm-card')[0].classList.add('selected');
+  }
+
+  getControlMode() {
+    return this.selectedControl;
   }
 
   _buildHUD() {
@@ -101,7 +120,7 @@ export class UI {
     this.hud.innerHTML = `
       <div class="hud-score" id="hud-score">0</div>
       <div class="hud-mode" id="hud-mode"></div>
-      <div class="hud-speed" id="hud-speed">Speed: 1x</div>
+      <div class="hud-speed" id="hud-speed">Скорость: 1x</div>
     `;
     this.container.appendChild(this.hud);
     this.hudScore = this.hud.querySelector('#hud-score');
@@ -124,11 +143,11 @@ export class UI {
     this.gameoverScreen = document.createElement('div');
     this.gameoverScreen.className = 'gameover-screen';
     this.gameoverScreen.innerHTML = `
-      <h1>CRASHED</h1>
-      <div class="final-score" id="final-score">Score: 0</div>
+      <h1>АВАРИЯ</h1>
+      <div class="final-score" id="final-score">Счёт: 0</div>
       <div class="gameover-btns">
-        <button class="btn" id="restart-btn">RESTART</button>
-        <button class="btn btn-secondary" id="menu-btn">MAIN MENU</button>
+        <button class="btn" id="restart-btn">ЗАНОВО</button>
+        <button class="btn btn-secondary" id="menu-btn">ГЛАВНОЕ МЕНЮ</button>
       </div>
     `;
     this.container.appendChild(this.gameoverScreen);
@@ -141,15 +160,42 @@ export class UI {
     this.hint = document.createElement('div');
     this.hint.className = 'controls-hint';
     this.hint.style.display = 'none';
-    this.hint.innerHTML = '&larr; &rarr; / A D &mdash; lanes &nbsp;&nbsp; &uarr; / W &mdash; gas &nbsp;&nbsp; &darr; / S &mdash; brake';
+    this.hint.innerHTML = '&larr; &rarr; / A D &mdash; ряд &nbsp;&nbsp; &uarr; / W &mdash; газ &nbsp;&nbsp; &darr; / S &mdash; тормоз';
     this.container.appendChild(this.hint);
+  }
+
+  _buildPortraitWarning() {
+    const el = document.createElement('div');
+    el.id = 'portrait-warning';
+    el.innerHTML = `
+      <div class="pw-icon">📱</div>
+      <div class="pw-text">Поверните устройство</div>
+      <div class="pw-sub">Для игры используйте альбомную ориентацию</div>
+    `;
+    document.body.appendChild(el);
+    this._portraitWarning = el;
+
+    const check = () => {
+      if (window.innerHeight > window.innerWidth && this._gameStarted) {
+        el.classList.add('show');
+      } else {
+        el.classList.remove('show');
+      }
+    };
+    window.addEventListener('resize', check);
+    this._checkOrientation = check;
+  }
+
+  setGameStarted(v) {
+    this._gameStarted = v;
+    if (this._checkOrientation) this._checkOrientation();
   }
 
   updateLoading(loaded, total) {
     const pct = Math.round((loaded / total) * 100);
     this.loadFill.style.width = pct + '%';
     if (loaded === total) {
-      this.loadingScreen.querySelector('.hint').textContent = 'Ready!';
+      this.loadingScreen.querySelector('.hint').textContent = 'Готово!';
     }
   }
 
@@ -160,7 +206,7 @@ export class UI {
   showStartScreen() {
     this.startScreen.style.display = 'flex';
     this.totalStars = parseInt(localStorage.getItem('highway_rush_stars') || '0', 10);
-    this.starProgress.textContent = `⭐ Total: ${this.totalStars}`;
+    this.starProgress.textContent = `⭐ Всего: ${this.totalStars}`;
     if (this.totalStars >= 100) this.unlockRX7();
   }
 
@@ -194,7 +240,7 @@ export class UI {
   showUnlockMessage() {
     const el = document.createElement('div');
     el.className = 'unlock-msg';
-    el.textContent = '🚗 MAZDA RX7 UNLOCKED! 🚗';
+    el.textContent = '🚗 MAZDA RX7 РАЗБЛОКИРОВАН! 🚗';
     this.container.appendChild(el);
     setTimeout(() => el.remove(), 2500);
   }
@@ -208,7 +254,7 @@ export class UI {
   }
 
   updateSpeed(speed) {
-    this.hudSpeed.textContent = `Speed: ${speed.toFixed(1)}x`;
+    this.hudSpeed.textContent = `Скорость: ${speed.toFixed(1)}x`;
   }
 
   updateBiome(name) {
@@ -217,8 +263,8 @@ export class UI {
 
   showGameOver(score, stars, mode, reason) {
     const titleEl = this.gameoverScreen.querySelector('h1');
-    titleEl.textContent = reason && reason !== 'crash' ? 'CONGRATULATIONS' : 'CRASHED';
-    this.finalScore.textContent = mode === 'time' ? `⭐ ${stars} collected` : mode === 'stars' ? `Time: ${Math.floor(score)}s` : `Score: ${Math.floor(score)}  ⭐ ${stars}`;
+    titleEl.textContent = reason && reason !== 'crash' ? 'ПОБЕДА' : 'АВАРИЯ';
+    this.finalScore.textContent = mode === 'time' ? `⭐ собрано ${stars}` : mode === 'stars' ? `Время: ${Math.floor(score)}с` : `Счёт: ${Math.floor(score)}  ⭐ ${stars}`;
     this.gameoverScreen.classList.add('show');
     this.hud.style.display = 'none';
     this.starCounter.style.display = 'none';
@@ -232,7 +278,7 @@ export class UI {
   showMainMenu() {
     this.gameoverScreen.classList.remove('show');
     this.totalStars = parseInt(localStorage.getItem('highway_rush_stars') || '0', 10);
-    this.starProgress.textContent = `⭐ Total: ${this.totalStars}`;
+    this.starProgress.textContent = `⭐ Всего: ${this.totalStars}`;
     if (this.totalStars >= 100) this.unlockRX7();
     this.startScreen.style.display = 'flex';
   }

@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { getLanePositions } from './Road.js';
 
 const SPAWN_Z = 25;
-const DESPAWN_Z = -2;
+const DESPAWN_Z = -15;
 function cloneWithMaterials(src) {
   const clone = src.clone();
   clone.traverse(child => {
@@ -127,6 +127,14 @@ export class Traffic {
     } else if (car.userData.modelId === 'traffic_10') {
       car.scale.setScalar(0.25);
       car.rotation.set(0, 0, 0);
+      car.position.set(x, 0, z);
+    } else if (car.userData.modelId === 'traffic_12') {
+      car.scale.setScalar(0.75);
+      car.rotation.set(0, 0, 0);
+      car.position.set(x, 0, z);
+    } else if (car.userData.modelId === 'traffic_13') {
+      car.scale.setScalar(1.6);
+      car.rotation.set(0, Math.PI, 0);
       car.position.set(x, 0, z);
     } else {
       car.rotation.set(0, 0, 0);

@@ -1,9 +1,11 @@
 import * as THREE from 'three';
 import { checkCollision } from './Collision.js';
 import { Biome } from './Biome.js';
+import { gameplayStart, gameplayStop, saveStars } from './YandexSDK.js';
+import { TouchControls } from './TouchControls.js';
 
 export class Game {
-  constructor(scene, camera, renderer, traffic, trees, houses, stars, road, ui, sceneSetup, smoke, ponyDecor) {
+  constructor(scene, camera, renderer, traffic, trees, houses, stars, road, ui, sceneSetup, smoke, ponyDecor, sound) {
     this.scene = scene;
     this.camera = camera;
     this.renderer = renderer;
@@ -19,6 +21,7 @@ export class Game {
     this.ponyDecor = ponyDecor;
     this.unlockCarModel = null;
     this.biome = new Biome();
+    this.sound = sound;
     this.ponyMode = false;
 
     this.unlocked = false;
@@ -37,8 +40,10 @@ export class Game {
     this.distance = 0;
 
     this._bindKeys();
-    this.ui.restartBtn.addEventListener('click', () => this.start());
-    this.ui.menuBtn.addEventListener('click', () => this.goToMainMenu());
+    this.touch = new TouchControls(this, renderer.domElement);
+    this.controlMode = 'swipe';
+    this.ui.restartBtn.addEventListener('click', () => { this.sound.play('click'); this.start(); });
+    this.ui.menuBtn.addEventListener('click', () => { this.sound.play('click'); this.goToMainMenu(); });
     this._startLoop();
   }
 
@@ -55,8 +60,27 @@ export class Game {
     this.scene.add(player.mesh);
   }
 
+  _setGas(val) { this.gasHeld = val; }
+  _setBrake(val) { this.brakeHeld = val; }
+
+  _switchLane(direction) {
+    if (!this.player) return;
+    this.player.switchLane(direction);
+    if (this.smoke && !this.traffic.isPony) {
+      const px = this.player.mesh.position.x;
+      const pz = this.player.mesh.position.z;
+      this.smoke.emit(px, pz, 1);
+      this.smoke.emit(px, pz, -1);
+    }
+  }
+
   goToMainMenu() {
     this.state = 'start_screen';
+    gameplayStop();
+    this.ui.setGameStarted(false);
+    this.touch.disable();
+    this.sound.stopAll();
+    this.sound.stop('crash');
     if (this.player) {
       this.scene.remove(this.player.mesh);
       this.player = null;
@@ -77,25 +101,12 @@ export class Game {
         this.brakeHeld = pressed;
         e.preventDefault();
       }
-
       if (pressed) {
         if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
-          this.player.switchLane(1);
-          if (this.smoke && !this.traffic.isPony) {
-            const px = this.player.mesh.position.x;
-            const pz = this.player.mesh.position.z;
-            this.smoke.emit(px, pz, 1);
-            this.smoke.emit(px, pz, -1);
-          }
+          this._switchLane(1);
         }
         if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
-          this.player.switchLane(-1);
-          if (this.smoke && !this.traffic.isPony) {
-            const px = this.player.mesh.position.x;
-            const pz = this.player.mesh.position.z;
-            this.smoke.emit(px, pz, 1);
-            this.smoke.emit(px, pz, -1);
-          }
+          this._switchLane(-1);
         }
         if (e.key === 'r' || e.key === 'R' || e.key === 'к' || e.key === 'К') {
           if (this.state === 'gameover') this.start();
@@ -118,6 +129,7 @@ export class Game {
     this.gasHeld = false;
     this.brakeHeld = false;
     this.lastTime = performance.now();
+    this._lastTick = -1;
     this.traffic.reset();
     this.trees.reset();
     this.houses.reset();
@@ -127,7 +139,7 @@ export class Game {
     this.ui.hideGameOver();
     this.ui.showHUD();
 
-    const modeLabels = { endless: 'Endless', time: '60 Seconds', stars: 'Star Rush' };
+    const modeLabels = { endless: 'Бесконечный', time: '60 Секунд', stars: 'Гонка за звёздами' };
     this.ui.hudMode.textContent = modeLabels[this.mode] || '';
 
     if (this.mode === 'time') {
@@ -138,11 +150,20 @@ export class Game {
     }
     this.distance = 0;
     this._treeIdx = -1;
+    this._lastTick = -1;
+    this._wasAtLane = true;
+    gameplayStart();
     this.biome.setPonyMode(this.ponyMode);
     this.road.setPonyMode(this.ponyMode);
     if (this.ponyDecor) this.ponyDecor.reset();
     this.ui.updateStars(0);
     this.ui.updateSpeed(1);
+    this.sound.stop('crash');
+    this.sound.startEngine();
+    this.sound.startMusic();
+    this.ui.setGameStarted(true);
+    this.touch.setMode(this.controlMode);
+    this.touch.enable();
   }
 
   _startLoop() {
@@ -182,6 +203,7 @@ export class Game {
     }
 
     this.actualSpeed = this.baseSpeed * this.gasMultiplier;
+    this.sound.updateEngine(this.actualSpeed);
 
     this.distance += delta * 30;
     const biomeState = this.biome.update(this.distance, delta);
@@ -195,28 +217,34 @@ export class Game {
         this.ponyDecor.update(delta, this.actualSpeed);
       }
     } else {
-      const treeIdx = biomeState.name === 'Savanna' ? 1 : biomeState.name === 'Desert' ? 2 : 0;
+      const treeIdx = biomeState.name === 'Саванна' ? 1 : biomeState.name === 'Пустыня' ? 2 : 0;
       if (treeIdx !== this._treeIdx) {
         this._treeIdx = treeIdx;
         this.trees.setModel(treeIdx);
-        this.houses.setEnabled(biomeState.name !== 'Desert');
+        this.houses.setEnabled(biomeState.name !== 'Пустыня');
       }
       this.trees.update(delta, this.actualSpeed);
       this.houses.update(delta, this.actualSpeed);
     }
 
     this.player.update(delta, this.gasHeld, this.brakeHeld);
+    const atLane = Math.abs(this.player.mesh.position.x - this.player.targetX) < 0.01;
+    if (!atLane && this._wasAtLane) this.sound.play('switch', 0.5);
+    this._wasAtLane = atLane;
     this.traffic.update(delta, this.actualSpeed);
     this.stars.update(delta, this.actualSpeed);
     if (this.smoke) this.smoke.update(delta);
     this.road.update(this.actualSpeed, delta);
 
     const playerBox = this.player.getBox();
-    this.starCount += this.stars.checkCollection(playerBox);
+    const collected = this.stars.checkCollection(playerBox);
+    if (collected > 0) this.sound.play('star', 0.6);
+    this.starCount += collected;
     this.ui.updateStars(this.starCount);
 
     if (this.starCount >= 100 && !this.unlocked && this.unlockCarModel) {
       this.unlocked = true;
+      this.sound.play('fanfare', 0.7);
       const newMesh = this.unlockCarModel.clone();
       newMesh.position.copy(this.player.mesh.position);
       newMesh.rotation.copy(this.player.mesh.rotation);
@@ -242,6 +270,10 @@ export class Game {
     if (this.mode === 'time') {
       const remaining = Math.max(0, this.timeLimit - this.timeElapsed);
       this.ui.updateScore(remaining);
+      if (remaining <= 10 && remaining > 0 && Math.floor(remaining) !== this._lastTick) {
+        this._lastTick = Math.floor(remaining);
+        this.sound.play('timer', 0.4);
+      }
       if (hit || remaining <= 0) {
         this._onGameOver(hit ? 'crash' : 'time', hit || null);
         return;
@@ -270,10 +302,20 @@ export class Game {
   _onGameOver(reason, hitMesh) {
     this.state = 'gameover';
     this.traffic.speed = 0;
+    this.ui.setGameStarted(false);
+    this.touch.disable();
+    gameplayStop();
+    this.sound.stopEngine();
+    this.sound.stopMusic();
+    if (reason === 'crash') {
+      this.sound.play('crash', 0.7);
+    } else {
+      this.sound.play('gameover', 0.6);
+    }
 
     const prev = parseInt(localStorage.getItem('highway_rush_stars') || '0', 10);
     const total = prev + this.starCount;
-    localStorage.setItem('highway_rush_stars', total.toString());
+    saveStars(total);
 
     setTimeout(() => {
       this.ui.showGameOver(this.score, this.starCount, this.mode, reason);

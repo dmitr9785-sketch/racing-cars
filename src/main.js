@@ -10,9 +10,14 @@ import { UI } from './UI.js';
 import { Game } from './Game.js';
 import { Smoke } from './Smoke.js';
 import { PonyDecor } from './PonyDecor.js';
+import { initYandexSDK, loadingReady, saveStars, getStars } from './YandexSDK.js';
+import { SoundManager } from './SoundManager.js';
 
 async function init() {
-  const ui = new UI();
+  await initYandexSDK();
+  const sound = new SoundManager();
+  sound.init();
+  const ui = new UI(sound);
   const sceneSetup = new SceneSetup();
   const road = new Road(sceneSetup.scene);
 
@@ -27,11 +32,12 @@ async function init() {
 
   await loader.loadPromise;
   ui.updateLoading(loader.total, loader.total);
+  loadingReady();
   await new Promise(r => setTimeout(r, 300));
   ui.hideLoading();
 
-  const trafficModels = loader.getTrafficModels().slice(0, 11);
-  const trafficModelIds = loader.getTrafficModelIds().slice(0, 11);
+  const trafficModels = loader.getTrafficModels();
+  const trafficModelIds = loader.getTrafficModelIds();
   if (trafficModels.length === 0) {
     console.error('No traffic models loaded');
     return;
@@ -76,14 +82,16 @@ async function init() {
     ui,
     sceneSetup,
     smoke,
-    ponyDecor
+    ponyDecor,
+    sound
   );
 
-  const totalStars = parseInt(localStorage.getItem('highway_rush_stars') || '0', 10);
+  const totalStars = await getStars();
   ui.totalStars = totalStars;
 
   ui.showStartScreen();
   ui.startBtn.addEventListener('click', () => {
+    sound.play('click');
     const choice = ui.getSelectedCharacter();
     let model;
     let playerScale = 0.8;
@@ -111,6 +119,8 @@ async function init() {
         }
       });
     }
+    game.controlMode = ui.getControlMode();
+    game.touch.setMode(game.controlMode);
     game.setMode(ui.getSelectedMode());
     game.setPlayer(player);
     game.setUnlockCarModel(unlockCarModel);
@@ -124,5 +134,5 @@ async function init() {
 init().catch(err => {
   console.error('Init error:', err);
   document.body.innerHTML = `<div style="color:#fff;padding:40px;font-size:18px;">
-    Failed to load game: ${err.message}</div>`;
+    Ошибка загрузки игры: ${err.message}</div>`;
 });
