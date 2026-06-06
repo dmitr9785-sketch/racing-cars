@@ -134,37 +134,32 @@ canvas { display: block; touch-action: none; }
 }
 #touch-buttons > * { pointer-events: auto; }
 
-.tb-half {
-  position: absolute; top: 0; bottom: 0;
-  display: flex; align-items: center; justify-content: center;
+.tb-corner {
+  position: fixed; bottom: 24px;
+  display: flex; gap: 12px;
 }
-.tb-half-left {
-  left: 0; width: 50vw;
-  flex-direction: row; gap: clamp(8px, 2vw, 16px);
-}
-.tb-half-right {
-  right: 0; width: 50vw;
-  flex-direction: column; gap: clamp(12px, 3vh, 24px);
-}
+.tb-corner-left { left: 20px; }
+.tb-corner-right { right: 20px; }
+
 .tb-btn {
-  width: clamp(48px, 10vw, 64px); height: clamp(48px, 10vw, 64px);
+  width: 56px; height: 56px;
   border-radius: 50%; border: none;
   background: rgba(255,255,255,0.15); color: #fff;
-  font-size: clamp(20px, 4vw, 28px); font-weight: 700;
+  font-size: 24px; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
 .tb-btn:active { background: rgba(255,255,255,0.3); }
 
-.tb-half-right .tb-btn {
-  width: clamp(72px, 16vw, 100px); height: clamp(44px, 8vh, 56px);
-  border-radius: 12px; font-size: clamp(12px, 2.5vw, 16px);
+.tb-corner-right .tb-btn {
+  width: 80px; height: 48px;
+  border-radius: 12px; font-size: 14px;
 }
-.tb-half-right .tb-gas { background: rgba(0,200,80,0.4); }
-.tb-half-right .tb-gas:active { background: rgba(0,200,80,0.7); }
-.tb-half-right .tb-brake { background: rgba(200,40,40,0.4); }
-.tb-half-right .tb-brake:active { background: rgba(200,40,40,0.7); }
+.tb-corner-right .tb-gas { background: rgba(0,200,80,0.4); }
+.tb-corner-right .tb-gas:active { background: rgba(0,200,80,0.7); }
+.tb-corner-right .tb-brake { background: rgba(200,40,40,0.4); }
+.tb-corner-right .tb-brake:active { background: rgba(200,40,40,0.7); }
 
 /* ---- Fullscreen Button ---- */
 #fs-btn {
