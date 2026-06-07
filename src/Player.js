@@ -2,7 +2,12 @@ import * as THREE from 'three';
 import { getLanePositions } from './Road.js';
 
 export class Player {
-  constructor(model, scale = 0.8) {
+  constructor(model, scale = 0.8, yOffset = 0, xOffset = 0, rotationY = 0, scaleZ = 1, zOffset = 0, scaleX = 1) {
+    this.ammo = 0;
+    this.yOffset = yOffset;
+    this.xOffset = xOffset;
+    this.zOffset = zOffset;
+    this.rotationY = rotationY;
     this.lanePositions = getLanePositions();
     this.currentLane = 1;
     this.targetLane = 1;
@@ -21,9 +26,20 @@ export class Player {
       }
     });
     this.mesh.scale.setScalar(scale);
+    if (scaleX !== 1) this.mesh.scale.x *= scaleX;
+    if (scaleZ !== 1) this.mesh.scale.z *= scaleZ;
     this.mesh.position.set(this.targetX, 0, this.z);
+    this.mesh.position.x += this.xOffset;
+    this.mesh.position.y = this.yOffset;
+    this.mesh.position.z += this.zOffset;
+    this.mesh.rotation.y = this.rotationY;
     this.mesh.traverse(c => { if (c.isMesh) { c.castShadow = true; c.receiveShadow = true; } });
     this._pitch = 0;
+    this.flyTime = 0;
+    this.flyCount = 0;
+    this.maxFlyCount = 3;
+    this.isFlying = false;
+    this._flyBaseY = this.yOffset;
   }
 
   switchLane(direction) {
@@ -32,6 +48,13 @@ export class Player {
     this.currentLane = newLane;
     this.targetLane = newLane;
     this.targetX = this.lanePositions[newLane];
+  }
+
+  startFly() {
+    if (this.flyCount >= this.maxFlyCount) return;
+    this.flyCount++;
+    this.flyTime = 1.5;
+    this.isFlying = true;
   }
 
   update(delta, gasHeld, brakeHeld) {
@@ -44,6 +67,22 @@ export class Player {
     } else {
       this.mesh.position.x = this.targetX;
       this.mesh.rotation.z *= 0.9;
+    }
+
+    if (this.isFlying) {
+      this.flyTime -= delta;
+      const t = 1 - this.flyTime / 1.5;
+      if (t < 0.3) {
+        this.mesh.position.y = this._flyBaseY + t / 0.3 * 3;
+      } else if (t < 0.7) {
+        this.mesh.position.y = this._flyBaseY + 3;
+      } else {
+        this.mesh.position.y = this._flyBaseY + 3 * (1 - (t - 0.7) / 0.3);
+      }
+      if (this.flyTime <= 0) {
+        this.isFlying = false;
+        this.mesh.position.y = this._flyBaseY;
+      }
     }
 
     const targetPitch = gasHeld ? -0.12 : brakeHeld ? 0.08 : 0;
@@ -68,10 +107,15 @@ export class Player {
   }
 
   reset() {
+    this.ammo = 0;
+    this.flyTime = 0;
+    this.flyCount = 0;
+    this.isFlying = false;
+    this._flyBaseY = this.yOffset;
     this.currentLane = 1;
     this.targetLane = 1;
     this.targetX = this.lanePositions[1];
-    this.mesh.position.set(this.targetX, 0, this.z);
-    this.mesh.rotation.set(0, 0, 0);
+    this.mesh.position.set(this.targetX + this.xOffset, this.yOffset, this.z + this.zOffset);
+    this.mesh.rotation.set(0, this.rotationY, 0);
   }
 }

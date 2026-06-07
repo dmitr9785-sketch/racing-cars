@@ -25,11 +25,30 @@ export class Smoke {
     }
   }
 
-  emit(x, z, side) {
+  emitAt(x, y, z, count = 3) {
+    for (let i = 0; i < count; i++) {
+      const puff = this.pool.find(p => p.life <= 0);
+      if (!puff) break;
+      puff.mesh.position.set(x + (Math.random() - 0.5) * 0.8, y + Math.random() * 0.3, z + (Math.random() - 0.5) * 0.8);
+      puff.mesh.scale.setScalar(0.01);
+      puff.mesh.visible = true;
+      puff.mesh.traverse(c => {
+        if (c.isMesh && c.material) {
+          c.material.opacity = 0.8;
+        }
+      });
+      this.scene.add(puff.mesh);
+      puff.life = LIFETIME * (0.5 + Math.random() * 0.5);
+      puff.vx = (Math.random() - 0.5) * 3;
+      puff.vz = -2 + Math.random() * -2;
+    }
+  }
+
+  emit(x, z, side, zOffset = -0.6) {
     const puff = this.pool.find(p => p.life <= 0);
     if (!puff) return;
 
-    puff.mesh.position.set(x + side * 0.4, 0.05, z + 0.6);
+    puff.mesh.position.set(x + side * 0.4, 0.05, z + zOffset);
     puff.mesh.scale.setScalar(0.01);
     puff.mesh.visible = true;
     puff.mesh.traverse(c => {

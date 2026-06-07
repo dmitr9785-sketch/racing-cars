@@ -190,6 +190,28 @@ export class Traffic {
     });
   }
 
+  findCarInFront(x, z, maxDist) {
+    let closest = null;
+    let closestDist = Infinity;
+    const halfLane = 2.5;
+    for (const c of this.cars) {
+      if (!c.visible) continue;
+      if (Math.abs(c.position.x - x) > halfLane) continue;
+      const dz = c.position.z - z;
+      if (dz <= 0 || dz > maxDist) continue;
+      if (dz < closestDist) {
+        closestDist = dz;
+        closest = c;
+      }
+    }
+    return closest;
+  }
+
+  destroyCar(mesh) {
+    mesh.visible = false;
+    this.scene.remove(mesh);
+  }
+
   reset() {
     for (const car of this.carPool) {
       if (car.visible) { car.visible = false; this.scene.remove(car); }

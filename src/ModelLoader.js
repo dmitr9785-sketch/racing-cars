@@ -1,6 +1,22 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
+const SHOP_VEHICLES = [
+  { id: 'race',            name: 'Гоночная машина',        price: 0,     scale: 0.8,  file: 'assets/models/race.glb' },
+  { id: 'lada_2107',       name: 'Лада 2107',              price: 50,    scale: 0.533,  file: 'assets/models/low_poly_lada_2107.glb' },
+  { id: 'audi_rs5',        name: 'Audi RS5',               price: 100,   scale: 0.65,  file: 'assets/models/audi_rs5_low_poly.glb' },
+  { id: 'bmw_m3',          name: 'BMW M3',                 price: 200,   scale: 0.8,  yOffset: 0.2, file: 'assets/models/bmw_m3_gtr_nfs_low_poly.glb' },
+  { id: 'nissan_silvia',   name: 'Nissan Silvia S13',      price: 350,   scale: 0.4,  yOffset: 0.5, scaleZ: 0.85, file: 'assets/models/low_poly_nissan_silvia_s13.glb' },
+  { id: 'free_car',        name: 'Free Car',               price: 500,   scale: 0.7,  yOffset: -1.25, zOffset: 2.0, smokeZ: -2.5, file: 'assets/models/free_low_poly_car.glb' },
+  { id: 'low_poly_car',    name: 'UAZ-452',                price: 750,  scale: 0.8,  file: 'assets/models/uaz-452_soviet_minivan.glb' },
+  { id: 'camaro',          name: 'Chevrolet Camaro',       price: 1000,  scale: 1.6,  color: 0xffff00, file: 'assets/models/chevrolet_camaro_low_poly_free.glb' },
+  { id: 'low_sports_car',  name: 'Sports Car 1',           price: 1500,  scale: 0.8,  yOffset: 0.2, scaleX: 0.7, file: 'assets/models/low_poly_sports_car.glb' },
+  { id: 'lowpoly_sports_car', name: 'Sports Car 2',        price: 2000,  scale: 0.8,  yOffset: 0.6, file: 'assets/models/low-poly_sports_car.glb' },
+  { id: 'rx7',             name: 'Mazda RX7',              price: 3000,  scale: 0.55, file: 'assets/models/mazda_rx7_veilside_stylized_toon.glb' },
+  { id: 'sci_fi',          name: 'Sci-Fi Car',             price: 5000,  scale: 0.8,  yOffset: 0.6, canFly: true, file: 'assets/models/sci-fi_car.glb' },
+  { id: 'tank',            name: 'Танк',                   price: 8000,  scale: 1.2,  yOffset: 0.5, file: 'assets/models/tank_low-poly__2.glb' },
+];
+
 const MODEL_LIST = [
   { id: 'player', file: 'assets/models/race.glb' },
   { id: 'traffic_0', file: 'assets/models/sedan.glb' },
@@ -29,7 +45,6 @@ const MODEL_LIST = [
   { id: 'house_2', file: 'assets/models/building-sample-house-c.glb' },
   { id: 'tree', file: 'assets/models/low_poly_tree.glb' },
   { id: 'star', file: 'assets/models/shining_star_low_poly.glb' },
-  { id: 'unlock_car', file: 'assets/models/mazda_rx7_veilside_stylized_toon.glb' },
   { id: 'smoke', file: 'assets/models/smoke.glb' },
   { id: 'cactus', file: 'assets/models/cactus_low_poly.glb' },
   { id: 'piramide', file: 'assets/models/low_poly_khafre.glb' },
@@ -38,6 +53,11 @@ const MODEL_LIST = [
   { id: 'pony_star', file: 'assets/models/star for pony .glb' },
   { id: 'pony_sun', file: 'assets/models/low_poly_sun.glb' },
 ];
+
+for (const v of SHOP_VEHICLES) {
+  if (v.id === 'race') continue;
+  MODEL_LIST.push({ id: v.id, file: v.file });
+}
 
 function fixMatColors(obj) {
   obj.traverse(child => {
@@ -68,11 +88,11 @@ export class ModelLoader {
       let completed = 0;
 
       for (const entry of MODEL_LIST) {
-        loader.load(
+          loader.load(
           entry.file,
           (gltf) => {
             const model = gltf.scene;
-            const skip = entry.id === 'pony' || entry.id.startsWith('pony_traffic') || entry.id.startsWith('house_') || entry.id === 'tree' || entry.id === 'star' || entry.id === 'unlock_car' || entry.id === 'smoke' || entry.id === 'cactus' || entry.id === 'piramide' || entry.id.startsWith('pony_');
+            const skip = entry.id === 'pony' || entry.id.startsWith('pony_traffic') || entry.id.startsWith('house_') || entry.id === 'tree' || entry.id === 'star' || entry.id === 'smoke' || entry.id === 'cactus' || entry.id === 'piramide' || entry.id.startsWith('pony_');
             if (!skip) {
               model.scale.setScalar(0.8);
               model.traverse((child) => {
@@ -82,6 +102,32 @@ export class ModelLoader {
                 }
               });
               fixMatColors(model);
+              const sv = SHOP_VEHICLES.find(v => v.id === entry.id);
+              if (sv && sv.color !== undefined) {
+                model.traverse(ch => { if (ch.isMesh && ch.material) { ch.material.color.setHex(sv.color); } });
+              }
+              const _b = new THREE.Box3().setFromObject(model);
+              const _c = _b.getCenter(new THREE.Vector3());
+              model.traverse(ch => { if (ch.isMesh) { ch.position.x -= _c.x; ch.position.z -= _c.z; } });
+              if (entry.id === 'nissan_silvia') {
+                const pivot = new THREE.Group();
+                const kids = [...model.children];
+                kids.forEach(k => { model.remove(k); pivot.add(k); });
+                pivot.rotation.y = -Math.PI / 2;
+                pivot.updateMatrixWorld(true);
+                const _b2 = new THREE.Box3().setFromObject(pivot);
+                const _c2 = _b2.getCenter(new THREE.Vector3());
+                pivot.children.slice().forEach(k => {
+                  const wp = new THREE.Vector3();
+                  k.getWorldPosition(wp);
+                  const wq = new THREE.Quaternion();
+                  k.getWorldQuaternion(wq);
+                  pivot.remove(k);
+                  k.position.copy(wp.sub(_c2));
+                  k.quaternion.copy(wq);
+                  model.add(k);
+                });
+              }
             }
             this.models[entry.id] = model.clone();
             this.loaded++;
@@ -128,10 +174,6 @@ export class ModelLoader {
       const crown = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.3, 4), new THREE.MeshStandardMaterial({ color: 0x4a8c3f, roughness: 0.9 }));
       crown.position.y = 0.45;
       group.add(crown);
-    } else if (id === 'unlock_car') {
-      const body = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.5, 3.6), new THREE.MeshStandardMaterial({ color: 0xff4444, roughness: 0.4, metalness: 0.6 }));
-      body.position.y = 0.25;
-      group.add(body);
     } else if (id === 'star') {
       const star = new THREE.Mesh(new THREE.OctahedronGeometry(0.3, 0), new THREE.MeshStandardMaterial({ color: 0xffdd44, emissive: 0xff8800, emissiveIntensity: 0.5 }));
       group.add(star);
@@ -164,7 +206,7 @@ export class ModelLoader {
       const top = new THREE.Mesh(new THREE.ConeGeometry(0.15, 0.2, 4), new THREE.MeshStandardMaterial({ color: 0xddbb77, roughness: 0.9 }));
       top.position.y = 0.6;
       group.add(top);
-    } else if (id.startsWith('player') || id.startsWith('traffic')) {
+    } else if (id.startsWith('player') || id.startsWith('traffic') || SHOP_VEHICLES.some(v => v.id === id)) {
       const geo = new THREE.BoxGeometry(1.8, 0.6, 3.6);
       const color = id.startsWith('player') ? 0x3388ff : 0x888888;
       mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color, roughness: 0.6 }));
@@ -229,8 +271,30 @@ export class ModelLoader {
     return this.models['star'] ? this.models['star'].clone() : null;
   }
 
-  getUnlockCarModel() {
-    return this.models['unlock_car'] ? this.models['unlock_car'].clone() : null;
+  getShopVehicles() {
+    return SHOP_VEHICLES.map(v => ({
+      id: v.id,
+      name: v.name,
+      price: v.price,
+      scale: v.scale,
+      yOffset: v.yOffset || 0,
+      model: this.models[v.id === 'race' ? 'player' : v.id]?.clone() || null,
+    }));
+  }
+
+  getVehicleModel(id) {
+    const key = id === 'race' ? 'player' : id;
+    return this.models[key]?.clone() || null;
+  }
+
+  getVehicleYOffset(id) {
+    const v = SHOP_VEHICLES.find(x => x.id === id);
+    return v?.yOffset || 0;
+  }
+
+  getVehicleOffsets(id) {
+    const v = SHOP_VEHICLES.find(x => x.id === id);
+    return { yOffset: v?.yOffset || 0, xOffset: v?.xOffset || 0, zOffset: v?.zOffset || 0, rotationY: v?.rotationY || 0, scaleX: v?.scaleX || 1, scaleZ: v?.scaleZ || 1, smokeZ: v?.smokeZ };
   }
 
   getSmokeModel() {

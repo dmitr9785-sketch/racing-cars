@@ -19,12 +19,11 @@ export class Game {
     this.ui = ui;
     this.smoke = smoke;
     this.ponyDecor = ponyDecor;
-    this.unlockCarModel = null;
     this.biome = new Biome();
     this.sound = sound;
     this.ponyMode = false;
-
-    this.unlocked = false;
+    this.vehicleId = 'race';
+    this._smokeZ = -0.6;
 
     this.state = 'start_screen';
     this.mode = 'endless';
@@ -44,11 +43,13 @@ export class Game {
     this.controlMode = 'swipe';
     this.ui.restartBtn.addEventListener('click', () => { this.sound.play('click'); this.start(); });
     this.ui.menuBtn.addEventListener('click', () => { this.sound.play('click'); this.goToMainMenu(); });
+    if (this.ui.fireBtn) {
+      this.ui.fireBtn.addEventListener('click', () => {
+        if (this.vehicleId === 'sci_fi') this._flySciFi();
+        else this._fireTank();
+      });
+    }
     this._startLoop();
-  }
-
-  setUnlockCarModel(model) {
-    this.unlockCarModel = model;
   }
 
   setMode(mode) {
@@ -69,15 +70,14 @@ export class Game {
     if (this.smoke && !this.traffic.isPony) {
       const px = this.player.mesh.position.x;
       const pz = this.player.mesh.position.z;
-      this.smoke.emit(px, pz, 1);
-      this.smoke.emit(px, pz, -1);
+      this.smoke.emit(px, pz, 1, this._smokeZ);
+      this.smoke.emit(px, pz, -1, this._smokeZ);
     }
   }
 
   goToMainMenu() {
     this.state = 'start_screen';
     gameplayStop();
-    this.ui.setGameStarted(false);
     this.touch.disable();
     this.sound.stopAll();
     this.sound.stop('crash');
@@ -85,13 +85,17 @@ export class Game {
       this.scene.remove(this.player.mesh);
       this.player = null;
     }
+    this.ui.hideFireButton();
     this.ui.showMainMenu();
   }
 
   _bindKeys() {
     const handler = (e) => {
       const pressed = e.type === 'keydown';
-      if (this.state === 'start_screen') return;
+      if (this.state === 'start_screen') {
+        if (e.key === ' ' || e.key === 'Space') e.preventDefault();
+        return;
+      }
 
       if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
         this.gasHeld = pressed;
@@ -108,6 +112,11 @@ export class Game {
         if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
           this._switchLane(-1);
         }
+        if (e.key === ' ' || e.key === 'Space') {
+          if (this.vehicleId === 'tank') this._fireTank();
+          else if (this.vehicleId === 'sci_fi') this._flySciFi();
+          e.preventDefault();
+        }
         if (e.key === 'r' || e.key === 'R' || e.key === 'к' || e.key === 'К') {
           if (this.state === 'gameover') this.start();
         }
@@ -121,7 +130,6 @@ export class Game {
     this.state = 'playing';
     this.score = 0;
     this.starCount = 0;
-    this.unlocked = false;
     this.baseSpeed = 1;
     this.actualSpeed = 1;
     this.timeElapsed = 0;
@@ -152,6 +160,25 @@ export class Game {
     this._treeIdx = -1;
     this._lastTick = -1;
     this._wasAtLane = true;
+    if (this.vehicleId === 'tank') {
+      this.player.ammo = 10;
+    }
+    this.ui.updateAmmo(this.player.ammo);
+    if (this.vehicleId === 'tank') {
+      this.sound.setEngine('tank_engine');
+    } else {
+      this.sound.setEngine('engine');
+    }
+    if (this.vehicleId === 'sci_fi') {
+      this.player.flyCount = 0;
+      this.player.maxFlyCount = 3;
+      this.ui.ammoLabel.textContent = '⬆ 3/3';
+      this.ui.ammoLabel.style.display = 'block';
+      this.ui.fireBtn.textContent = '⬆';
+      this.ui.fireBtn.style.display = 'flex';
+    } else if (this.vehicleId === 'tank') {
+      this.ui.fireBtn.textContent = '🔥';
+    }
     gameplayStart();
     this.biome.setPonyMode(this.ponyMode);
     this.road.setPonyMode(this.ponyMode);
@@ -189,7 +216,7 @@ export class Game {
 
   _update(delta) {
     this.timeElapsed += delta;
-    this.score = this.timeElapsed * 100;
+    this.score = this.timeElapsed * 50;
     this.baseSpeed = 1 + this.timeElapsed * 0.08;
 
     if (this.gasHeld) {
@@ -242,30 +269,8 @@ export class Game {
     this.starCount += collected;
     this.ui.updateStars(this.starCount);
 
-    if (this.starCount >= 100 && !this.unlocked && this.unlockCarModel) {
-      this.unlocked = true;
-      this.sound.play('fanfare', 0.7);
-      const newMesh = this.unlockCarModel.clone();
-      newMesh.position.copy(this.player.mesh.position);
-      newMesh.rotation.copy(this.player.mesh.rotation);
-      newMesh.scale.setScalar(0.8);
-      newMesh.traverse(c => { if (c.isMesh) { c.castShadow = true; c.receiveShadow = true; } });
-      this.scene.remove(this.player.mesh);
-      this.scene.add(newMesh);
-      this.player.mesh = newMesh;
-      this.ui.showUnlockMessage();
-    }
-
     const trafficBoxes = this.traffic.getBoxes();
-    const hit = checkCollision(playerBox, trafficBoxes);
-    if (hit) {
-      console.log('CRASH! playerBox:', JSON.stringify({min: playerBox.min.toArray(), max: playerBox.max.toArray()}), 'traffic count:', trafficBoxes.length);
-      for (const t of trafficBoxes) {
-        if (t.box.intersectsBox(playerBox)) {
-          console.log('  hit car:', t.mesh.userData.modelId, 'box:', JSON.stringify({min: t.box.min.toArray(), max: t.box.max.toArray()}));
-        }
-      }
-    }
+    const hit = !this.player.isFlying && checkCollision(playerBox, trafficBoxes);
 
     if (this.mode === 'time') {
       const remaining = Math.max(0, this.timeLimit - this.timeElapsed);
@@ -297,6 +302,39 @@ export class Game {
     }
 
     this.ui.updateSpeed(this.gasMultiplier);
+  }
+
+  _fireTank() {
+    if (this.state !== 'playing') return;
+    if (!this.player || this.player.ammo <= 0) return;
+    this.player.ammo--;
+    this.ui.updateAmmo(this.player.ammo);
+    this.sound.play('fire_tank', 0.5);
+    const px = this.player.mesh.position.x;
+    const pz = this.player.mesh.position.z;
+    const _box = new THREE.Box3().setFromObject(this.player.mesh);
+    const _cx = (_box.min.x + _box.max.x) / 2;
+    const flash = new THREE.Mesh(new THREE.SphereGeometry(0.3, 6, 6), new THREE.MeshBasicMaterial({ color: 0xffff00 }));
+    flash.position.set(_cx, _box.max.y - 0.3, _box.max.z + 0.1);
+    this.scene.add(flash);
+    setTimeout(() => { this.scene.remove(flash); }, 80);
+    const target = this.traffic.findCarInFront(px, pz, 15);
+    if (target) {
+      this.traffic.destroyCar(target);
+      if (this.smoke) this.smoke.emitAt(target.position.x, 0.5, target.position.z, 5);
+    } else {
+      if (this.smoke) this.smoke.emitAt(px, 0.3, pz + 5, 3);
+    }
+  }
+
+  _flySciFi() {
+    if (this.state !== 'playing') return;
+    if (!this.player || this.player.flyCount >= this.player.maxFlyCount) return;
+    this.player.startFly();
+    const remaining = this.player.maxFlyCount - this.player.flyCount;
+    this.ui.ammoLabel.textContent = `⬆ ${remaining}/3`;
+    if (remaining <= 0) { this.ui.ammoLabel.style.display = 'none'; this.ui.fireBtn.style.display = 'none'; }
+    this.sound.play('rocket', 0.5);
   }
 
   _onGameOver(reason, hitMesh) {

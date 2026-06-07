@@ -56,7 +56,7 @@ async function init() {
   const starModel = loader.getStarModel();
   const stars = new Stars(starModel, sceneSetup.scene);
 
-  const unlockCarModel = loader.getUnlockCarModel();
+  const shopVehicles = loader.getShopVehicles();
 
   const ponyModel = loader.getPonyModel();
   const playerModelRace = loader.getPlayerModel();
@@ -89,45 +89,35 @@ async function init() {
   const totalStars = await getStars();
   ui.totalStars = totalStars;
 
+  ui.setShopVehicles(shopVehicles);
   ui.showStartScreen();
   ui.startBtn.addEventListener('click', () => {
     sound.play('click');
-    const choice = ui.getSelectedCharacter();
-    let model;
-    let playerScale = 0.8;
+    const equipped = ui.getEquippedVehicle();
 
-    if (choice === 'pony') {
-      model = ponyModel;
-      playerScale = 0.6;
-    } else if (choice === 'rx7') {
-      model = unlockCarModel;
-      playerScale = 0.55;
-    } else {
-      model = playerModelRace;
-    }
+    let model = loader.getVehicleModel(equipped);
+    let vehicleData = shopVehicles.find(v => v.id === equipped);
+    let playerScale = vehicleData ? vehicleData.scale : 0.8;
 
     if (!model) {
-      console.error('Failed to get model for', choice);
+      console.error('Failed to get model for', equipped);
       return;
     }
 
-    const player = new Player(model, playerScale);
-    if (choice === 'race') {
-      player.mesh.traverse(c => {
-        if (c.isMesh && c.material && c.material.color) {
-          c.material.color.setHex(0xcc2222);
-        }
-      });
-    }
+    const off = loader.getVehicleOffsets(equipped);
+    console.log('Vehicle offsets:', JSON.stringify(off));
+    const player = new Player(model, playerScale, off.yOffset, off.xOffset, off.rotationY, off.scaleZ, off.zOffset, off.scaleX);
     game.controlMode = ui.getControlMode();
     game.touch.setMode(game.controlMode);
     game.setMode(ui.getSelectedMode());
     game.setPlayer(player);
-    game.setUnlockCarModel(unlockCarModel);
-    const isPony = choice === 'pony';
+    const isPony = false;
     traffic.setPonyMode(isPony);
     game.ponyMode = isPony;
+    game.vehicleId = equipped;
+    game._smokeZ = off.smokeZ || -0.6;
     game.start();
+    console.log('Player pos after start:', game.player.mesh.position.toArray().map(v => v.toFixed(2)).join(','));
   });
 }
 

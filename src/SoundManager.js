@@ -16,6 +16,9 @@ export class SoundManager {
       fanfare: 'assets/sounds/brass-fanfare.mp3',
       timer: 'assets/sounds/timer.mp3',
       music: 'assets/sounds/game_music.mp3',
+      rocket: 'assets/sounds/rocket-rocket-sound_1.mp3',
+      tank_engine: 'assets/sounds/drive_tank.mp3',
+      fire_tank: 'assets/sounds/fire_tank.mp3',
     };
     for (const [key, path] of Object.entries(files)) {
       const audio = new Audio(path);
@@ -39,6 +42,12 @@ export class SoundManager {
     if (!a) return;
     a.pause();
     a.currentTime = 0;
+  }
+
+  setEngine(name) {
+    if (this._sounds[name]) {
+      this._engine = this._sounds[name];
+    }
   }
 
   startEngine() {
