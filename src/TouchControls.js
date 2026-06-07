@@ -127,8 +127,8 @@ export class TouchControls {
         <button class="tb-btn tb-btn-right">&#8594;</button>
       </div>
       <div class="tb-corner tb-corner-right">
-        <button class="tb-btn tb-gas">ГАЗ</button>
-        <button class="tb-btn tb-brake">ТОРМОЗ</button>
+        <button class="tb-btn tb-gas"><svg viewBox="0 0 36 48" width="24" height="32"><path d="M14 2 H22 L26 38 C26 42 22 46 18 46 C14 46 10 42 10 38 Z" fill="#4ade80" stroke="#166534" stroke-width="1.5" stroke-linejoin="round"/><path d="M14 14 H22 M14 20 H22 M14 26 H22" stroke="#166534" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/></svg></button>
+        <button class="tb-btn tb-brake"><svg viewBox="0 0 36 40" width="24" height="28"><path d="M6 4 C6 2 8 0 10 0 H26 C28 0 30 2 30 4 L32 34 C32 38 28 40 24 40 H12 C8 40 4 38 4 34 Z" fill="#f87171" stroke="#991b1b" stroke-width="1.5" stroke-linejoin="round"/><rect x="12" y="10" width="12" height="4" rx="1" fill="#991b1b" opacity="0.4"/><rect x="12" y="18" width="12" height="4" rx="1" fill="#991b1b" opacity="0.4"/><rect x="12" y="26" width="8" height="4" rx="1" fill="#991b1b" opacity="0.4"/></svg></button>
       </div>
     `;
     document.body.appendChild(c);
