@@ -281,7 +281,7 @@ export class UI {
 
     this.biomeLabel = document.createElement('div');
     this.biomeLabel.className = 'hud-biome';
-    this.biomeLabel.textContent = 'Highway';
+    this.biomeLabel.textContent = 'Трасса';
     this.hud.appendChild(this.biomeLabel);
 
     this.starCounter = document.createElement('div');
