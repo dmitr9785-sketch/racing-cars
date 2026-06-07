@@ -3,18 +3,18 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const SHOP_VEHICLES = [
   { id: 'race',            name: 'Гоночная машина',        price: 0,     scale: 0.8,  file: 'assets/models/race.glb' },
-  { id: 'lada_2107',       name: 'Лада 2107',              price: 50,    scale: 0.533,  file: 'assets/models/low_poly_lada_2107.glb' },
-  { id: 'audi_rs5',        name: 'Audi RS5',               price: 100,   scale: 0.65,  file: 'assets/models/audi_rs5_low_poly.glb' },
-  { id: 'bmw_m3',          name: 'BMW M3',                 price: 200,   scale: 0.8,  yOffset: 0.2, file: 'assets/models/bmw_m3_gtr_nfs_low_poly.glb' },
-  { id: 'nissan_silvia',   name: 'Nissan Silvia S13',      price: 350,   scale: 0.4,  yOffset: 0.5, scaleZ: 0.85, file: 'assets/models/low_poly_nissan_silvia_s13.glb' },
-  { id: 'free_car',        name: 'BMW M5',                 price: 500,   scale: 0.7,  yOffset: -1.25, zOffset: 2.0, smokeZ: -2.5, file: 'assets/models/free_low_poly_car.glb' },
-  { id: 'low_poly_car',    name: 'UAZ-452',                price: 750,  scale: 0.8,  file: 'assets/models/uaz-452_soviet_minivan.glb' },
-  { id: 'camaro',          name: 'Chevrolet Camaro',       price: 1000,  scale: 1.6,  color: 0xffff00, file: 'assets/models/chevrolet_camaro_low_poly_free.glb' },
-  { id: 'low_sports_car',  name: 'Спорткар 1',             price: 1500,  scale: 0.8,  yOffset: 0.2, scaleX: 0.7, file: 'assets/models/low_poly_sports_car.glb' },
-  { id: 'lowpoly_sports_car', name: 'Спорткар 2',          price: 2000,  scale: 0.8,  yOffset: 0.6, file: 'assets/models/low-poly_sports_car.glb' },
-  { id: 'rx7',             name: 'Mazda RX7',              price: 3000,  scale: 0.55, file: 'assets/models/mazda_rx7_veilside_stylized_toon.glb' },
-  { id: 'sci_fi',          name: 'Научная машина',         price: 5000,  scale: 0.8,  yOffset: 0.6, canFly: true, file: 'assets/models/sci-fi_car.glb' },
-  { id: 'tank',            name: 'Танк',                   price: 8000,  scale: 1.2,  yOffset: 0.5, file: 'assets/models/tank_low-poly__2.glb' },
+  { id: 'lada_2107',       name: 'Лада 2107',              price: 5,    scale: 0.533,  file: 'assets/models/low_poly_lada_2107.glb' },
+  { id: 'audi_rs5',        name: 'Audi RS5',               price: 10,   scale: 0.65,  file: 'assets/models/audi_rs5_low_poly.glb' },
+  { id: 'bmw_m3',          name: 'BMW M3',                 price: 15,   scale: 0.8,  yOffset: 0.2, file: 'assets/models/bmw_m3_gtr_nfs_low_poly.glb' },
+  { id: 'nissan_silvia',   name: 'Nissan Silvia S13',      price: 25,   scale: 0.4,  yOffset: 0.5, scaleZ: 0.85, file: 'assets/models/low_poly_nissan_silvia_s13.glb' },
+  { id: 'free_car',        name: 'BMW M5',                 price: 40,   scale: 0.7,  yOffset: -1.25, zOffset: 2.0, smokeZ: -2.5, file: 'assets/models/free_low_poly_car.glb' },
+  { id: 'low_poly_car',    name: 'UAZ-452',                price: 60,  scale: 0.8,  file: 'assets/models/uaz-452_soviet_minivan.glb' },
+  { id: 'camaro',          name: 'Chevrolet Camaro',       price: 80,  scale: 1.6,  color: 0xffff00, file: 'assets/models/chevrolet_camaro_low_poly_free.glb' },
+  { id: 'low_sports_car',  name: 'Спорткар 1',             price: 120,  scale: 0.8,  yOffset: 0.2, scaleX: 0.7, file: 'assets/models/low_poly_sports_car.glb' },
+  { id: 'lowpoly_sports_car', name: 'Спорткар 2',          price: 160,  scale: 0.8,  yOffset: 0.6, file: 'assets/models/low-poly_sports_car.glb' },
+  { id: 'rx7',             name: 'Mazda RX7',              price: 240,  scale: 0.55, file: 'assets/models/mazda_rx7_veilside_stylized_toon.glb' },
+  { id: 'sci_fi',          name: 'Научная машина',         price: 400,  scale: 0.8,  yOffset: 0.6, canFly: true, file: 'assets/models/sci-fi_car.glb' },
+  { id: 'tank',            name: 'Танк',                   price: 500,  scale: 1.2,  yOffset: 0.5, file: 'assets/models/tank_low-poly__2.glb' },
 ];
 
 const MODEL_LIST = [

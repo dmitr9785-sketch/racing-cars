@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { checkCollision } from './Collision.js';
 import { Biome } from './Biome.js';
-import { gameplayStart, gameplayStop, saveStars } from './YandexSDK.js';
+import { gameplayStart, gameplayStop, saveStars, showAd, showRewarded } from './YandexSDK.js';
 import { TouchControls } from './TouchControls.js';
 
 export class Game {
@@ -43,6 +43,7 @@ export class Game {
     this.controlMode = 'swipe';
     this.ui.restartBtn.addEventListener('click', () => { this.sound.play('click'); this.start(); });
     this.ui.menuBtn.addEventListener('click', () => { this.sound.play('click'); this.goToMainMenu(); });
+    this.ui.rewardedBtn.addEventListener('click', () => { this.sound.play('click'); this._watchRewarded(); });
     if (this.ui.fireBtn) {
       this.ui.fireBtn.addEventListener('click', () => {
         if (this.vehicleId === 'sci_fi') this._flySciFi();
@@ -337,6 +338,17 @@ export class Game {
     this.sound.play('rocket', 0.5);
   }
 
+  async _watchRewarded() {
+    const rewarded = await showRewarded();
+    if (rewarded) {
+      const bonus = 5;
+      const prev = parseInt(localStorage.getItem('highway_rush_stars') || '0', 10);
+      const total = prev + bonus;
+      saveStars(total);
+      this.ui._rewardedBonus(bonus);
+    }
+  }
+
   _onGameOver(reason, hitMesh) {
     this.state = 'gameover';
     this.traffic.speed = 0;
@@ -355,9 +367,9 @@ export class Game {
     const total = prev + this.starCount;
     saveStars(total);
 
-    setTimeout(() => {
+    showAd().finally(() => {
       const displayScore = this.mode === 'stars' ? this.timeElapsed : this.score;
       this.ui.showGameOver(displayScore, this.starCount, this.mode, reason);
-    }, 400);
+    });
   }
 }

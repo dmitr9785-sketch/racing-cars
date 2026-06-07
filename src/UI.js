@@ -299,12 +299,14 @@ export class UI {
       <div class="final-score" id="final-score">Счёт: 0</div>
       <div class="gameover-btns">
         <button class="btn" id="restart-btn">ЗАНОВО</button>
+        <button class="btn btn-secondary" id="rewarded-btn">🎬 +5⭐</button>
         <button class="btn btn-secondary" id="menu-btn">ГЛАВНОЕ МЕНЮ</button>
       </div>
     `;
     this.container.appendChild(this.gameoverScreen);
     this.finalScore = this.gameoverScreen.querySelector('#final-score');
     this.restartBtn = this.gameoverScreen.querySelector('#restart-btn');
+    this.rewardedBtn = this.gameoverScreen.querySelector('#rewarded-btn');
     this.menuBtn = this.gameoverScreen.querySelector('#menu-btn');
   }
 
@@ -395,6 +397,14 @@ export class UI {
     this.starCounter.style.display = 'none';
     this.hint.style.display = 'none';
     this.hideFireButton();
+  }
+
+  _rewardedBonus(bonus) {
+    const el = document.createElement('div');
+    el.className = 'unlock-msg';
+    el.textContent = `+${bonus}⭐ за рекламу!`;
+    this.container.appendChild(el);
+    setTimeout(() => el.remove(), 2500);
   }
 
   hideGameOver() {

@@ -62,3 +62,25 @@ export function getEquippedVehicle() {
   const valid = stored && (stored === 'race' || purchases.includes(stored));
   return valid ? stored : 'race';
 }
+
+export async function showAd() {
+  if (ysdk && !ysdk.mock && ysdk.adv) {
+    try {
+      await ysdk.adv.showFullscreenAdv();
+    } catch (e) {
+      console.warn('Fullscreen ad failed:', e);
+    }
+  }
+}
+
+export async function showRewarded() {
+  if (ysdk && !ysdk.mock && ysdk.adv) {
+    try {
+      const result = await ysdk.adv.showRewardedVideo();
+      return result === 'rewarded';
+    } catch (e) {
+      console.warn('Rewarded ad failed:', e);
+    }
+  }
+  return false;
+}
