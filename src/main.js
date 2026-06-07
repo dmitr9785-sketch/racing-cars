@@ -10,11 +10,12 @@ import { UI } from './UI.js';
 import { Game } from './Game.js';
 import { Smoke } from './Smoke.js';
 import { PonyDecor } from './PonyDecor.js';
-import { initYandexSDK, loadingReady, saveStars, getStars } from './YandexSDK.js';
+import { initYandexSDK, loadingReady, saveStars, getStars, loadCloud } from './YandexSDK.js';
 import { SoundManager } from './SoundManager.js';
 
 async function init() {
   await initYandexSDK();
+  await loadCloud();
   const sound = new SoundManager();
   sound.init();
   const ui = new UI(sound);
