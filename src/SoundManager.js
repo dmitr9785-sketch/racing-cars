@@ -11,7 +11,7 @@ export class SoundManager {
       star: 'assets/sounds/starsound.mp3',
       crash: 'assets/sounds/boom_car.mp3',
       switch: 'assets/sounds/povorot_maincar.mp3',
-      gameover: 'assets/sounds/gameover (1).mp3',
+      gameover: 'assets/sounds/gameover.mp3',
       click: 'assets/sounds/cartoon-button-click-sound.mp3',
       fanfare: 'assets/sounds/brass-fanfare.mp3',
       timer: 'assets/sounds/timer.mp3',

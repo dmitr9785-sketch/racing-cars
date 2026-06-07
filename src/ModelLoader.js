@@ -49,8 +49,8 @@ const MODEL_LIST = [
   { id: 'cactus', file: 'assets/models/cactus_low_poly.glb' },
   { id: 'piramide', file: 'assets/models/low_poly_khafre.glb' },
   { id: 'pony_flower', file: 'assets/models/low_poly_flowers.glb' },
-  { id: 'pony_flower2', file: 'assets/models/low_poly_flowers(1).glb' },
-  { id: 'pony_star', file: 'assets/models/star for pony .glb' },
+  { id: 'pony_flower2', file: 'assets/models/low_poly_flowers2.glb' },
+  { id: 'pony_star', file: 'assets/models/star_for_pony.glb' },
   { id: 'pony_sun', file: 'assets/models/low_poly_sun.glb' },
 ];
 
