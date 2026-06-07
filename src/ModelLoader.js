@@ -7,7 +7,7 @@ const SHOP_VEHICLES = [
   { id: 'audi_rs5',        name: 'Audi RS5',               price: 100,   scale: 0.65,  file: 'assets/models/audi_rs5_low_poly.glb' },
   { id: 'bmw_m3',          name: 'BMW M3',                 price: 200,   scale: 0.8,  yOffset: 0.2, file: 'assets/models/bmw_m3_gtr_nfs_low_poly.glb' },
   { id: 'nissan_silvia',   name: 'Nissan Silvia S13',      price: 350,   scale: 0.4,  yOffset: 0.5, scaleZ: 0.85, file: 'assets/models/low_poly_nissan_silvia_s13.glb' },
-  { id: 'free_car',        name: 'Бесплатная машина',      price: 500,   scale: 0.7,  yOffset: -1.25, zOffset: 2.0, smokeZ: -2.5, file: 'assets/models/free_low_poly_car.glb' },
+  { id: 'free_car',        name: 'BMW M5',                 price: 500,   scale: 0.7,  yOffset: -1.25, zOffset: 2.0, smokeZ: -2.5, file: 'assets/models/free_low_poly_car.glb' },
   { id: 'low_poly_car',    name: 'UAZ-452',                price: 750,  scale: 0.8,  file: 'assets/models/uaz-452_soviet_minivan.glb' },
   { id: 'camaro',          name: 'Chevrolet Camaro',       price: 1000,  scale: 1.6,  color: 0xffff00, file: 'assets/models/chevrolet_camaro_low_poly_free.glb' },
   { id: 'low_sports_car',  name: 'Спорткар 1',             price: 1500,  scale: 0.8,  yOffset: 0.2, scaleX: 0.7, file: 'assets/models/low_poly_sports_car.glb' },
