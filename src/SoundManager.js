@@ -53,7 +53,7 @@ export class SoundManager {
   startEngine() {
     if (!this._engine) return;
     this._engine.loop = true;
-    this._engine.volume = 0.3;
+    this._engine.volume = 0.5;
     this._engine.playbackRate = 0.8;
     this._engine.play().catch(() => {});
   }
@@ -61,7 +61,7 @@ export class SoundManager {
   updateEngine(speed) {
     if (!this._engine || this._engine.paused) return;
     this._engine.playbackRate = 0.8 + speed * 0.15;
-    this._engine.volume = Math.min(0.5, 0.15 + speed * 0.05);
+    this._engine.volume = Math.min(0.8, 0.3 + speed * 0.08);
   }
 
   stopEngine() {
