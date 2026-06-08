@@ -1,14 +1,33 @@
-param([switch]$Clean)
+param([Switch]$Clean)
+
 $src = "D:\racing cars"
-$out = Join-Path $src "build"
-$zip = Join-Path $src "highway-rush.zip"
-if (Test-Path $zip) { Remove-Item -LiteralPath $zip -Force }
-if (Test-Path $out) { Remove-Item -LiteralPath $out -Recurse -Force }
-New-Item -ItemType Directory -Path $out -Force | Out-Null
-Copy-Item (Join-Path $src "index.html") $out
-Copy-Item (Join-Path $src "styles.css") $out
-Copy-Item (Join-Path $src "game.js") $out
-Copy-Item -Recurse -Force (Join-Path $src "assets") "$out\assets"
-Compress-Archive -Path "$out\*" -DestinationPath $zip -Force
-Remove-Item -LiteralPath $out -Recurse -Force
-Write-Host "Архив создан: $zip"
+$out = Join-Path $src "highway-rush.zip"
+$buildDir = Join-Path $env:TEMP "highway-rush-build"
+
+# Clean
+if (Test-Path $out) { Remove-Item -LiteralPath $out -Force }
+if (Test-Path $buildDir) { Remove-Item -LiteralPath $buildDir -Recurse -Force }
+
+# Prepare build directory
+$null = New-Item -ItemType Directory -Path $buildDir -Force
+Copy-Item (Join-Path $src "index.html"), (Join-Path $src "styles.css"), (Join-Path $src "game.js") $buildDir
+Copy-Item -Recurse (Join-Path $src "assets") (Join-Path $buildDir "assets")
+
+Add-Type -AssemblyName System.IO.Compression
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+
+$zipStream = [System.IO.File]::Open($out, [System.IO.FileMode]::Create)
+$zip = New-Object System.IO.Compression.ZipArchive($zipStream, [System.IO.Compression.ZipArchiveMode]::Create)
+
+Get-ChildItem -Path $buildDir -Recurse | Where-Object { -not $_.PSIsContainer } | ForEach-Object {
+    $relative = $_.FullName.Substring($buildDir.Length + 1) -replace '\\', '/'
+    $entry = $zip.CreateEntry($relative, [System.IO.Compression.CompressionLevel]::Optimal)
+    $writer = New-Object System.IO.BinaryWriter $entry.Open()
+    $writer.Write([System.IO.File]::ReadAllBytes($_.FullName))
+    $writer.Dispose()
+}
+
+$zip.Dispose()
+$zipStream.Dispose()
+Remove-Item -LiteralPath $buildDir -Recurse -Force
+Write-Host "Архив создан: $out"
