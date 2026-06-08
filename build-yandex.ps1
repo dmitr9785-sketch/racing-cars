@@ -11,6 +11,7 @@ Copy-Item (Join-Path $src "index.html") $out
 Copy-Item (Join-Path $src "styles.css") $out
 
 Copy-Item -Recurse (Join-Path $src "src") (Join-Path $out "src")
+Copy-Item -Recurse (Join-Path $src "lib") (Join-Path $out "lib")
 
 Copy-Item -Recurse -Force (Join-Path $src "assets\models") (Join-Path $out "assets")
 Copy-Item -Recurse -Force (Join-Path $src "assets\sounds") (Join-Path $out "assets")
