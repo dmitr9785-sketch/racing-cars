@@ -4,3 +4,5 @@ lib/
 game.js
 highway-rush.zip
 *.docx
+
+build-check/
