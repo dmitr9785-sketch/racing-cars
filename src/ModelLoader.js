@@ -135,7 +135,11 @@ export class ModelLoader {
             if (completed === this.total) resolve();
           },
           undefined,
-          () => {
+          (err) => {
+            console.error('Failed to load ' + entry.file + ':', err && err.message ? err.message : err);
+            if (err && err.target && err.target instanceof HTMLImageElement) {
+              console.error('Missing texture:', err.target.src);
+            }
             const fallback = this._createFallback(entry.id);
             this.models[entry.id] = fallback;
             this.loaded++;
