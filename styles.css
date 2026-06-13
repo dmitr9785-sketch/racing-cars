@@ -305,6 +305,22 @@ canvas { display: block; touch-action: none; }
   text-shadow: 0 0 8px rgba(255,170,0,0.5);
 }
 
+/* Портретная ориентация */
+@media (orientation: portrait) {
+  .gameover-screen h1 { font-size: clamp(28px, 7vw, 40px); margin-bottom: 6px; }
+  .gameover-screen .final-score { font-size: clamp(14px, 3.5vw, 20px); margin-bottom: 16px; }
+  .gameover-btns { gap: 4px; }
+  .gameover-btns .btn { padding: 6px 10px; font-size: clamp(11px, 2.5vw, 13px); min-height: 32px; }
+  .mode-select { gap: 4px; margin-bottom: 10px; }
+  .mode-card { padding: 4px 6px; min-height: 36px; }
+  .mode-name { font-size: clamp(11px, 2vw, 13px); }
+  .mode-desc { font-size: clamp(9px, 1.5vw, 10px); }
+  #start-screen { padding: 8px; }
+  .start-btns { gap: 6px; }
+  #start-screen .mode-label { margin: 8px 0 6px; font-size: 13px; }
+  #shop-btn { padding: 8px 20px; font-size: clamp(12px, 2.5vw, 14px); }
+}
+
 /* Remove hover on touch devices */
 @media (hover: none) {
   .btn:hover { transform: none; background: #00d4ff; }

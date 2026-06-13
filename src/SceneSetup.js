@@ -36,11 +36,26 @@ export class SceneSetup {
     this.sun.shadow.camera.bottom = -10;
     this.scene.add(this.sun);
 
-    window.addEventListener('resize', () => {
-      this.camera.aspect = window.innerWidth / window.innerHeight;
-      this.camera.updateProjectionMatrix();
-      this.renderer.setSize(window.innerWidth, window.innerHeight);
-    });
+    this._updateOrientation();
+    window.addEventListener('resize', () => this._updateOrientation());
+  }
+
+  _updateOrientation() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const isPortrait = h > w;
+    this.camera.aspect = w / h;
+    if (isPortrait) {
+      this.camera.fov = 75;
+      this.camera.position.set(0, 10, -7);
+      this.camera.lookAt(0, 0, 6);
+    } else {
+      this.camera.fov = 60;
+      this.camera.position.set(0, 12, -4);
+      this.camera.lookAt(0, 0, 4);
+    }
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(w, h);
   }
 
   setBiome(colors) {
