@@ -338,10 +338,12 @@ export class Game {
 
   async _watchRewarded() {
     const rewarded = await showRewarded();
+    console.log('[Game] _watchRewarded ->', rewarded);
     if (rewarded) {
       const bonus = 5;
       const prev = parseInt(localStorage.getItem('highway_rush_stars') || '0', 10);
       const total = prev + bonus;
+      console.log('[Game] prev:', prev, 'total:', total);
       saveStars(total);
       this.ui._rewardedBonus(bonus);
     }

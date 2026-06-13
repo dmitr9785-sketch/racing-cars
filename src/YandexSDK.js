@@ -128,21 +128,20 @@ export async function showAd() {
 
 export async function showRewarded() {
   if (_soundManager) _soundManager.pauseForAd();
-  if (ysdk && !ysdk.mock && ysdk.adv) {
+  if (ysdk && !ysdk.mock && ysdk.adv && typeof ysdk.adv.showRewardedVideo === 'function') {
     try {
-      const result = await ysdk.adv.showRewardedVideo();
-      const rewarded = !!(result && (result === true || result.result === 'rewarded' || result.code === 'rewarded'));
-      if (_soundManager) _soundManager.resumeFromAd();
-      return rewarded;
+      await ysdk.adv.showRewardedVideo({
+        callbacks: { onRewarded: () => {} }
+      });
     } catch (e) {
-      console.warn('Rewarded ad failed:', e);
+      console.warn('[YandexSDK] showRewardedVideo failed:', e);
+      if (_soundManager) _soundManager.resumeFromAd();
+      return false;
     }
-  } else {
-    // mock mode — simulate rewarded for testing
-    await new Promise(r => setTimeout(r, 500));
     if (_soundManager) _soundManager.resumeFromAd();
     return true;
   }
+  await new Promise(r => setTimeout(r, 500));
   if (_soundManager) _soundManager.resumeFromAd();
-  return false;
+  return true;
 }
