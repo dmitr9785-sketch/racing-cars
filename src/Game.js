@@ -41,8 +41,8 @@ export class Game {
     this._bindKeys();
     this.touch = new TouchControls(this, renderer.domElement);
     this.controlMode = 'swipe';
-    this.ui.restartBtn.addEventListener('click', () => { this.sound.play('click'); this.start(); });
-    this.ui.menuBtn.addEventListener('click', () => { this.sound.play('click'); this.goToMainMenu(); });
+    this.ui.restartBtn.addEventListener('click', () => { this.sound.play('click'); this._adThenStart(); });
+    this.ui.menuBtn.addEventListener('click', () => { this.sound.play('click'); this._adThenMenu(); });
     this.ui.rewardedBtn.addEventListener('click', () => { this.sound.play('click'); this._watchRewarded(); });
     if (this.ui.fireBtn) {
       this.ui.fireBtn.addEventListener('click', () => {
@@ -51,6 +51,16 @@ export class Game {
       });
     }
     this._startLoop();
+  }
+
+  async _adThenStart() {
+    await showAd();
+    this.start();
+  }
+
+  async _adThenMenu() {
+    await showAd();
+    this.goToMainMenu();
   }
 
   setMode(mode) {
@@ -97,7 +107,6 @@ export class Game {
         if (e.key === ' ' || e.key === 'Space') e.preventDefault();
         return;
       }
-
       if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
         this.gasHeld = pressed;
         e.preventDefault();
@@ -107,12 +116,8 @@ export class Game {
         e.preventDefault();
       }
       if (pressed) {
-        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
-          this._switchLane(1);
-        }
-        if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
-          this._switchLane(-1);
-        }
+        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') this._switchLane(1);
+        if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') this._switchLane(-1);
         if (e.key === ' ' || e.key === 'Space') {
           if (this.vehicleId === 'tank') this._fireTank();
           else if (this.vehicleId === 'sci_fi') this._flySciFi();
@@ -147,10 +152,8 @@ export class Game {
     this.ui.hideStartScreen();
     this.ui.hideGameOver();
     this.ui.showHUD();
-
     const modeLabels = { endless: 'Бесконечный', time: '60 Секунд', stars: 'Гонка за звёздами' };
     this.ui.hudMode.textContent = modeLabels[this.mode] || '';
-
     if (this.mode === 'time') {
       this.timeLimit = 60;
       this.ui.updateScore(this.timeLimit);
@@ -189,7 +192,6 @@ export class Game {
     this.sound.stop('crash');
     this.sound.startEngine();
     this.sound.startMusic();
-    this.ui.setGameStarted(true);
     this.touch.setMode(this.controlMode);
     this.touch.enable();
   }
@@ -197,17 +199,13 @@ export class Game {
   _startLoop() {
     const loop = (now) => {
       requestAnimationFrame(loop);
-
       if (this.state === 'start_screen') {
         this.renderer.render(this.scene, this.camera);
         return;
       }
-
       const delta = Math.min((now - this.lastTime) / 1000, 0.05);
       this.lastTime = now;
-
       this.renderer.render(this.scene, this.camera);
-
       if (this.state === 'playing') {
         this._update(delta);
       }
@@ -352,7 +350,6 @@ export class Game {
   _onGameOver(reason, hitMesh) {
     this.state = 'gameover';
     this.traffic.speed = 0;
-    this.ui.setGameStarted(false);
     this.touch.disable();
     gameplayStop();
     this.sound.stopEngine();
@@ -367,9 +364,7 @@ export class Game {
     const total = prev + this.starCount;
     saveStars(total);
 
-    showAd().finally(() => {
-      const displayScore = this.mode === 'stars' ? this.timeElapsed : this.score;
-      this.ui.showGameOver(displayScore, this.starCount, this.mode, reason);
-    });
+    const displayScore = this.mode === 'stars' ? this.timeElapsed : this.score;
+    this.ui.showGameOver(displayScore, this.starCount, this.mode, reason);
   }
 }

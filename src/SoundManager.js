@@ -1,11 +1,18 @@
 export class SoundManager {
   constructor() {
-    this._sounds = {};
-    this._engine = null;
-    this._music = null;
+    this._ctx = null;
+    this._buffers = {};
+    this._engineSource = null;
+    this._engineGain = null;
+    this._musicSource = null;
+    this._musicGain = null;
+    this._engineId = 'engine';
+    this._suspendedForAd = false;
+    this._onVisibility = this._onVisibilityChange.bind(this);
   }
 
-  init() {
+  async init() {
+    this._ctx = new (window.AudioContext || window.webkitAudioContext)();
     const files = {
       engine: 'assets/sounds/sound_of_motor.mp3',
       star: 'assets/sounds/starsound.mp3',
@@ -20,71 +27,137 @@ export class SoundManager {
       tank_engine: 'assets/sounds/drive_tank.mp3',
       fire_tank: 'assets/sounds/fire_tank.mp3',
     };
-    for (const [key, path] of Object.entries(files)) {
-      const audio = new Audio(path);
-      audio.preload = 'auto';
-      this._sounds[key] = audio;
+    const entries = Object.entries(files);
+    this._total = entries.length;
+    this._loaded = 0;
+    const promises = entries.map(([key, path]) =>
+      fetch(path)
+        .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.arrayBuffer(); })
+        .then(buf => this._ctx.decodeAudioData(buf))
+        .then(ab => { this._buffers[key] = ab; })
+        .catch(() => {})
+        .finally(() => { this._loaded++; })
+    );
+    document.addEventListener('visibilitychange', this._onVisibility);
+    document.addEventListener('pagehide', this._onVisibility);
+    return Promise.all(promises);
+  }
+
+  get loaded() { return this._loaded; }
+  get total() { return this._total; }
+
+  _ensureRunning() {
+    if (this._ctx && this._ctx.state === 'suspended') {
+      this._ctx.resume().catch(() => {});
     }
-    this._engine = this._sounds.engine;
-    this._music = this._sounds.music;
+  }
+
+  _onVisibilityChange() {
+    if (document.hidden || document.visibilityState === 'hidden') {
+      if (this._ctx && this._ctx.state === 'running') {
+        this._ctx.suspend().catch(() => {});
+      }
+    } else {
+      if (this._ctx && this._ctx.state === 'suspended' && !this._suspendedForAd) {
+        this._ctx.resume().catch(() => {});
+      }
+    }
+  }
+
+  pauseForAd() {
+    this._suspendedForAd = true;
+    if (this._ctx && this._ctx.state === 'running') {
+      this._ctx.suspend().catch(() => {});
+    }
+  }
+
+  resumeFromAd() {
+    this._suspendedForAd = false;
+    if (this._ctx && this._ctx.state === 'suspended') {
+      this._ctx.resume().catch(() => {});
+    }
   }
 
   play(name, volume = 1) {
-    const a = this._sounds[name];
-    if (!a) return;
-    a.currentTime = 0;
-    a.volume = volume;
-    a.play().catch(() => {});
+    this._ensureRunning();
+    const buf = this._buffers[name];
+    if (!buf || !this._ctx) return;
+    const source = this._ctx.createBufferSource();
+    source.buffer = buf;
+    const gain = this._ctx.createGain();
+    gain.gain.value = volume;
+    source.connect(gain);
+    gain.connect(this._ctx.destination);
+    source.start(0);
   }
 
-  stop(name) {
-    const a = this._sounds[name];
-    if (!a) return;
-    a.pause();
-    a.currentTime = 0;
-  }
+  stop(name) {}
 
   setEngine(name) {
-    if (this._sounds[name]) {
-      this._engine = this._sounds[name];
-    }
+    this._engineId = name;
   }
 
   startEngine() {
-    if (!this._engine) return;
-    this._engine.loop = true;
-    this._engine.volume = 0.5;
-    this._engine.playbackRate = 0.8;
-    this._engine.play().catch(() => {});
+    this._ensureRunning();
+    const id = this._engineId;
+    const buf = this._buffers[id];
+    if (!buf || !this._ctx) return;
+    this._stop('_engineSource', '_engineGain');
+    const source = this._ctx.createBufferSource();
+    source.buffer = buf;
+    source.loop = true;
+    source.playbackRate.value = 0.8;
+    const gain = this._ctx.createGain();
+    gain.gain.value = 0.5;
+    source.connect(gain);
+    gain.connect(this._ctx.destination);
+    source.start(0);
+    this._engineSource = source;
+    this._engineGain = gain;
   }
 
   updateEngine(speed) {
-    if (!this._engine || this._engine.paused) return;
-    this._engine.playbackRate = 0.8 + speed * 0.15;
-    this._engine.volume = Math.min(0.8, 0.3 + speed * 0.08);
+    if (this._engineSource && this._engineSource.playbackRate) {
+      this._engineSource.playbackRate.value = 0.8 + speed * 0.15;
+    }
+    if (this._engineGain) {
+      this._engineGain.gain.value = Math.min(0.8, 0.3 + speed * 0.08);
+    }
   }
 
   stopEngine() {
-    if (!this._engine) return;
-    this._engine.pause();
-    this._engine.currentTime = 0;
+    this._stop('_engineSource', '_engineGain');
   }
 
   startMusic() {
-    if (!this._music) return;
-    this._music.loop = true;
-    this._music.volume = 0.2;
-    this._music.play().catch(() => {});
+    this._ensureRunning();
+    const buf = this._buffers.music;
+    if (!buf || !this._ctx) return;
+    this._stop('_musicSource', '_musicGain');
+    const source = this._ctx.createBufferSource();
+    source.buffer = buf;
+    source.loop = true;
+    const gain = this._ctx.createGain();
+    gain.gain.value = 0.2;
+    source.connect(gain);
+    gain.connect(this._ctx.destination);
+    source.start(0);
+    this._musicSource = source;
+    this._musicGain = gain;
   }
 
   stopMusic() {
-    if (!this._music) return;
-    this._music.pause();
-    this._music.currentTime = 0;
+    this._stop('_musicSource', '_musicGain');
   }
 
   stopAll() {
     this.stopEngine();
     this.stopMusic();
+  }
+
+  _stop(sourceKey, gainKey) {
+    try { this[sourceKey]?.stop(); } catch {}
+    this[sourceKey] = null;
+    this[gainKey] = null;
   }
 }

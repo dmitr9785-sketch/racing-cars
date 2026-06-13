@@ -10,15 +10,21 @@ import { UI } from './UI.js';
 import { Game } from './Game.js';
 import { Smoke } from './Smoke.js';
 import { PonyDecor } from './PonyDecor.js';
-import { initYandexSDK, loadingReady, saveStars, getStars, loadCloud } from './YandexSDK.js';
+import { initYandexSDK, loadingReady, saveStars, getStars, loadCloud, getLang, setSoundManager } from './YandexSDK.js';
 import { SoundManager } from './SoundManager.js';
 
 async function init() {
   await initYandexSDK();
   await loadCloud();
+  const lang = getLang();
+
   const sound = new SoundManager();
-  sound.init();
+  setSoundManager(sound);
+  await sound.init();
+
   const ui = new UI(sound);
+  ui.setLang(lang);
+
   const sceneSetup = new SceneSetup();
   const road = new Road(sceneSetup.scene);
 
@@ -106,7 +112,6 @@ async function init() {
     }
 
     const off = loader.getVehicleOffsets(equipped);
-    console.log('Vehicle offsets:', JSON.stringify(off));
     const player = new Player(model, playerScale, off.yOffset, off.xOffset, off.rotationY, off.scaleZ, off.zOffset, off.scaleX);
     game.controlMode = ui.getControlMode();
     game.touch.setMode(game.controlMode);
@@ -118,7 +123,6 @@ async function init() {
     game.vehicleId = equipped;
     game._smokeZ = off.smokeZ || -0.6;
     game.start();
-    console.log('Player pos after start:', game.player.mesh.position.toArray().map(v => v.toFixed(2)).join(','));
   });
 }
 

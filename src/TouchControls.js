@@ -22,14 +22,21 @@ export class TouchControls {
     this._onTouchStart = this._onTouchStart.bind(this);
     this._onTouchMove = this._onTouchMove.bind(this);
     this._onTouchEnd = this._onTouchEnd.bind(this);
-
     this._onTouchCancel = this._onTouchCancel.bind(this);
+
     this.canvas.addEventListener('touchstart', this._onTouchStart, { passive: false });
     this.canvas.addEventListener('touchmove', this._onTouchMove, { passive: false });
     this.canvas.addEventListener('touchend', this._onTouchEnd, { passive: false });
     this.canvas.addEventListener('touchcancel', this._onTouchCancel, { passive: false });
 
+    this._preventGlobalEvents();
     this._buildFullscreenBtn();
+  }
+
+  _preventGlobalEvents() {
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('selectstart', e => e.preventDefault());
+    document.addEventListener('dragstart', e => e.preventDefault());
   }
 
   setMode(mode) {
@@ -48,7 +55,6 @@ export class TouchControls {
   _onTouchStart(e) {
     if (!this._enabled || this.game.state === 'start_screen') return;
     e.preventDefault();
-
     if (this.mode === 'swipe') {
       this._handleSwipeStart(e);
     }
@@ -79,7 +85,6 @@ export class TouchControls {
     this._touchId = t.identifier;
     this._startX = t.clientX;
     this._swipeTriggered = false;
-
     const halfW = window.innerWidth / 2;
     if (t.clientX < halfW) {
       this._zone = 'brake';
@@ -139,15 +144,8 @@ export class TouchControls {
     this._gasBtn = c.querySelector('.tb-gas');
     this._brakeBtn = c.querySelector('.tb-brake');
 
-    this._leftBtn.addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      this.game._switchLane(1);
-    }, { passive: false });
-
-    this._rightBtn.addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      this.game._switchLane(-1);
-    }, { passive: false });
+    this._leftBtn.addEventListener('touchstart', (e) => { e.preventDefault(); this.game._switchLane(1); }, { passive: false });
+    this._rightBtn.addEventListener('touchstart', (e) => { e.preventDefault(); this.game._switchLane(-1); }, { passive: false });
 
     this._gasBtn.addEventListener('touchstart', (e) => {
       e.preventDefault();
@@ -156,16 +154,10 @@ export class TouchControls {
     }, { passive: false });
     this._gasBtn.addEventListener('touchend', (e) => {
       for (const t of e.changedTouches) {
-        if (t.identifier === this._gasTouchId) {
-          this.game._setGas(false);
-          this._gasTouchId = null;
-        }
+        if (t.identifier === this._gasTouchId) { this.game._setGas(false); this._gasTouchId = null; }
       }
     }, { passive: false });
-    this._gasBtn.addEventListener('touchcancel', () => {
-      this.game._setGas(false);
-      this._gasTouchId = null;
-    }, { passive: false });
+    this._gasBtn.addEventListener('touchcancel', () => { this.game._setGas(false); this._gasTouchId = null; }, { passive: false });
 
     this._brakeBtn.addEventListener('touchstart', (e) => {
       e.preventDefault();
@@ -174,16 +166,10 @@ export class TouchControls {
     }, { passive: false });
     this._brakeBtn.addEventListener('touchend', (e) => {
       for (const t of e.changedTouches) {
-        if (t.identifier === this._brakeTouchId) {
-          this.game._setBrake(false);
-          this._brakeTouchId = null;
-        }
+        if (t.identifier === this._brakeTouchId) { this.game._setBrake(false); this._brakeTouchId = null; }
       }
     }, { passive: false });
-    this._brakeBtn.addEventListener('touchcancel', () => {
-      this.game._setBrake(false);
-      this._brakeTouchId = null;
-    }, { passive: false });
+    this._brakeBtn.addEventListener('touchcancel', () => { this.game._setBrake(false); this._brakeTouchId = null; }, { passive: false });
   }
 
   _removeButtons() {

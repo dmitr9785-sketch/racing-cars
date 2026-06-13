@@ -12,7 +12,7 @@ export class SceneSetup {
 
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1));
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     document.body.prepend(this.renderer.domElement);
@@ -26,8 +26,8 @@ export class SceneSetup {
     this.sun = new THREE.DirectionalLight(0xffeedd, 1.4);
     this.sun.position.set(10, 20, 5);
     this.sun.castShadow = true;
-    this.sun.shadow.mapSize.width = 512;
-    this.sun.shadow.mapSize.height = 512;
+    this.sun.shadow.mapSize.width = 256;
+    this.sun.shadow.mapSize.height = 256;
     this.sun.shadow.camera.near = 0.5;
     this.sun.shadow.camera.far = 60;
     this.sun.shadow.camera.left = -20;

@@ -1,5 +1,15 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Segoe UI', sans-serif; overscroll-behavior: none; }
+html, body {
+  width: 100%; height: 100%; overflow: hidden; background: #000;
+  font-family: 'Segoe UI', sans-serif;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: auto;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-touch-callout: none;
+}
 
 canvas { display: block; touch-action: none; }
 
@@ -14,6 +24,7 @@ canvas { display: block; touch-action: none; }
   color: #fff; text-align: right;
   text-shadow: 0 2px 8px rgba(0,0,0,0.7);
   font-size: clamp(13px, 2.5vw, 18px);
+  z-index: 30;
 }
 .hud-score { font-size: clamp(28px, 5vw, 42px); font-weight: 800; letter-spacing: 2px; }
 .hud-speed { font-size: clamp(12px, 2vw, 16px); opacity: 0.8; margin-top: 4px; }
@@ -39,10 +50,11 @@ canvas { display: block; touch-action: none; }
   display: none; flex-direction: column;
   align-items: center; justify-content: center;
   background: rgba(0,0,0,0.8); color: #fff; z-index: 50;
+  padding: 16px;
 }
 .gameover-screen.show { display: flex; }
 .gameover-screen h1 { font-size: clamp(36px, 8vw, 64px); margin-bottom: 10px; letter-spacing: 6px; font-weight: 800; }
-.gameover-screen .final-score { font-size: clamp(18px, 4vw, 28px); margin-bottom: 40px; opacity: 0.8; }
+.gameover-screen .final-score { font-size: clamp(18px, 4vw, 28px); margin-bottom: 40px; opacity: 0.8; text-align: center; }
 .btn {
   padding: clamp(10px, 2vh, 14px) clamp(24px, 6vw, 48px); font-size: clamp(14px, 3vw, 20px); font-weight: 700;
   background: #00d4ff; color: #1a1a2e; border: none; border-radius: 8px;
@@ -94,10 +106,12 @@ canvas { display: block; touch-action: none; }
   color: #ffdd44; font-size: clamp(20px, 4vw, 28px); font-weight: 800;
   text-shadow: 0 0 12px rgba(255,200,0,0.6), 0 2px 8px rgba(0,0,0,0.7);
   letter-spacing: 1px;
+  z-index: 30;
 }
 
 .gameover-btns {
   display: flex; gap: clamp(8px, 2vw, 16px); flex-wrap: wrap; justify-content: center;
+  max-width: 100%;
 }
 .btn-secondary {
   background: rgba(255,255,255,0.15); color: #fff;
@@ -118,13 +132,14 @@ canvas { display: block; touch-action: none; }
 .hud-biome {
   position: absolute; top: clamp(55px, 8vh, 75px); right: clamp(10px, 2vw, 20px);
   color: rgba(255,255,255,0.5); font-size: clamp(10px, 1.8vw, 13px); font-weight: 600;
-  letter-spacing: 1px; text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .controls-hint {
   position: absolute; bottom: clamp(10px, 3vh, 30px); left: 50%; transform: translateX(-50%);
   color: rgba(255,255,255,0.4); font-size: clamp(10px, 1.8vw, 14px);
   letter-spacing: 1px; white-space: nowrap;
+  z-index: 30;
 }
 
 /* ---- Virtual Touch Buttons ---- */
@@ -149,6 +164,7 @@ canvas { display: block; touch-action: none; }
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; user-select: none;
   -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 }
 .tb-btn:active { background: rgba(255,255,255,0.3); }
 
@@ -171,20 +187,8 @@ canvas { display: block; touch-action: none; }
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; z-index: 45; user-select: none;
   -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 }
-
-/* ---- Portrait Warning ---- */
-#portrait-warning {
-  position: fixed; inset: 0; z-index: 300;
-  display: none; flex-direction: column;
-  align-items: center; justify-content: center;
-  background: rgba(0,0,0,0.95); color: #fff;
-  text-align: center; padding: 20px;
-}
-#portrait-warning.show { display: flex; }
-#portrait-warning .pw-icon { font-size: clamp(40px, 10vw, 64px); margin-bottom: 20px; }
-#portrait-warning .pw-text { font-size: clamp(16px, 4vw, 24px); font-weight: 700; }
-#portrait-warning .pw-sub { font-size: clamp(12px, 2.5vw, 16px); opacity: 0.6; margin-top: 8px; }
 
 /* ---- Control Mode Toggle ---- */
 #control-mode-select {
@@ -206,16 +210,36 @@ canvas { display: block; touch-action: none; }
   .star-counter { left: 10px; top: 10px; }
   .hud-biome { top: 50px; right: 10px; }
   .gameover-screen h1 { margin-bottom: 6px; }
+  .gameover-screen .final-score { margin-bottom: 20px; }
+  .gameover-btns { gap: 6px; }
+  .gameover-btns .btn { padding: 8px 14px; font-size: clamp(12px, 2.5vw, 14px); min-height: 36px; }
   .char-select, .mode-select { gap: 6px; }
-  #portrait-warning .pw-icon { font-size: 48px; }
+}
+
+/* ---- Start screen ---- */
+#start-screen {
+  padding: 16px;
+}
+
+#start-screen .current-vehicle,
+#start-screen .star-total {
+  font-size: clamp(14px, 2.5vw, 18px);
+  margin-bottom: 6px;
+}
+
+#start-screen .mode-label {
+  font-size: 15px; opacity: 0.6; margin: 14px 0 10px;
+}
+
+.start-btns {
+  display: flex; gap: clamp(8px, 2vw, 16px); justify-content: center; margin-top: 8px;
 }
 
 #shop-btn {
-  position: absolute; top: 100px; left: 50%; transform: translateX(-50%);
   padding: 12px 32px; font-size: clamp(14px, 3vw, 18px);
   background: linear-gradient(135deg, #00d4ff, #0090ff);
   border: none; border-radius: 12px; color: #fff; cursor: pointer;
-  font-weight: bold; z-index: 20;
+  font-weight: bold;
 }
 
 .shop-screen {
@@ -269,6 +293,7 @@ canvas { display: block; touch-action: none; }
   cursor: pointer; z-index: 50; display: none;
   align-items: center; justify-content: center;
   -webkit-tap-highlight-color: transparent; user-select: none;
+  -webkit-touch-callout: none;
 }
 #fire-btn:active { background: rgba(255,68,68,0.7); }
 

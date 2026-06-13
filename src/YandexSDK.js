@@ -1,15 +1,31 @@
 let ysdk = null;
+let _soundManager = null;
 
-export async function initYandexSDK() {
+export function setSoundManager(sm) {
+  _soundManager = sm;
+}
+
+export function initYandexSDK() {
   if (typeof YaGames !== 'undefined') {
-    try {
-      ysdk = await YaGames.init();
-      return;
-    } catch (e) {
+    return YaGames.init().then(y => {
+      ysdk = y;
+    }).catch(e => {
       console.warn('Yandex SDK init failed, using mock:', e);
-    }
+      ysdk = { mock: true };
+    });
   }
   ysdk = { mock: true };
+  return Promise.resolve();
+}
+
+export function getLang() {
+  if (ysdk && !ysdk.mock) {
+    try {
+      return ysdk.environment.i18n.lang;
+    } catch {}
+  }
+  const nav = navigator.language || navigator.userLanguage || '';
+  return nav.startsWith('ru') ? 'ru' : 'en';
 }
 
 export function loadingReady() {
@@ -89,15 +105,9 @@ export async function loadCloud() {
     try {
       const data = await ysdk.getPlayer?.().getData?.();
       if (data) {
-        if (data.stars != null) {
-          localStorage.setItem('highway_rush_stars', String(data.stars));
-        }
-        if (data.purchases) {
-          localStorage.setItem('highway_rush_purchases', JSON.stringify(data.purchases));
-        }
-        if (data.equipped) {
-          localStorage.setItem('highway_rush_equipped', data.equipped);
-        }
+        if (data.stars != null) localStorage.setItem('highway_rush_stars', String(data.stars));
+        if (data.purchases) localStorage.setItem('highway_rush_purchases', JSON.stringify(data.purchases));
+        if (data.equipped) localStorage.setItem('highway_rush_equipped', data.equipped);
         _setPlayerData(data);
       }
     } catch {}
@@ -105,6 +115,7 @@ export async function loadCloud() {
 }
 
 export async function showAd() {
+  if (_soundManager) _soundManager.pauseForAd();
   if (ysdk && !ysdk.mock && ysdk.adv) {
     try {
       await ysdk.adv.showFullscreenAdv();
@@ -112,16 +123,21 @@ export async function showAd() {
       console.warn('Fullscreen ad failed:', e);
     }
   }
+  if (_soundManager) _soundManager.resumeFromAd();
 }
 
 export async function showRewarded() {
+  if (_soundManager) _soundManager.pauseForAd();
   if (ysdk && !ysdk.mock && ysdk.adv) {
     try {
       const result = await ysdk.adv.showRewardedVideo();
-      return result === 'rewarded';
+      const rewarded = result === 'rewarded';
+      if (_soundManager) _soundManager.resumeFromAd();
+      return rewarded;
     } catch (e) {
       console.warn('Rewarded ad failed:', e);
     }
   }
+  if (_soundManager) _soundManager.resumeFromAd();
   return false;
 }
