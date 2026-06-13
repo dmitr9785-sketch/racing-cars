@@ -131,12 +131,17 @@ export async function showRewarded() {
   if (ysdk && !ysdk.mock && ysdk.adv) {
     try {
       const result = await ysdk.adv.showRewardedVideo();
-      const rewarded = result === 'rewarded';
+      const rewarded = !!(result && (result === true || result.result === 'rewarded' || result.code === 'rewarded'));
       if (_soundManager) _soundManager.resumeFromAd();
       return rewarded;
     } catch (e) {
       console.warn('Rewarded ad failed:', e);
     }
+  } else {
+    // mock mode — simulate rewarded for testing
+    await new Promise(r => setTimeout(r, 500));
+    if (_soundManager) _soundManager.resumeFromAd();
+    return true;
   }
   if (_soundManager) _soundManager.resumeFromAd();
   return false;
