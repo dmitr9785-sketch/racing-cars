@@ -10,7 +10,7 @@ import { UI } from './UI.js';
 import { Game } from './Game.js';
 import { Smoke } from './Smoke.js';
 import { PonyDecor } from './PonyDecor.js';
-import { initYandexSDK, loadingReady, saveStars, getStars, loadCloud, getLang, setSoundManager } from './YandexSDK.js';
+import { initYandexSDK, loadingReady, gameReady, saveStars, getStars, loadCloud, getLang, setSoundManager } from './YandexSDK.js';
 import { SoundManager } from './SoundManager.js';
 
 async function init() {
@@ -97,6 +97,7 @@ async function init() {
   ui.totalStars = totalStars;
 
   ui.setShopVehicles(shopVehicles);
+  gameReady();
   ui.showStartScreen();
   ui.startBtn.addEventListener('click', () => {
     sound.play('click');

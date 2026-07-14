@@ -50,7 +50,7 @@ canvas { display: block; touch-action: none; }
   display: none; flex-direction: column;
   align-items: center; justify-content: center;
   background: rgba(0,0,0,0.8); color: #fff; z-index: 50;
-  padding: 16px;
+  padding: 16px; overflow-y: auto;
 }
 .gameover-screen.show { display: flex; }
 .gameover-screen h1 { font-size: clamp(36px, 8vw, 64px); margin-bottom: 10px; letter-spacing: 6px; font-weight: 800; }
@@ -303,6 +303,30 @@ canvas { display: block; touch-action: none; }
   font-family: 'Segoe UI', sans-serif;
   z-index: 50; display: none;
   text-shadow: 0 0 8px rgba(255,170,0,0.5);
+}
+
+/* Очень маленькие экраны (Android <400px) */
+@media (max-width: 400px) {
+  .gameover-screen h1 { font-size: 22px; }
+  .gameover-screen .final-score { font-size: 12px; margin-bottom: 10px; }
+  .gameover-btns .btn { padding: 4px 8px; font-size: 10px; min-height: 28px; }
+  .mode-card { padding: 3px 5px; min-height: 30px; }
+  .mode-name { font-size: 10px; }
+  .mode-desc { font-size: 8px; }
+  #start-screen { padding: 4px; }
+  #start-screen h1 { font-size: 20px; margin-bottom: 4px; }
+  #start-screen .current-vehicle,
+  #start-screen .star-total { font-size: 11px; margin-bottom: 3px; }
+  #start-screen .mode-label { font-size: 11px; margin: 6px 0 4px; }
+  .cm-card { padding: 4px 8px; font-size: 10px; min-height: 28px; }
+  .start-btns { gap: 4px; margin-top: 4px; }
+  .btn { padding: 6px 12px; font-size: 11px; min-height: 32px; }
+  #shop-btn { padding: 6px 14px; font-size: 11px; }
+  .hud-score { font-size: 20px; }
+  .hud-speed { font-size: 10px; }
+  .star-counter { font-size: 16px; }
+  .tb-corner-right .tb-btn { width: 60px; height: 36px; font-size: 11px; }
+  .tb-btn { width: 40px; height: 40px; font-size: 18px; }
 }
 
 /* Портретная ориентация */

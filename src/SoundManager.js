@@ -1,18 +1,22 @@
 export class SoundManager {
   constructor() {
     this._ctx = null;
+    this._masterGain = null;
     this._buffers = {};
     this._engineSource = null;
     this._engineGain = null;
     this._musicSource = null;
     this._musicGain = null;
     this._engineId = 'engine';
-    this._suspendedForAd = false;
+    this._mutedForAd = false;
     this._onVisibility = this._onVisibilityChange.bind(this);
   }
 
   async init() {
     this._ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this._masterGain = this._ctx.createGain();
+    this._masterGain.gain.value = 1;
+    this._masterGain.connect(this._ctx.destination);
     const files = {
       engine: 'assets/sounds/sound_of_motor.mp3',
       star: 'assets/sounds/starsound.mp3',
@@ -58,23 +62,23 @@ export class SoundManager {
         this._ctx.suspend().catch(() => {});
       }
     } else {
-      if (this._ctx && this._ctx.state === 'suspended' && !this._suspendedForAd) {
+      if (this._ctx && this._ctx.state === 'suspended' && !this._mutedForAd) {
         this._ctx.resume().catch(() => {});
       }
     }
   }
 
-  pauseForAd() {
-    this._suspendedForAd = true;
-    if (this._ctx && this._ctx.state === 'running') {
-      this._ctx.suspend().catch(() => {});
+  mute() {
+    this._mutedForAd = true;
+    if (this._masterGain) {
+      this._masterGain.gain.setValueAtTime(0, this._ctx.currentTime);
     }
   }
 
-  resumeFromAd() {
-    this._suspendedForAd = false;
-    if (this._ctx && this._ctx.state === 'suspended') {
-      this._ctx.resume().catch(() => {});
+  unmute() {
+    this._mutedForAd = false;
+    if (this._masterGain) {
+      this._masterGain.gain.setValueAtTime(1, this._ctx.currentTime);
     }
   }
 
@@ -87,7 +91,7 @@ export class SoundManager {
     const gain = this._ctx.createGain();
     gain.gain.value = volume;
     source.connect(gain);
-    gain.connect(this._ctx.destination);
+    gain.connect(this._masterGain);
     source.start(0);
   }
 
@@ -110,7 +114,7 @@ export class SoundManager {
     const gain = this._ctx.createGain();
     gain.gain.value = 0.5;
     source.connect(gain);
-    gain.connect(this._ctx.destination);
+    gain.connect(this._masterGain);
     source.start(0);
     this._engineSource = source;
     this._engineGain = gain;
@@ -140,7 +144,7 @@ export class SoundManager {
     const gain = this._ctx.createGain();
     gain.gain.value = 0.2;
     source.connect(gain);
-    gain.connect(this._ctx.destination);
+    gain.connect(this._masterGain);
     source.start(0);
     this._musicSource = source;
     this._musicGain = gain;

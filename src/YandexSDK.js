@@ -21,7 +21,8 @@ export function initYandexSDK() {
 export function getLang() {
   if (ysdk && !ysdk.mock) {
     try {
-      return ysdk.environment.i18n.lang;
+      const lang = ysdk.environment.i18n.lang;
+      if (lang) return lang;
     } catch {}
   }
   const nav = navigator.language || navigator.userLanguage || '';
@@ -30,6 +31,10 @@ export function getLang() {
 
 export function loadingReady() {
   if (ysdk && !ysdk.mock) ysdk.features.LoadingAPI?.ready();
+}
+
+export function gameReady() {
+  if (ysdk && !ysdk.mock) ysdk.features.GameReadyAPI?.ready();
 }
 
 export function gameplayStart() {
@@ -115,7 +120,7 @@ export async function loadCloud() {
 }
 
 export async function showAd() {
-  if (_soundManager) _soundManager.pauseForAd();
+  if (_soundManager) _soundManager.mute();
   if (ysdk && !ysdk.mock && ysdk.adv) {
     try {
       await ysdk.adv.showFullscreenAdv();
@@ -123,25 +128,32 @@ export async function showAd() {
       console.warn('Fullscreen ad failed:', e);
     }
   }
-  if (_soundManager) _soundManager.resumeFromAd();
+  if (_soundManager) _soundManager.unmute();
 }
 
 export async function showRewarded() {
-  if (_soundManager) _soundManager.pauseForAd();
+  if (_soundManager) _soundManager.mute();
   if (ysdk && !ysdk.mock && ysdk.adv && typeof ysdk.adv.showRewardedVideo === 'function') {
-    try {
-      await ysdk.adv.showRewardedVideo({
-        callbacks: { onRewarded: () => {} }
-      });
-    } catch (e) {
-      console.warn('[YandexSDK] showRewardedVideo failed:', e);
-      if (_soundManager) _soundManager.resumeFromAd();
-      return false;
-    }
-    if (_soundManager) _soundManager.resumeFromAd();
-    return true;
+    return new Promise(resolve => {
+      let rewarded = false;
+      try {
+        ysdk.adv.showRewardedVideo({
+          callbacks: {
+            onRewarded: () => { rewarded = true; },
+            onClose: () => {
+              if (_soundManager) _soundManager.unmute();
+              resolve(rewarded);
+            },
+          }
+        });
+      } catch (e) {
+        console.warn('[YandexSDK] showRewardedVideo error:', e);
+        if (_soundManager) _soundManager.unmute();
+        resolve(false);
+      }
+    });
   }
   await new Promise(r => setTimeout(r, 500));
-  if (_soundManager) _soundManager.resumeFromAd();
+  if (_soundManager) _soundManager.unmute();
   return true;
 }
